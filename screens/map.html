@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="height=device-height, initial-scale=1.0">
+    <title>map</title>
+</head>
+<body>
+<div style="flex-direction: row;flex: 1;justify-content: center;align-content: center">
+    <div id="mapId" style="width: 96.5%;height: 96.5%;position: absolute">
+
+    </div>
+
+</div>
+</body>
+
+<script src="http://tmap.tehran.ir/app/pub/index.php/application/api/key/47b38134190e432ea74623de53f91c34"></script>
+<script>
+    var map = null;
+    var marker;
+
+
+
+
+
+    function LoadMap(panelId) {
+        map = new MPS.Map(panelId, {controls: ['Navigation','ZoomBar','ScaleLine','Navigator'], zoom: 1});
+        marker = null;
+        map.setCenter(new MPS.LonLat(35.662577, 51.363424), 7);
+        var size = new MPS.Size(35, 34);
+        var offset = new MPS.Pixel(-size.w / 2,(-size.h));
+        var icon = new
+        MPS.Icon('https://i.dlpng.com/static/png/1465417-download-this-image-as-map-marker-png-600_498_preview.png',
+            size, offset);
+        var marker = new MPS.Marker(new MPS.LonLat(35.662191, 51.362875), icon);
+        map.addMarker(marker);
+
+    }
+
+    LoadMap('mapId');
+
+
+</script>
+
+
+</html>
