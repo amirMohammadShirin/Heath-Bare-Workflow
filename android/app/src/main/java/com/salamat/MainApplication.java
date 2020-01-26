@@ -33,6 +33,7 @@ public class MainApplication extends Application implements ReactApplication {
            //packages.add(new MyReactNativePackage());
            //packages.add(new ReanimatedPackage());
             packages.add(new NeshanFullScreenPackage());
+
           return packages;
         }
 

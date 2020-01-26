@@ -97,7 +97,10 @@ export default class DetailsForMedicalCenterScreen extends Component {
                             await AsyncStorage.setItem("Longitude", data.Longitude)
                             // await AsyncStorage.setItem("Longitude", "51.425232")
                             // await AsyncStorage.setItem("Latitude", "35.715376")
-                            this.props.navigation.navigate('MapScreen')
+                            // this.props.navigation.navigate('MapScreen')
+                            NativeModules.NeshanFullScreenModule.navigateToNative(
+                                data.Latitude, data.Longitude)
+
                         });
 
                     }
@@ -230,9 +233,9 @@ export default class DetailsForMedicalCenterScreen extends Component {
                                             borderColor: '#23b9b9',
                                         }}
                                                 onPress={async () => {
-                                                    // this.getLocation()
-                                                    NativeModules.NeshanFullScreenModule.navigateToNative(
-                                                        this.state.selectedMedicalCenter.Id)
+                                                     this.getLocation()
+                                                    // NativeModules.NeshanFullScreenModule.navigateToNative(
+                                                    //     this.state.selectedMedicalCenter.Id)
                                                     // NativeModules.NeshanFullScreenModule.test()
 
                                                 }}
