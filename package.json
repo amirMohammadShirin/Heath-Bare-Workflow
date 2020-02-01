@@ -19,6 +19,7 @@
     "@react-native-community/masked-view": "^0.1.6",
     "moment": "latest",
     "native-base": "^2.13.8",
+    "prop-types": "latest",
     "react": "16.9.0",
     "react-native": "0.61.5",
     "react-native-drawer": "^2.5.1",
@@ -34,8 +35,7 @@
     "react-native-screens": "^2.0.0-alpha.27",
     "react-native-swipeable-row": "^0.8.1",
     "react-navigation": "^4.0.10",
-    "react-navigation-drawer": "^2.3.3",
-    "prop-types": "latest"
+    "react-navigation-drawer": "^2.3.3"
   },
   "devDependencies": {
     "@babel/core": "^7.8.3",

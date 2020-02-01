@@ -174,8 +174,7 @@ export default class MapScreen extends Component {
 
         return (
             <Container>
-                <StatusBar showHideTransition={"slide"} barStyle="light-content" hidden={false}
-                           backgroundColor="#23b9b9" translucent={true}/>
+                <StatusBar translucent backgroundColor={"#219e9e"} barStyle={"light-content"}/>
                 <Header style={styles.header}>
                     <Left>
                         <Button transparent style={styles.headerMenuIcon}
@@ -190,6 +189,7 @@ export default class MapScreen extends Component {
                 </Header>
                 <Content scrollEnabled={true} style={{flex: 1, backgroundColor: '#fff'}}>
                     <MapView
+                        provider={'google'}
                         userLocationAnnotationTitle={"موقعیت من"}
                         showsMyLocationButton={true}
                         loadingEnabled={true}

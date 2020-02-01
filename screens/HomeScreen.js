@@ -12,6 +12,7 @@ import {
     PermissionsAndroid
 } from 'react-native';
 import {Container, Header, Footer, Fab, Button, Left, Right, Icon, Text, Input, Content, Item} from 'native-base';
+
 // import * as Permissions from 'expo-permissions'
 // import * as Location from 'expo-location';
 // import Constants from 'expo-constants'
@@ -308,98 +309,100 @@ export default class HomeScreen extends Component {
                     {/*    injectedJavaScript={javascript}*/}
                     {/*/>*/}
 
-                    {/*<MapView*/}
-                    {/*    userLocationAnnotationTitle={"موقعیت من"}*/}
-                    {/*    showsMyLocationButton={true}*/}
-                    {/*    loadingEnabled={true}*/}
-                    {/*    loadingIndicatorColor={'#23b9b9'}*/}
-                    {/*    showsUserLocation={true}*/}
-                    {/*    minZoomLevel={0}*/}
-                    {/*    style={{*/}
-                    {/*        width: Dimensions.get('window').width,*/}
-                    {/*        height: Dimensions.get('window').height,*/}
-                    {/*    }}*/}
+                    <MapView
+                        userLocationAnnotationTitle={"موقعیت من"}
+                        showsMyLocationButton={true}
+                        loadingEnabled={true}
+                        loadingIndicatorColor={'#23b9b9'}
+                        showsUserLocation={true}
+                        minZoomLevel={0}
+                        style={{
+                            width: Dimensions.get('window').width,
+                            height: Dimensions.get('window').height,
+                            // width: '100%',
+                            // height: '100%'
+                        }}
 
-                    {/*    initialRegion={{*/}
-                    {/*        latitude: 35.715559,*/}
-                    {/*        longitude: 51.425621,*/}
-                    {/*        latitudeDelta: 0.0922,*/}
-                    {/*        longitudeDelta: 0.0421,*/}
-                    {/*    }}>*/}
+                        initialRegion={{
+                            latitude: 35.715559,
+                            longitude: 51.425621,
+                            latitudeDelta: 0.0922,
+                            longitudeDelta: 0.0421,
+                        }}>
 
-                    {/*    {this.state.medicalCenters.map((value, index) =>*/}
-                    {/*        <View key={index}>*/}
-                    {/*            <Marker*/}
+                        {this.state.medicalCenters.map((value, index) =>
+                            <View key={index}>
+                                <Marker
 
-                    {/*                title={value.Title}*/}
-                    {/*                onCalloutPress={() => this.setState({selectedMedicalCenter: value}, () => {*/}
-                    {/*                    this.setState({visible: true})*/}
-                    {/*                })}*/}
-                    {/*                coordinate={{*/}
-                    {/*                    latitude: parseFloat(value.Latitude),*/}
-                    {/*                    longitude: parseFloat(value.Longitude),*/}
-                    {/*                }}>*/}
-                    {/*                <Icon type={'FontAwesome5'} name={'map-marker-alt'}*/}
-                    {/*                      style={{color: '#23b9b9', fontSize: 45}}/>*/}
-                    {/*            </Marker>*/}
-                    {/*        </View>*/}
-                    {/*    )*/}
-                    {/*    }*/}
+                                    title={value.Title}
+                                    onCalloutPress={() => this.setState({selectedMedicalCenter: value}, () => {
+                                        this.setState({visible: true})
+                                    })}
+                                    coordinate={{
+                                        latitude: parseFloat(value.Latitude),
+                                        longitude: parseFloat(value.Longitude),
+                                    }}>
+                                    <Icon type={'FontAwesome5'} name={'map-marker-alt'}
+                                          style={{color: '#23b9b9', fontSize: 45}}/>
+                                </Marker>
+                            </View>
+                        )
+                        }
 
-                    {/*    {this.state.selectedMedicalCenter != null && <Modal*/}
-                    {/*        width={300}*/}
-                    {/*        onTouchOutside={() => {*/}
-                    {/*            this.setState({visible: false});*/}
-                    {/*        }}*/}
-                    {/*        visible={this.state.visible}*/}
-                    {/*        modalTitle={*/}
-                    {/*            <ModalTitle style={styles.modalTitle} textStyle={styles.modalTitleText}*/}
-                    {/*                        title={this.state.selectedMedicalCenter.Title}/>}*/}
-                    {/*        modalAnimation={new SlideAnimation({*/}
-                    {/*            slideFrom: 'bottom'*/}
-                    {/*        })}*/}
-                    {/*        footer={*/}
-                    {/*            <ModalFooter style={styles.modalFooter}>*/}
-                    {/*                <ModalButton*/}
-                    {/*                    style={[styles.modalCancelButton]}*/}
-                    {/*                    textStyle={styles.modalCancelButtonText}*/}
-                    {/*                    text="جستجوی پزشک"*/}
-                    {/*                    onPress={async () => {*/}
-                    {/*                        this.setState({visible: false})*/}
-                    {/*                        this.props.navigation.navigate('MapSearchDoctorScreen',*/}
-                    {/*                            {medicalCenter: this.state.selectedMedicalCenter})*/}
-                    {/*                    }}*/}
-                    {/*                />*/}
-                    {/*                <ModalButton*/}
-                    {/*                    style={[styles.modalSuccessButton]}*/}
-                    {/*                    textStyle={[styles.modalSuccessButtonText]}*/}
-                    {/*                    text="اطلاعات بیشتر"*/}
-                    {/*                    onPress={async () => {*/}
-                    {/*                        await this.setState({visible: false})*/}
-                    {/*                        this.props.navigation.push('DetailsForMedicalCenterScreen',*/}
-                    {/*                            {*/}
-                    {/*                                medicalCenter: this.state.selectedMedicalCenter,*/}
-                    {/*                                backRoute: 'HomeScreen'*/}
-                    {/*                            })*/}
-                    {/*                    }*/}
-                    {/*                    }*/}
-                    {/*                />*/}
-                    {/*            </ModalFooter>*/}
-                    {/*        }*/}
-                    {/*    >*/}
-                    {/*        <ModalContent style={styles.modalContent}>*/}
-                    {/*            <View>*/}
-                    {/*                <Text style={[styles.modalCancelButtonText,*/}
-                    {/*                    {*/}
-                    {/*                        color: '#23b9b9',*/}
-                    {/*                        fontSize: 15,*/}
+                        {this.state.selectedMedicalCenter != null && <Modal
+                            width={300}
+                            onTouchOutside={() => {
+                                this.setState({visible: false});
+                            }}
+                            visible={this.state.visible}
+                            modalTitle={
+                                <ModalTitle style={styles.modalTitle} textStyle={styles.modalTitleText}
+                                            title={this.state.selectedMedicalCenter.Title}/>}
+                            modalAnimation={new SlideAnimation({
+                                slideFrom: 'bottom'
+                            })}
+                            footer={
+                                <ModalFooter style={styles.modalFooter}>
+                                    <ModalButton
+                                        style={[styles.modalCancelButton]}
+                                        textStyle={styles.modalCancelButtonText}
+                                        text="جستجوی پزشک"
+                                        onPress={async () => {
+                                            this.setState({visible: false})
+                                            this.props.navigation.navigate('MapSearchDoctorScreen',
+                                                {medicalCenter: this.state.selectedMedicalCenter})
+                                        }}
+                                    />
+                                    <ModalButton
+                                        style={[styles.modalSuccessButton]}
+                                        textStyle={[styles.modalSuccessButtonText]}
+                                        text="اطلاعات بیشتر"
+                                        onPress={async () => {
+                                            await this.setState({visible: false})
+                                            this.props.navigation.push('DetailsForMedicalCenterScreen',
+                                                {
+                                                    medicalCenter: this.state.selectedMedicalCenter,
+                                                    backRoute: 'HomeScreen'
+                                                })
+                                        }
+                                        }
+                                    />
+                                </ModalFooter>
+                            }
+                        >
+                            <ModalContent style={styles.modalContent}>
+                                <View>
+                                    <Text style={[styles.modalCancelButtonText,
+                                        {
+                                            color: '#23b9b9',
+                                            fontSize: 15,
 
-                    {/*                    }]}>{this.state.selectedMedicalCenter.Description != null ?*/}
-                    {/*                    this.state.selectedMedicalCenter.Description : ''}</Text>*/}
-                    {/*            </View>*/}
-                    {/*        </ModalContent>*/}
-                    {/*    </Modal>}*/}
-                    {/*</MapView>*/}
+                                        }]}>{this.state.selectedMedicalCenter.Description != null ?
+                                        this.state.selectedMedicalCenter.Description : ''}</Text>
+                                </View>
+                            </ModalContent>
+                        </Modal>}
+                    </MapView>
 
 
                     <Modal style={{opacity: 0.7}}
