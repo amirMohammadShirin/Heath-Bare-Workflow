@@ -1,6 +1,16 @@
 import React, {Component} from 'react';
 
-import {StyleSheet, View, Text, ImageBackground, Image, ActivityIndicator, StatusBar} from 'react-native';
+import {
+    StyleSheet,
+    View,
+    Text,
+    ImageBackground,
+    Image,
+    ActivityIndicator,
+    StatusBar,
+    Platform,
+    BackHandler, Alert
+} from 'react-native';
 import {
     Content,
     Container,
@@ -21,6 +31,9 @@ export default class SideMenu extends Component {
 
     constructor(props) {
         super(props);
+        if (Platform.OS === 'android') {
+            this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
+        }
         this.state = {
             navigationState: {},
             animated: true,
@@ -33,11 +46,16 @@ export default class SideMenu extends Component {
 
     componentWillMount(): void {
         this.generateFullName()
-
+        if (Platform.OS === 'android') {
+            BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+        }
     }
 
     componentDidMount(): void {
         StatusBar.setHidden(true)
+        if (Platform.OS === 'android') {
+            BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+        }
     }
 
     getAccess(menuItem, role) {
@@ -57,6 +75,31 @@ export default class SideMenu extends Component {
         }
     }
 
+    handleBackButtonClick() {
+        // alert('pressed')
+
+        console.log(JSON.stringify(this.props.navigation.state.isDrawerOpen))
+
+        if (this.props.navigation.state.isDrawerOpen) {
+            this.props.navigation.closeDrawer()
+        } else {
+            // alert('hello')
+            Alert.alert(
+                'خروج',
+                ' مایل به خروج از برنامه هستید؟ ',
+                [
+                    {
+                        text: 'خیر',
+                        style: 'cancel',
+                    },
+                    {text: 'بله', onPress: () => BackHandler.exitApp()},
+                ],
+                {cancelable: false},
+            );
+        }
+        return true;
+    }
+
     generateFullName() {
         var routes = (this.props.navigation.state['routes'])
         var homeRoute = routes[1]
@@ -74,12 +117,8 @@ export default class SideMenu extends Component {
     }
 
     render() {
-
-        let PARAMS = {};
         return (
             <Container>
-
-                {/*<View style={{height: '100%', width: '100%', backgroundColor: '#23b9b9'}}>*/}
                 <View style={{height: '20%', width: '100%', backgroundColor: '#23b9b9'}}>
                     <ImageBackground style={styles.headerImage}
                                      source={require(
@@ -254,8 +293,6 @@ export default class SideMenu extends Component {
                         </ListItem>}
                     </List>
                 </Content>
-
-                {/*</View>*/}
                 <Footer style={{backgroundColor: '#23b9b9', flexDirection: 'row'}}>
                     {this.getAccess('information', 'admin') &&
                     <View style={{flex: 1}}>
@@ -269,7 +306,7 @@ export default class SideMenu extends Component {
                 </Footer>
             </Container>
         )
-            ;
+
     }
 }
 

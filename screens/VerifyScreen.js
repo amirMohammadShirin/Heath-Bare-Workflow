@@ -1,5 +1,15 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Text, StatusBar, Image, AsyncStorage, ActivityIndicator, Keyboard} from 'react-native';
+import {
+    StyleSheet,
+    View,
+    Text,
+    StatusBar,
+    Image,
+    AsyncStorage,
+    ActivityIndicator,
+    Keyboard,
+    Platform, BackHandler, Alert
+} from 'react-native';
 import {Button, Card, Container, Content, Input, Item} from 'native-base'
 import Modal, {ModalContent, SlideAnimation} from "react-native-modals";
 
@@ -9,12 +19,40 @@ const AUTHENTICATE = "/Api/Authenticate";
 export default class VerifyScreen extends Component {
     constructor(props) {
         super(props);
-        ;
+        if (Platform.OS === 'android') {
+            this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
+        }
         this.state = {
             username: '09191111111',
             progressModalVisible: false,
         }
     }
+
+    componentDidMount(): void {
+        if (Platform.OS === 'android') {
+            BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+        }
+    }
+
+
+    handleBackButtonClick() {
+        // alert('pressed')
+
+        Alert.alert(
+            'خروج',
+            ' مایل به خروج از برنامه هستید؟ ',
+            [
+                {
+                    text: 'خیر',
+                    style: 'cancel',
+                },
+                {text: 'بله', onPress: () => BackHandler.exitApp()},
+            ],
+            {cancelable: false},
+        );
+        return true;
+    }
+
 
     goToHomeScreen = async () => {
         let body = {
@@ -60,6 +98,16 @@ export default class VerifyScreen extends Component {
             .catch((error) => {
                 console.error(error)
             })
+        // fetch(BASE + AUTHENTICATE, {
+        //     method: 'POST',
+        //     Accept: 'application/json',
+        //     credentials: 'include',
+        //     headers: {'content-type': 'application/json'},
+        //     body: JSON.stringify(body)
+        // }).then((response) => console.log(JSON.stringify(response)))
+        //     .catch((error) => {
+        //         console.error(error)
+        //     })
     };
 
     render() {

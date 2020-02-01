@@ -7,7 +7,7 @@ import {
     Text,
     Keyboard,
     View,
-    ScrollView
+    ScrollView, Platform
 } from 'react-native';
 import {
     ActionSheet,
@@ -89,7 +89,6 @@ export default class DoctorsResult extends Component {
     render() {
         return (
             <Container>
-                <StatusBar translucent backgroundColor={"#219e9e"} barStyle={"light-content"}/>
                 <Header style={styles.header}>
                     <Left>
                         <Button transparent style={styles.headerMenuIcon}
@@ -127,8 +126,10 @@ export default class DoctorsResult extends Component {
                 </Header>
                 <Root>
                     <Content scrollEnabled={false} padder style={styles.content}>
-
-
+                        {Platform.OS === 'android' &&
+                        <StatusBar barStyle={"dark-content"} backgroundColor={'#209b9b'}
+                                   hidden={false}/>
+                        }
                         {
                             <Card>
                                 <CardItem style={{flexDirection: 'row-reverse', justifyContent: 'flex-start'}}>

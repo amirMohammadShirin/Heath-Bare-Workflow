@@ -162,7 +162,10 @@ export default class ReserveScreen extends Component {
                     </Right>
                 </Header>
                 <Content padder style={styles.content}>
-                    <StatusBar translucent backgroundColor={"transparent"} barStyle={"light-content"}/>
+                    {Platform.OS === 'android' &&
+                    <StatusBar barStyle={"dark-content"} backgroundColor={'#209b9b'}
+                               hidden={false}/>
+                    }
                     <View style={styles.body}>
                         <View style={styles.card}>
                             <Card style={{

@@ -9,7 +9,7 @@ import {
     ActivityIndicator,
     Dimensions,
     NativeModules,
-    PermissionsAndroid
+    PermissionsAndroid, BackHandler, Alert
 } from 'react-native';
 import {Container, Header, Footer, Fab, Button, Left, Right, Icon, Text, Input, Content, Item} from 'native-base';
 
@@ -127,6 +127,9 @@ export default class HomeScreen extends Component {
 
     constructor(props) {
         super(props);
+        if (Platform.OS === 'android') {
+            this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
+        }
         this.state = {
             active: true,
             errorMessage: '',
@@ -142,6 +145,29 @@ export default class HomeScreen extends Component {
 
     }
 
+    handleBackButtonClick() {
+        // alert('pressed')
+
+        console.log(JSON.stringify(this.props.navigation.state))
+
+        if (this.props.navigation.state.isDrawerOpen) {
+            this.props.navigation.closeDrawer()
+        } else {
+            Alert.alert(
+                'خروج',
+                ' مایل به خروج از برنامه هستید؟ ',
+                [
+                    {
+                        text: 'خیر',
+                        style: 'cancel',
+                    },
+                    {text: 'بله', onPress: () => BackHandler.exitApp()},
+                ],
+                {cancelable: false},
+            );
+        }
+        return true;
+    }
 
     getLatLong(first, second, isLat) {
         let operator = new utmObj('WGS 84');
@@ -160,11 +186,14 @@ export default class HomeScreen extends Component {
         await this.setState({progressModalVisible: true})
         await fetch(this.state.baseUrl + GETALLLOCATIONS, {
             method: 'GET',
+
             headers: {
                 'content-type': 'application/json',
                 Accept: 'application/json',
+
                 'Authorization': 'Bearer ' + new String(this.state.token)
             },
+
         }).then((response) => response.json())
             .then(async (responseData) => {
                 if (responseData['StatusCode'] === 200) {
@@ -231,6 +260,9 @@ export default class HomeScreen extends Component {
     }
 
     async componentWillMount(): void {
+        if (Platform.OS === 'android') {
+            BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+        }
         let token = await AsyncStorage.getItem('token');
         let baseUrl = await AsyncStorage.getItem('baseUrl');
 
@@ -250,6 +282,9 @@ export default class HomeScreen extends Component {
 
 
     async componentDidMount(): void {
+        if (Platform.OS === 'android') {
+            BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+        }
         const LocationPermission = await PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION, {
                 title: 'Cool Photo App Camera Permission',
@@ -264,12 +299,18 @@ export default class HomeScreen extends Component {
 
     }
 
+    componentWillUnmount(): void {
+        if (Platform.OS === 'android') {
+            BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+        }
+    }
+
     render() {
 
         return (
+
             <Container>
-                <StatusBar showHideTransition={"slide"} barStyle={"light-content"} backgroundColor={'transparent'}
-                           hidden={true}/>
+
                 <Header style={styles.header}>
 
                     {/*<Item style={{backgroundColor: 'rgba(255,255,255,0)', borderWidth: 0, flex: 1}}>*/}
@@ -290,6 +331,11 @@ export default class HomeScreen extends Component {
                     </Right>
                 </Header>
                 <Content scrollEnabled={true} style={{flex: 1, backgroundColor: '#fff'}}>
+
+                    {Platform.OS === 'android' &&
+                    <StatusBar barStyle={"dark-content"} backgroundColor={'#209b9b'}
+                               hidden={false}/>
+                    }
 
                     {/*<View style={{flex: 1, width: '100%', height: '100%'}}>*/}
                     {/*<WebView*/}

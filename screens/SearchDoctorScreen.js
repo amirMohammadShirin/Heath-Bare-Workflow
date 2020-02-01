@@ -7,7 +7,7 @@ import {
     Text,
     TextInput,
     Keyboard,
-    View
+    View, Platform
 } from 'react-native';
 import {
     Button,
@@ -244,7 +244,7 @@ export default class SearchMedicalCenter extends Component {
     render() {
         return (
             <Container>
-                <StatusBar translucent backgroundColor={"#219e9e"} barStyle={"light-content"}/>
+
                 {this.state.selectedMedicalCenter != null ? <Header style={styles.header}>
                         <Left style={{flex: 1}}>
                             <Button transparent style={styles.headerMenuIcon}
@@ -284,7 +284,10 @@ export default class SearchMedicalCenter extends Component {
                     </Header>}
                 <Root>
                     <Content padder style={styles.content}>
-
+                        {Platform.OS === 'android' &&
+                        <StatusBar barStyle={"dark-content"} backgroundColor={'#209b9b'}
+                                   hidden={false}/>
+                        }
                         <Item regular style={{borderRadius: 5}}>
                             <Input placeholder='جستجوی نام پزشک،تخصص و ...'
                                    placeholderTextColor={'#d0d0d0'}

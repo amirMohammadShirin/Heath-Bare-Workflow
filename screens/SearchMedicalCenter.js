@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {ActivityIndicator, AsyncStorage, StatusBar, StyleSheet, Text, Keyboard, View} from 'react-native';
+import {ActivityIndicator, AsyncStorage, StatusBar, StyleSheet, Text, Keyboard, View, Platform} from 'react-native';
 import {Alert} from 'react-native'
 import {
     List,
@@ -130,7 +130,6 @@ export default class SearchMedicalCenter extends Component {
     render() {
         return (
             <Container>
-                <StatusBar translucent backgroundColor={"#219e9e"} barStyle={"light-content"}/>
                 <Header style={styles.header}>
                     <Left style={{flex: 5}}>
                         <Text style={styles.headerText}>جستجوی
@@ -152,6 +151,10 @@ export default class SearchMedicalCenter extends Component {
                 </Header>
                 <Root>
                     <Content padder style={styles.content}>
+                        {Platform.OS === 'android' &&
+                        <StatusBar barStyle={"dark-content"} backgroundColor={'#209b9b'}
+                                   hidden={false}/>
+                        }
                         <Item regular>
                             <Input placeholder='جستجوی نام مرکز،خدمات،منطقه و ...'
                                    placeholderTextColor={'#d0d0d0'}
@@ -232,8 +235,8 @@ export default class SearchMedicalCenter extends Component {
                                                         fontSize: 13,
                                                         marginRight: 1,
                                                         marginTop: 5,
-                                                        minHeight:28,
-                                                        maxHeight:32
+                                                        minHeight: 28,
+                                                        maxHeight: 32
                                                     }}>{item.Title}</Text>
                                                     {(item.Facility != null || item.ServiceDetail != null ||
                                                         item.Service != null) && <Text style={{
@@ -303,8 +306,8 @@ export default class SearchMedicalCenter extends Component {
                                                         height: '100%',
                                                         textAlign: 'right',
                                                         fontSize: 13,
-                                                        minHeight:28,
-                                                        maxHeight:32
+                                                        minHeight: 28,
+                                                        maxHeight: 32
                                                     }}>{item.Title}</Text>
                                                 </Body>
                                             </ListItem>
@@ -417,6 +420,7 @@ const styles = StyleSheet.create({
     },
     headerMenuIcon: {
         padding: 5,
+        fontSize: 30,
         color: '#fff',
     },
     headerText: {

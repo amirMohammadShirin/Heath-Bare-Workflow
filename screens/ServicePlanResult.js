@@ -8,7 +8,7 @@ import {
     StatusBar,
     AsyncStorage,
     Keyboard,
-    Alert
+    Alert, Platform
 } from 'react-native';
 import {
     Container,
@@ -330,7 +330,6 @@ export default class ServicePlanResult extends Component {
     render() {
         return (
             <Container>
-                <StatusBar backgroundColor={"#219e9e"} barStyle={"light-content"}/>
                 <Header style={{backgroundColor: '#23b9b9'}}>
                     <Left>
                         <Button transparent style={styles.headerMenuIcon}
@@ -345,7 +344,10 @@ export default class ServicePlanResult extends Component {
                 </Header>
                 <Root>
                     <Content scrollEnabled={false} padder style={styles.content}>
-
+                        {Platform.OS === 'android' &&
+                        <StatusBar barStyle={"dark-content"} backgroundColor={'#209b9b'}
+                                   hidden={false}/>
+                        }
                         <Card>
                             <CardItem style={{flexDirection: 'row-reverse', justifyContent: 'flex-start'}}>
                                 <Right style={{flexDirection: 'row-reverse', justifyContent: 'flex-start'}}>

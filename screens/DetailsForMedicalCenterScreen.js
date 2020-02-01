@@ -7,7 +7,7 @@ import {
     Text,
     TextInput,
     View,
-    NativeModules
+    NativeModules, Platform
 } from 'react-native';
 import {
     Button,
@@ -196,7 +196,6 @@ export default class DetailsForMedicalCenterScreen extends Component {
 
         return (
             <Container>
-                <StatusBar translucent backgroundColor={"#219e9e"} barStyle={"light-content"}/>
                 <Header span style={styles.header}>
                     <Left>
                         <Button transparent style={styles.headerMenuIcon}
@@ -211,6 +210,10 @@ export default class DetailsForMedicalCenterScreen extends Component {
                 </Header>
                 <Root>
                     <Content padder style={styles.content}>
+                        {Platform.OS === 'android' &&
+                        <StatusBar barStyle={"dark-content"} backgroundColor={'#209b9b'}
+                                   hidden={false}/>
+                        }
                         <Card style={{padding: 5, borderColor: '#23b9b9', elevation: 8, borderWidth: 1}}>
                             {!this.state.progressModalVisible && <CardItem style={{marginTop: 5}}>
                                 <Left>

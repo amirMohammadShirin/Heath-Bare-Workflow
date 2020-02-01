@@ -7,7 +7,7 @@ import {
     TextInput,
     AsyncStorage,
     ActivityIndicator,
-    Keyboard
+    Keyboard, Platform
 } from 'react-native';
 import Modal, {ModalButton, ModalFooter, ModalTitle, SlideAnimation, ModalContent} from 'react-native-modals';
 import PersianCalendarPicker from 'react-native-persian-calendar-picker';
@@ -392,7 +392,6 @@ export default class ReserveScreen extends Component {
         return (
             <Root>
                 <Container>
-                    <StatusBar translucent backgroundColor={"#219e9e"} barStyle={"light-content"}/>
                     {(typeof DOCTOR != 'undefined' || typeof MEDICALCENTER != 'undefined') && (MEDICALCENTER != null ||
                     DOCTOR != null) ?
                         <Header hasTabs style={{backgroundColor: '#23b9b9'}}>
@@ -427,7 +426,10 @@ export default class ReserveScreen extends Component {
                         </Header>}
 
                     <Content padder style={styles.content}>
-
+                        {Platform.OS === 'android' &&
+                        <StatusBar barStyle={"dark-content"} backgroundColor={'#209b9b'}
+                                   hidden={false}/>
+                        }
                         <Card style={styles.card}>
 
                             <View style={styles.row}>
@@ -1031,6 +1033,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
     },
     headerMenuIcon: {
+        fontSize: 30,
         paddingTop: 5,
         paddingBottom: 5,
         color: '#fff',
@@ -1104,6 +1107,7 @@ const styles = StyleSheet.create({
     },
     label: {
         fontFamily: 'IRANMarker',
+        color:'#000',
         alignSelf: 'flex-end',
         alignContent: 'center',
         justifyContent: 'center',
@@ -1116,6 +1120,7 @@ const styles = StyleSheet.create({
         textAlign: 'right'
     },
     Input: {
+        color:'#000',
         fontFamily: 'IRANMarker',
         margin: 1,
         marginRight: 2,

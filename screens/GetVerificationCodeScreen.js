@@ -1,10 +1,15 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Text, StatusBar, Image} from 'react-native';
+import {StyleSheet, View, Text, StatusBar, Image, Platform, Alert} from 'react-native';
+import {BackHandler} from 'react-native';
 import {Button, Input, Item, Container, Content, Card, Icon} from 'native-base'
+
 
 export default class GetVerificationCodeScreen extends Component {
     constructor(props) {
         super(props);
+        if (Platform.OS === 'android') {
+            this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
+        }
         this.state = {
             phone: '',
             valid: false,
@@ -18,6 +23,31 @@ export default class GetVerificationCodeScreen extends Component {
     }
 
 
+    componentDidMount(): void {
+        if (Platform.OS === 'android') {
+            BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+        }
+    }
+
+
+    handleBackButtonClick() {
+        // alert('pressed')
+
+        Alert.alert(
+            'خروج',
+            ' مایل به خروج از برنامه هستید؟ ',
+            [
+                {
+                    text: 'خیر',
+                    style: 'cancel',
+                },
+                {text: 'بله', onPress: () => BackHandler.exitApp()},
+            ],
+            {cancelable: false},
+        );
+        return true;
+    }
+
     phoneNumberValidation(value) {
         const regex = RegExp('^(\\+98|0)?9\\d{9}$');
         let phone = new String(value)
@@ -30,7 +60,6 @@ export default class GetVerificationCodeScreen extends Component {
             return status;
         }
     }
-
 
     render() {
         return (
@@ -59,12 +88,18 @@ export default class GetVerificationCodeScreen extends Component {
                                        }}/>
                                 <Icon name={this.state.icon} style={{color: this.state.color}}/>
                             </Item>
-                            <Button light style={styles.buttonStyle} onPress={() => {
+                            <Button
+                                textStyle={{fontFamily: 'IRANMarker'}}
+                                light style={styles.buttonStyle} onPress={() => {
                                 if (this.phoneNumberValidation(this.state.phone)) {
                                     // alert('Sent')
-                                    this.props.navigation.navigate('VerifyScreen');
+                                    this.props.navigation.push('VerifyScreen');
                                 } else {
-                                    alert('لطفا شماره تلفن خود را وارد کنید')
+                                    if (this.state.phone.length < 11) {
+                                        alert('لطفا شماره تلفن خود را وارد کنید')
+                                    } else {
+                                        alert('شماره تلفن شما صحیح نمی باشد')
+                                    }
                                 }
                             }}>
                                 <Text style={styles.textStyle}>دریافت کد فعال سازی</Text>
@@ -117,6 +152,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#23b9b9'
     },
     textStyle: {
+        fontFamily: 'IRANMarkersss',
         textAlign: 'center',
         color: '#fff',
         padding: 5

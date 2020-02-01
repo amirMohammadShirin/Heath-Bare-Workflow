@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Image, ScrollView, ActivityIndicator, StatusBar, AsyncStorage} from 'react-native';
+import {StyleSheet, View, Image, ScrollView, ActivityIndicator, StatusBar, AsyncStorage, Platform} from 'react-native';
 import {
     Container,
     Header,
@@ -133,7 +133,6 @@ export default class NoticeScreen extends Component {
     render() {
         return (
             <Container>
-                <StatusBar translucent backgroundColor={"#219e9e"} barStyle={"light-content"}/>
                 <Header style={{backgroundColor: '#23b9b9'}}>
                     <Left style={{flex: 5}}>
                         <Text style={styles.headerText}>اطلاع رسانی</Text>
@@ -148,6 +147,10 @@ export default class NoticeScreen extends Component {
 
                 </Header>
                 <Content padder style={styles.content}>
+                    {Platform.OS === 'android' &&
+                    <StatusBar barStyle={"dark-content"} backgroundColor={'#209b9b'}
+                               hidden={false}/>
+                    }
                     {/*<Card style={styles.card}>*/}
                     {/*    <CardItem>*/}
                     {/*        <Body>*/}

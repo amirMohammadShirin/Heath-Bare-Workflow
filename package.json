@@ -34,7 +34,7 @@
     "react-native-safe-area-view": "^1.0.0",
     "react-native-screens": "^2.0.0-alpha.27",
     "react-native-swipeable-row": "^0.8.1",
-    "react-navigation": "^4.0.10",
+    "react-navigation": "^4.1.0",
     "react-navigation-drawer": "^2.3.3"
   },
   "devDependencies": {

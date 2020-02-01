@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Image, ScrollView, TouchableOpacity, Alert, StatusBar} from 'react-native';
+import {StyleSheet, View, Image, ScrollView, TouchableOpacity, Alert, StatusBar, Platform} from 'react-native';
 import Swipeable from 'react-native-swipeable-row';
 import {
     Container,
@@ -80,9 +80,12 @@ export default class InboxScreen extends Component {
 
         return (
             <Container style={{backgroundColor: 'rgba(34,166,166,0.72)',}}>
-                <StatusBar showHideTransition={"slide"} barStyle={"light-content"} backgroundColor={'transparent'}
-                           hidden={true}/>
+
                 <Content>
+                    {Platform.OS === 'android' &&
+                    <StatusBar barStyle={"dark-content"} backgroundColor={'#209b9b'}
+                               hidden={false}/>
+                    }
                     <Icon light bordered style={{
                         alignSelf: 'flex-start',
                         alignItems: 'center',
@@ -92,7 +95,8 @@ export default class InboxScreen extends Component {
                         marginBottom: 5,
                         marginLeft: 10,
                         marginRight: 5,
-                        color: '#fff'
+                        color: '#fff',
+                        fontSize: 30
 
                     }}
                           type='FontAwesome' name='edit'
@@ -128,16 +132,23 @@ export default class InboxScreen extends Component {
                                         >
                                             <Body style={{width: '70%', height: '100%'}}>
                                                 <Text style={{
+                                                    fontFamily: 'IRANMarker',
                                                     textAlign: 'right',
                                                     borderColor: '#fff',
                                                     color: '#f4f4f4'
                                                 }}>{value.senderName}</Text>
-                                                <Text style={{textAlign: 'right', borderColor: '#fff', color: '#fff'}}
+                                                <Text style={{
+                                                    textAlign: 'right',
+                                                    borderColor: '#fff',
+                                                    color: '#fff',
+                                                    fontFamily: 'IRANMarker'
+                                                }}
                                                       note
                                                       numberOfLines={1}>{value.lastMessage}</Text>
                                             </Body>
                                             <Right style={{height: '100%'}}>
-                                                <Icon name='user' type='FontAwesome5' style={{color: '#fff'}}/>
+                                                <Icon name='user' type='FontAwesome5'
+                                                      style={{color: '#fff', fontSize: 35}}/>
                                             </Right>
                                         </ListItem>
                                     </Swipeable>

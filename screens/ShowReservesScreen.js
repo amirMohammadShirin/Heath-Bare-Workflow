@@ -7,7 +7,7 @@ import {
     StatusBar,
     AsyncStorage,
     ActivityIndicator,
-    Alert
+    Alert, Platform
 } from 'react-native';
 import Swipeable from 'react-native-swipeable-row'
 import {
@@ -288,9 +288,12 @@ export default class ShowReservesScreen extends Component {
 
         return (
             <Container style={{backgroundColor: 'rgba(34,166,166,0.72)',}}>
-                <StatusBar showHideTransition={"slide"} barStyle={"light-content"} backgroundColor={'transparent'}
-                           hidden={true}/>
+
                 <Content>
+                    {Platform.OS === 'android' &&
+                    <StatusBar barStyle={"dark-content"} backgroundColor={'#209b9b'}
+                               hidden={false}/>
+                    }
                     <View style={styles.container}>
                         <ScrollView>
                             {this.state.array != null &&

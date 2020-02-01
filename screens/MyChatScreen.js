@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Text, ScrollView, Keyboard, StatusBar} from 'react-native';
+import {StyleSheet, View, Text, ScrollView, Keyboard, StatusBar, Platform} from 'react-native';
 import {
     Container,
     Header,
@@ -39,7 +39,6 @@ export default class MyChatScreen extends Component {
 
         return (
             <Container>
-                <StatusBar  translucent backgroundColor={"#219e9e"} barStyle={"light-content"}/>
                 <Header style={{backgroundColor: '#23b9b9'}}>
                     <Left>
                         <Button transparent style={styles.headerMenuIcon}
@@ -53,6 +52,10 @@ export default class MyChatScreen extends Component {
                     </Right>
                 </Header>
                 <Content padder>
+                    {Platform.OS === 'android' &&
+                    <StatusBar barStyle={"dark-content"} backgroundColor={'#209b9b'}
+                               hidden={false}/>
+                    }
                     <View style={{
                         margin: 5,
                         borderWidth: 2,

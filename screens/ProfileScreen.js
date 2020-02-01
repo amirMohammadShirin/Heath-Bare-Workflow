@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, TextInput, View, Platform, StatusBar, Image, ActivityIndicator} from 'react-native';
+import {StyleSheet, TextInput, Text, View, Platform, StatusBar, Image, ActivityIndicator} from 'react-native';
 import {
     Container,
     Header,
@@ -15,7 +15,6 @@ import {
     Right,
     Body,
     Icon,
-    Text,
     Fab
 } from 'native-base';
 
@@ -26,6 +25,7 @@ export default class ProfileScreen extends Component {
         this.state = {
             user: null,
             animated: true,
+            test: '22',
             insurances: [
                 {
                     insurance: "تامین اجتماعی",
@@ -47,9 +47,9 @@ export default class ProfileScreen extends Component {
                 }
             ],
             insurancesForShow:
-                [{title: "First Element", content: "Lorem ipsum dolor sit amet"},
-                    {title: "Second Element", content: "Lorem ipsum dolor sit amet"},
-                    {title: "Third Element", content: "Lorem ipsum dolor sit amet"}
+                [{title: "First Element", content: "Lorem ipsum dolor sit amet", serial: '', code: ''},
+                    {title: "Second Element", content: "Lorem ipsum dolor sit amet", serial: '', code: ''},
+                    {title: "Third Element", content: "Lorem ipsum dolor sit amet", serial: '', code: ''}
                 ]
         }
 
@@ -61,7 +61,9 @@ export default class ProfileScreen extends Component {
         for (let item of this.state.insurances) {
             let insuranceForShow = {
                 title: item.insurance,
-                content: " بیمه " + item.insuranceType + " با شماره " + item.serial + " و کد " + item.code
+                content: " بیمه " + item.insuranceType + " با شماره " + item.serial + " و کد " + item.code,
+                serial: item.serial,
+                code: item.code
             }
             array.push(insuranceForShow)
         }
@@ -84,7 +86,6 @@ export default class ProfileScreen extends Component {
     render() {
         return (
             <Container>
-                <StatusBar translucent backgroundColor={"#219e9e"} barStyle={"light-content"}/>
                 <Header style={{
                     backgroundColor: '#23b9b9', shadowOffset: {height: 0, width: 0},
                     shadowOpacity: 0, shadowColor: '#23b9b9'
@@ -101,6 +102,10 @@ export default class ProfileScreen extends Component {
                     </Right>
                 </Header>
                 <Content scrollEnabled={true} style={[styles.content]}>
+                    {Platform.OS === 'android' &&
+                    <StatusBar barStyle={"dark-content"} backgroundColor={'#209b9b'}
+                               hidden={false}/>
+                    }
                     <View style={styles.container}>
                         <View style={styles.header}></View>
                         {this.state.user['gender'] !== 'زن' ?
@@ -132,7 +137,7 @@ export default class ProfileScreen extends Component {
                                         }}
                                         multiline={false}
                                         editable={false}/>
-                                    <Text style={styles.label}>نام کاربری</Text>
+                                    <Text style={[styles.label]}>نام کاربری</Text>
                                 </View>
                                 <View style={styles.row}>
                                     <TextInput style={[styles.textInput]}
@@ -177,7 +182,7 @@ export default class ProfileScreen extends Component {
                                                }}
                                                editable={false}
                                                multiline={false}
-                                               />
+                                    />
                                     <Text style={styles.label}>تاریخ تولد</Text>
                                 </View>
                                 <View style={[styles.row, {
@@ -205,10 +210,12 @@ export default class ProfileScreen extends Component {
                                     flex: 1,
 
                                 }}
+
                                            dataArray={this.state.insurancesForShow}
                                            headerStyle={{
                                                backgroundColor: "rgba(35,185,185,0.72)",
-                                               flexDirection: 'row-reverse'
+                                               flexDirection: 'row-reverse',
+
                                            }}
                                            contentStyle={{
                                                backgroundColor: "rgba(49,255,255,0)",
@@ -217,7 +224,6 @@ export default class ProfileScreen extends Component {
                                                borderColor: '#23b9b9',
                                                borderWidth: 1,
                                            }}
-
 
                                            iconStyle={{color: "white"}}
                                            expandedIconStyle={{color: "white"}}
@@ -301,20 +307,20 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(47,246,246,0.02)',
     },
     label: {
-        fontFamily:'IRANMarker',
+        fontFamily: 'IRANMarker',
         textAlign: 'right',
         color: '#000',
         fontSize: 15,
-        fontWeight: 'bold',
         alignSelf: 'flex-start',
         margin: 2,
         flex: 1,
         padding: 3,
     },
     textInput: {
+        color: '#717171',
         fontFamily: 'IRANMarker',
         textAlign: 'right',
-        fontSize: 15,
+        fontSize: 12,
         padding: 3,
         alignSelf: 'flex-end',
         margin: 2,

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Modal, ScrollView, StatusBar} from 'react-native';
+import {StyleSheet, View, Modal, ScrollView, StatusBar, Platform} from 'react-native';
 import Swipeable from 'react-native-swipeable-row'
 import {
     Container,
@@ -103,6 +103,10 @@ export default class MedicalFilesScreen extends Component {
             <Container style={{backgroundColor: 'rgba(34,166,166,0.72)',}}>
                 <StatusBar   showHideTransition={"slide"}  barStyle={"light-content"} backgroundColor={'transparent'} hidden={true} />
                 <Content>
+                    {Platform.OS === 'android' &&
+                    <StatusBar barStyle={"dark-content"} backgroundColor={'#209b9b'}
+                               hidden={false}/>
+                    }
                     <ScrollView>
                         {this.state.array.map((value, index) =>
                             this.renderList(value, index)

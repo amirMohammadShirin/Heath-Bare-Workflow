@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, StatusBar} from 'react-native';
+import {StyleSheet, StatusBar, Alert, BackHandler, Platform} from 'react-native';
 import {
     Container,
     Header,
@@ -19,6 +19,46 @@ import HomeScreen from "./HomeScreen";
 
 
 export default class HistoryScreen extends Component {
+
+    constructor() {
+        super();
+        if (Platform.OS === 'android') {
+            this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
+        }
+    }
+
+    componentDidMount(): void {
+        if (Platform.OS === 'android') {
+            BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+        }
+    }
+
+    handleBackButtonClick() {
+        // alert('pressed')
+
+        console.log(JSON.stringify(this.props.navigation.state))
+
+        if (this.props.navigation.state.isDrawerOpen) {
+            this.props.navigation.closeDrawer()
+        } else {
+            // Alert.alert(
+            //     'خروج',
+            //     ' مایل به خروج از برنامه هستید؟ ',
+            //     [
+            //         {
+            //             text: 'خیر',
+            //             style: 'cancel',
+            //         },
+            //         {text: 'بله', onPress: () => BackHandler.exitApp()},
+            //     ],
+            //     {cancelable: false},
+            // );
+            // alert('test')
+            this.props.navigation.goBack(null)
+        }
+        return true;
+    }
+
     render() {
         return (
             <Container>

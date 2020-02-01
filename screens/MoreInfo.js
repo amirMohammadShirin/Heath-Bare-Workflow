@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Text, StatusBar} from 'react-native';
+import {StyleSheet, View, Text, StatusBar, Platform} from 'react-native';
 import {
     Container,
     Header,
@@ -34,7 +34,6 @@ export default class MoreInfo extends Component {
 
         return (
             <Container>
-                <StatusBar  translucent backgroundColor={"#219e9e"} barStyle={"light-content"}/>
                 <Header span style={{backgroundColor: '#23b9b9'}}>
                     <Left>
                         <Button transparent style={styles.headerMenuIcon}
@@ -48,7 +47,10 @@ export default class MoreInfo extends Component {
                     </Body>
                 </Header>
                 <Content>
-
+                    {Platform.OS === 'android' &&
+                    <StatusBar barStyle={"dark-content"} backgroundColor={'#209b9b'}
+                               hidden={false}/>
+                    }
                     <View style={{flex: 1}}>
                         <View style={styles.header}></View>
                         <View style={styles.body}>

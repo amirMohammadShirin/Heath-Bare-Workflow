@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {ActivityIndicator, AsyncStorage, StatusBar, StyleSheet, Text, View} from 'react-native';
+import {ActivityIndicator, AsyncStorage, Platform, StatusBar, StyleSheet, Text, View} from 'react-native';
 import {
     ActionSheet,
     Button,
@@ -497,7 +497,7 @@ export default class AdvanceSearchScreen extends Component {
         if (this.props.navigation.getParam('doctor')) {
             return (
                 <Container>
-                    <StatusBar translucent backgroundColor={"#219e9e"} barStyle={"light-content"}/>
+
                     <Header style={styles.header}>
                         <Left style={{flex: 1}}>
                             <Button transparent style={styles.headerMenuIcon}
@@ -520,7 +520,10 @@ export default class AdvanceSearchScreen extends Component {
                     </Header>
                     <Root>
                         <Content padder style={styles.content}>
-
+                            {Platform.OS === 'android' &&
+                            <StatusBar barStyle={"dark-content"} backgroundColor={'#209b9b'}
+                                       hidden={false}/>
+                            }
                             {/*skill*/}
                             {this.state.skills != null && <CardItem bordered>
                                 <Body style={styles.row}>
@@ -698,7 +701,10 @@ export default class AdvanceSearchScreen extends Component {
                     </Header>
                     <Root>
                         <Content padder style={styles.content}>
-
+                            {Platform.OS === 'android' &&
+                            <StatusBar barStyle={"dark-content"} backgroundColor={'#209b9b'}
+                                       hidden={false}/>
+                            }
                             <Card>
                                 {/*kinds*/}
                                 <CardItem bordered>
@@ -1162,6 +1168,7 @@ const styles = StyleSheet.create({
         borderColor: '#23b9b9',
     },
     label: {
+        color:'#000',
         fontFamily: 'IRANMarker',
         padding: 1,
         textAlign: 'right',

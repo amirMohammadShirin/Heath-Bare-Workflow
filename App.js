@@ -48,8 +48,9 @@ const SearchDoctorNavigator = createStackNavigator({
     HomeScreen: {screen: HomeScreen}
 }, {
     defaultNavigationOptions: {
-        gesturesEnabled: false,
-        header: null,
+        // gesturesEnabled: false,
+        gestureEnabled: false,
+        // header: null,
         headerShown: false
     }
 });
@@ -64,8 +65,9 @@ const SearchMedicalCenterNavigator = createStackNavigator({
 
 }, {
     defaultNavigationOptions: {
-        header: null,
-        gesturesEnabled: false,
+        // header: null,
+        // gesturesEnabled: false,
+        gestureEnabled: false,
         headerShown: false
     }
 });
@@ -99,8 +101,9 @@ const ChatStackNavigator = createStackNavigator({
     ChatScreen: {screen: ChatScreen}
 }, {
     defaultNavigationOptions: {
-        header: null,
-        gesturesEnabled: false,
+        // header: null,
+        // gesturesEnabled: false,
+        gestureEnabled: false,
         headerShown: false
     }
 });
@@ -110,7 +113,8 @@ const GuidStackNavigator = createStackNavigator({
     MoreInfo: {screen: MoreInfo}
 }, {
     defaultNavigationOptions: {
-        gesturesEnabled: false,
+        // gesturesEnabled: false,
+        gestureEnabled: false,
         headerShown: false
     }
 })
@@ -125,8 +129,9 @@ const HistoryStackNavigator = createStackNavigator({
 }, {
     initialRouteName: 'HistoryScreen',
     defaultNavigationOptions: {
-        header: null,
-        gesturesEnabled: false,
+        // header: null,
+        // gesturesEnabled: false,
+        gestureEnabled: false,
         headerShown: false
     }
 });
@@ -138,7 +143,8 @@ const SplashStackNavigator = createStackNavigator({
 }, {
     initialRouteName: 'SplashScreen',
     defaultNavigationOptions: {
-        gesturesEnabled: false,
+        // gesturesEnabled: false,
+        gestureEnabled: false,
         headerShown: false
     }
 });
@@ -149,8 +155,9 @@ const NavigateBetweenMapAndHome = createStackNavigator({
     MapSearchMedicalCenterScreen: SearchMedicalCenterNavigator
 }, {
     defaultNavigationOptions: {
-        header: null,
-        gesturesEnabled: false,
+        // header: null,
+        // gesturesEnabled: false,
+        gestureEnabled: false,
         headerShown: false
     }
 });
@@ -171,9 +178,11 @@ const AppDrawerNavigator = createDrawerNavigator({
     VerifyScreen: VerificationStackNavigator
 
 }, {
-
+// drawerWidth:'100%',
+    keyboardDismissMode: "on-drag",
     defaultNavigationOptions: {
-        gesturesEnabled: false,
+        // gesturesEnabled: false,
+        gestureEnabled: false,
         headerShown: false
     },
     initialRouteName: 'HomeScreen',
