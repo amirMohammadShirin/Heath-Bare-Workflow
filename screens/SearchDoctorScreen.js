@@ -7,7 +7,7 @@ import {
     Text,
     TextInput,
     Keyboard,
-    View, Platform
+    View, Platform, BackHandler
 } from 'react-native';
 import {
     Button,
@@ -33,6 +33,9 @@ export default class SearchMedicalCenter extends Component {
 
     constructor(props) {
         super(props);
+        if (Platform.OS === 'android') {
+            this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
+        }
         this.state = {
             selectedDoctor: null,
             selectedMedicalCenter: null,
@@ -56,15 +59,37 @@ export default class SearchMedicalCenter extends Component {
 
     }
 
+    handleBackButtonClick() {
+        // alert('pressed')
+
+        console.log(JSON.stringify(this.props.navigation.state))
+
+        if (this.props.navigation.state.isDrawerOpen) {
+            this.props.navigation.closeDrawer()
+        } else {
+
+            if (!this.state.progressModalVisible) {
+                if (this.state.visible) {
+                    this.setState({visible: false})
+                } else {
+                    this.onBackPressed()
+                }
+            }
+        }
+        return true;
+    }
+
     async goToReserveScreen() {
         if (this.state.selectedMedicalCenter != null) {
             this.props.navigation.navigate('ReserveScreen', {
                 doctor: this.state.selectedDoctor,
-                medicalCenter: this.state.selectedMedicalCenter
+                medicalCenter: this.state.selectedMedicalCenter,
+                goBack: null
             })
         } else {
             this.props.navigation.navigate('ReserveScreen', {
                 doctor: this.state.selectedDoctor,
+                goBack: null
             })
         }
 
@@ -94,6 +119,9 @@ export default class SearchMedicalCenter extends Component {
     }
 
     async componentWillMount(): void {
+        if (Platform.OS === 'android') {
+            BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+        }
         const token = await AsyncStorage.getItem('token');
         const baseUrl = await AsyncStorage.getItem('baseUrl');
         if (typeof this.props.navigation.getParam('medicalCenter') !== "undefined" &&

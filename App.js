@@ -179,6 +179,8 @@ const AppDrawerNavigator = createDrawerNavigator({
 
 }, {
 // drawerWidth:'100%',
+    hideStatusBar: true,
+    statusBarAnimation: 'fade',
     keyboardDismissMode: "on-drag",
     defaultNavigationOptions: {
         // gesturesEnabled: false,

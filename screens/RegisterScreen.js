@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Text, StatusBar, TextInput, Keyboard, Platform} from 'react-native';
+import {StyleSheet, View, Text, StatusBar, TextInput, Keyboard, Platform, BackHandler, Alert} from 'react-native';
 import {PermissionsAndroid} from 'react-native';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button'
 import DatePicker from 'react-native-jalaali-date-picker'
@@ -36,6 +36,9 @@ export default class ReserveScreen extends Component {
 
     constructor(props) {
         super(props);
+        if (Platform.OS === 'android') {
+            this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
+        }
         this.state = {
             patientUsername: '',
             nationalCode: '',
@@ -64,6 +67,40 @@ export default class ReserveScreen extends Component {
 
         };
         (this).onStartDateChange = this.onStartDateChange.bind(this);
+    }
+
+    componentWillMount(): void {
+        if (Platform.OS === 'android') {
+            BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+        }
+    }
+
+    handleBackButtonClick() {
+        // alert('pressed')
+
+        console.log(JSON.stringify(this.props.navigation.state))
+
+        if (this.props.navigation.state.isDrawerOpen) {
+            this.props.navigation.closeDrawer()
+        } else {
+
+            if (!this.state.progressModalVisible) {
+                Alert.alert(
+                    'خروج',
+                    ' مایل به خروج از برنامه هستید؟ ',
+                    [
+                        {
+                            text: 'خیر',
+                            style: 'cancel',
+                        },
+                        {text: 'بله', onPress: () => BackHandler.exitApp()},
+                    ],
+                    {cancelable: false},
+                );
+            }
+
+        }
+        return true;
     }
 
     onStartDateChange(date) {

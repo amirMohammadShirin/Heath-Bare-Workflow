@@ -122,7 +122,8 @@ export default class SideMenu extends Component {
                 <View style={{height: '20%', width: '100%', backgroundColor: '#23b9b9'}}>
                     <ImageBackground style={styles.headerImage}
                                      source={require(
-                                         'D:\\E\\react native projects\\Health\\bare\\salamat\\assets\\images\\BACK.png')}>
+                                         'D:\\E\\react native projects\\Health\\bare\\salamat\\assets\\images\\BACK.png')}
+                    >
                         <Card style={{backgroundColor: 'rgba(48,255,255,0)'}}>
                             <CardItem style={{backgroundColor: 'rgba(35,185,185,0.41)'}}>
                                 <Left>
@@ -194,7 +195,8 @@ export default class SideMenu extends Component {
                         <ListItem icon style={styles.listItem} onPress={() => {
                             this.props.navigation.navigate('ReserveScreen', {
                                 medicalCenter: null,
-                                doctor: null
+                                doctor: null,
+                                goBack:'home'
                             })
                         }}>
                             <Right>

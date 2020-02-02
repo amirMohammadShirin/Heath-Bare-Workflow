@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {
     ActivityIndicator,
-    AsyncStorage,
+    AsyncStorage, BackHandler,
     Keyboard,
     Platform,
     StatusBar,
@@ -32,6 +32,9 @@ export default class DetailsScreen extends Component {
 
     constructor(props) {
         super(props);
+        if (Platform.OS === 'android') {
+            this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
+        }
         this.state = {
             token: null,
             baseUrl: null,
@@ -59,6 +62,23 @@ export default class DetailsScreen extends Component {
         };
     }
 
+    handleBackButtonClick() {
+        // alert('pressed')
+
+        console.log(JSON.stringify(this.props.navigation.state))
+
+        if (this.props.navigation.state.isDrawerOpen) {
+            this.props.navigation.closeDrawer()
+        } else {
+
+            if (!this.state.progressModalVisible) {
+                this.onBackPressed()
+            }
+
+        }
+        return true;
+    }
+
     onRegionChange(region) {
         this.setState({region});
     }
@@ -66,12 +86,16 @@ export default class DetailsScreen extends Component {
     goToReserveScreen() {
 
         this.props.navigation.navigate('ReserveScreen', {
-            doctor: this.state.doctor
+            doctor: this.state.doctor,
+            goBack:null
         });
 
     }
 
     async componentWillMount(): void {
+        if (Platform.OS === 'android') {
+            BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+        }
         var token = await AsyncStorage.getItem('token');
         var baseUrl = await AsyncStorage.getItem('baseUrl')
         const doctor = this.props.navigation.getParam('doctor');
@@ -178,7 +202,7 @@ export default class DetailsScreen extends Component {
                                                     this.goToReserveScreen()
                                                 }}
                                         >
-                                            <Text style={{color: '#fff',fontFamily:'IRANMarker'}}>رزرو نوبت</Text>
+                                            <Text style={{color: '#fff', fontFamily: 'IRANMarker'}}>رزرو نوبت</Text>
                                         </Button>
                                     </Body>
                                 </Left>
@@ -188,7 +212,7 @@ export default class DetailsScreen extends Component {
                                 <Left>
                                     <Body style={{justifyContent: 'flex-end', alignContent: 'flex-end'}}>
                                         {(this.state.doctor != null) && <Text style={{
-                                            fontFamily:'IRANMarker',
+                                            fontFamily: 'IRANMarker',
                                             textAlign: 'right',
                                             alignSelf: 'flex-end',
                                             fontSize: 20,
@@ -204,7 +228,7 @@ export default class DetailsScreen extends Component {
                             <CardItem style={{marginTop: 5}}>
                                 <Left style={{justifyContent: 'flex-end', alignContent: 'flex-end'}}>
                                     <Text style={{
-                                        fontFamily:'IRANMarker',
+                                        fontFamily: 'IRANMarker',
                                         textAlign: 'right',
                                         alignSelf: 'flex-end',
                                         fontSize: 13,
@@ -219,7 +243,7 @@ export default class DetailsScreen extends Component {
                             <CardItem style={{marginTop: 2}}>
                                 <Body>
                                     {this.state.doctor.Age != null && <Text style={{
-                                        fontFamily:'IRANMarker',
+                                        fontFamily: 'IRANMarker',
                                         textAlign: 'right',
                                         alignSelf: 'flex-end',
                                         fontSize: 12,
@@ -232,7 +256,7 @@ export default class DetailsScreen extends Component {
                             <CardItem style={{marginTop: 2}}>
                                 <Body>
                                     <Text style={{
-                                        fontFamily:'IRANMarker',
+                                        fontFamily: 'IRANMarker',
                                         textAlign: 'right',
                                         alignSelf: 'flex-end',
                                         fontSize: 12,
@@ -245,7 +269,7 @@ export default class DetailsScreen extends Component {
                             <CardItem style={{marginTop: 2}}>
                                 <Body>
                                     {<Text style={{
-                                        fontFamily:'IRANMarker',
+                                        fontFamily: 'IRANMarker',
                                         textAlign: 'right',
                                         alignSelf: 'flex-end',
                                         fontSize: 12,
@@ -258,7 +282,7 @@ export default class DetailsScreen extends Component {
                                 <Body style={{flexDirection: 'row-reverse'}}>
                                     <View>
                                         <Text style={{
-                                            fontFamily:'IRANMarker',
+                                            fontFamily: 'IRANMarker',
                                             textAlign: 'right',
                                             fontSize: 14,
                                             color: '#a7a7a7',
@@ -268,7 +292,7 @@ export default class DetailsScreen extends Component {
                                         {this.state.doctor.Skills.map((item, key) => (
                                             <View key={key}>
                                                 <Text style={{
-                                                    fontFamily:'IRANMarker',
+                                                    fontFamily: 'IRANMarker',
                                                     textAlign: 'right',
                                                     fontSize: 12,
                                                     margin: 1,
@@ -286,7 +310,7 @@ export default class DetailsScreen extends Component {
                                 <Body style={{flexDirection: 'row-reverse'}}>
                                     <View>
                                         <Text style={{
-                                            fontFamily:'IRANMarker',
+                                            fontFamily: 'IRANMarker',
                                             textAlign: 'right',
                                             fontSize: 14,
                                             color: '#a7a7a7',
@@ -296,7 +320,7 @@ export default class DetailsScreen extends Component {
                                         {this.state.doctor.MedicalCenters.map((item, key) => (
                                             <View key={key}>
                                                 <Text style={{
-                                                    fontFamily:'IRANMarker',
+                                                    fontFamily: 'IRANMarker',
                                                     textAlign: 'right',
                                                     fontSize: 12,
                                                     margin: 2,
@@ -359,7 +383,7 @@ const styles = StyleSheet.create({
         color: '#fff',
     },
     headerText: {
-        fontFamily:'IRANMarker',
+        fontFamily: 'IRANMarker',
         padding: 5,
         fontSize: 18,
         color: '#fff',

@@ -1,5 +1,16 @@
 import React, {Component} from 'react';
-import {ActivityIndicator, AsyncStorage, Platform, StatusBar, StyleSheet, Text, View} from 'react-native';
+import {
+    ActivityIndicator,
+    Alert,
+    AsyncStorage,
+    BackHandler,
+    Platform,
+    StatusBar,
+    StyleSheet,
+    Text,
+    View
+} from 'react-native';
+import AbortController from 'abort-controller';
 import {
     ActionSheet,
     Button,
@@ -36,6 +47,9 @@ export default class AdvanceSearchScreen extends Component {
 
     constructor(props) {
         super(props);
+        if (Platform.OS === 'android') {
+            this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
+        }
         this.state = {
             progressModalVisible: false,
             token: null,
@@ -103,6 +117,24 @@ export default class AdvanceSearchScreen extends Component {
 
     }
 
+
+    handleBackButtonClick() {
+        // alert('pressed')
+
+        console.log(JSON.stringify(this.props.navigation.state))
+
+        if (this.props.navigation.state.isDrawerOpen) {
+            this.props.navigation.closeDrawer()
+        } else {
+
+            if (!this.state.progressModalVisible) {
+                this.onBackPressed()
+            }
+
+        }
+        return true;
+    }
+
     getOptions(array) {
         let options = [];
         for (let item of array) {
@@ -137,7 +169,11 @@ export default class AdvanceSearchScreen extends Component {
 
     }
 
+
     async componentWillMount(): void {
+        if (Platform.OS === 'android') {
+            BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+        }
         var token = await AsyncStorage.getItem('token');
         var baseUrl = await AsyncStorage.getItem('baseUrl')
         this.setState({baseUrl: baseUrl, token: token}, () => {
@@ -542,17 +578,7 @@ export default class AdvanceSearchScreen extends Component {
                                                 }
                                             )
                                         }}
-                                        bordered style={{
-                                        textAlign: 'center',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        borderRadius: 2,
-                                        margin: 1,
-                                        flex: 2,
-                                        borderWidth: 1,
-                                        borderColor: '#fff',
-
-                                    }}>
+                                        bordered style={styles.buttonStyle}>
                                         <Text style={styles.filters}>{this.state.selectedSkill.value}</Text>
                                     </Button>
                                     <View style={{
@@ -584,17 +610,7 @@ export default class AdvanceSearchScreen extends Component {
                                                 }
                                             )
                                         }}
-                                        bordered style={{
-                                        textAlign: 'center',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        borderRadius: 2,
-                                        margin: 1,
-                                        flex: 2,
-                                        borderWidth: 1,
-                                        borderColor: '#fff',
-
-                                    }}>
+                                        bordered style={styles.buttonStyle}>
                                         <Text style={styles.filters}>{this.state.selectedGender.value}</Text>
                                     </Button>
                                     <View style={{
@@ -611,16 +627,7 @@ export default class AdvanceSearchScreen extends Component {
                             {this.state.certificates != null && <CardItem bordered>
                                 <Body style={styles.row}>
                                     <Button
-                                        bordered style={{
-                                        textAlign: 'center',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        borderRadius: 2,
-                                        margin: 1,
-                                        flex: 2,
-                                        borderWidth: 1,
-                                        borderColor: '#fff',
-                                    }}
+                                        bordered style={styles.buttonStyle}
                                         onPress={() => ActionSheet.show(
                                             {
                                                 options: this.getOptions(this.state.certificates),
@@ -671,6 +678,7 @@ export default class AdvanceSearchScreen extends Component {
                                 alignItems: 'center'
                             }}
 
+
                                     onPress={() => {
                                         this.doctorAdvanceSearch(this.state.selectedGender, this.state.selectedSkill,
                                             this.state.selectedCertificate)
@@ -678,7 +686,9 @@ export default class AdvanceSearchScreen extends Component {
                                     }
 
                             >
-                                <Text style={styles.searchButton}>جستجو</Text>
+                                <Text style={{
+                                    color: '#fff', textAlign: 'center', fontSize: 15, fontFamily: 'IRANMarker',
+                                }}>جستجو</Text>
                             </Button>
                         </Footer>
                     </Root>
@@ -725,46 +735,15 @@ export default class AdvanceSearchScreen extends Component {
                                                     }
                                                 )
                                             }}
-                                            bordered style={{
-                                            textAlign: 'center',
-                                            justifyContent: 'center',
-                                            alignItems: 'center',
-                                            borderRadius: 2,
-                                            margin: 1,
-                                            flex: 2,
-                                            borderWidth: 1,
-                                            borderColor: '#fff',
-
-                                        }}>
-                                            <Text style={{
-                                                fontFamily: 'IRANMarker',
-                                                padding: 1,
-                                                textAlign: 'center',
-                                                borderRadius: 2,
-                                                flex: 2,
-                                                fontSize: 13,
-                                                color: '#23b9b9',
-                                                borderWidth: 1,
-                                                borderColor: '#23b9b9',
-
-                                            }}>{this.state.selectedKind.value}</Text>
+                                            bordered style={styles.buttonStyle}>
+                                            <Text style={styles.filters}>{this.state.selectedKind.value}</Text>
                                         </Button>
                                         <View style={{
                                             alignItems: 'center',
                                             justifyContent: 'center',
                                             alignContent: 'center'
                                         }}>
-                                            <Text style={{
-                                                fontFamily: 'IRANMarker',
-                                                padding: 1,
-                                                textAlign: 'right',
-                                                marginTop: 10,
-                                                marginRight: 5,
-                                                marginLeft: 5,
-                                                flex: 1,
-                                                alignSelf: 'center',
-                                                fontSize: 16,
-                                            }}
+                                            <Text style={styles.label}
                                             >نوع مرکز</Text>
                                         </View>
                                     </Body>
@@ -788,46 +767,15 @@ export default class AdvanceSearchScreen extends Component {
                                                     }
                                                 )
                                             }}
-                                            bordered style={{
-                                            textAlign: 'center',
-                                            justifyContent: 'center',
-                                            alignItems: 'center',
-                                            borderRadius: 2,
-                                            margin: 1,
-                                            flex: 2,
-                                            borderWidth: 1,
-                                            borderColor: '#fff',
-
-                                        }}>
-                                            <Text style={{
-                                                fontFamily: 'IRANMarker',
-                                                padding: 1,
-                                                textAlign: 'center',
-                                                borderRadius: 2,
-                                                flex: 2,
-                                                fontSize: 13,
-                                                color: '#23b9b9',
-                                                borderWidth: 1,
-                                                borderColor: '#23b9b9',
-
-                                            }}>{this.state.selectedState.value}</Text>
+                                            bordered style={styles.buttonStyle}>
+                                            <Text style={styles.filters}>{this.state.selectedState.value}</Text>
                                         </Button>
                                         <View style={{
                                             alignItems: 'center',
                                             justifyContent: 'center',
                                             alignContent: 'center'
                                         }}>
-                                            <Text style={{
-                                                fontFamily: 'IRANMarker',
-                                                padding: 1,
-                                                textAlign: 'right',
-                                                marginTop: 10,
-                                                marginRight: 5,
-                                                marginLeft: 5,
-                                                flex: 1,
-                                                alignSelf: 'center',
-                                                fontSize: 16,
-                                            }}
+                                            <Text style={styles.label}
                                             >منطقه</Text>
                                         </View>
                                     </Body>
@@ -854,46 +802,15 @@ export default class AdvanceSearchScreen extends Component {
                                                     }
                                                 )
                                             }}
-                                            bordered style={{
-                                            textAlign: 'center',
-                                            justifyContent: 'center',
-                                            alignItems: 'center',
-                                            borderRadius: 2,
-                                            margin: 1,
-                                            flex: 2,
-                                            borderWidth: 1,
-                                            borderColor: '#fff',
-
-                                        }}>
-                                            <Text style={{
-                                                fontFamily: 'IRANMarker',
-                                                padding: 1,
-                                                textAlign: 'center',
-                                                borderRadius: 2,
-                                                flex: 2,
-                                                fontSize: 13,
-                                                color: '#23b9b9',
-                                                borderWidth: 1,
-                                                borderColor: '#23b9b9',
-
-                                            }}>{this.state.selectedService.value}</Text>
+                                            bordered style={styles.buttonStyle}>
+                                            <Text style={styles.filters}>{this.state.selectedService.value}</Text>
                                         </Button>
                                         <View style={{
                                             alignItems: 'center',
                                             justifyContent: 'center',
                                             alignContent: 'center'
                                         }}>
-                                            <Text style={{
-                                                fontFamily: 'IRANMarker',
-                                                padding: 1,
-                                                textAlign: 'right',
-                                                marginTop: 10,
-                                                marginRight: 5,
-                                                marginLeft: 5,
-                                                flex: 1,
-                                                alignSelf: 'center',
-                                                fontSize: 16,
-                                            }}
+                                            <Text style={styles.label}
                                             >سرویس</Text>
                                         </View>
                                     </Body>
@@ -918,46 +835,15 @@ export default class AdvanceSearchScreen extends Component {
                                                     }
                                                 )
                                             }}
-                                            bordered style={{
-                                            textAlign: 'center',
-                                            justifyContent: 'center',
-                                            alignItems: 'center',
-                                            borderRadius: 2,
-                                            margin: 1,
-                                            flex: 2,
-                                            borderWidth: 1,
-                                            borderColor: '#fff',
-
-                                        }}>
-                                            <Text style={{
-                                                fontFamily: 'IRANMarker',
-                                                padding: 1,
-                                                textAlign: 'center',
-                                                borderRadius: 2,
-                                                flex: 2,
-                                                fontSize: 13,
-                                                color: '#23b9b9',
-                                                borderWidth: 1,
-                                                borderColor: '#23b9b9',
-
-                                            }}>{this.state.selectedServiceDetail.value}</Text>
+                                            bordered style={styles.buttonStyle}>
+                                            <Text style={styles.filters}>{this.state.selectedServiceDetail.value}</Text>
                                         </Button>
                                         <View style={{
                                             alignItems: 'center',
                                             justifyContent: 'center',
                                             alignContent: 'center'
                                         }}>
-                                            <Text style={{
-                                                fontFamily: 'IRANMarker',
-                                                padding: 1,
-                                                textAlign: 'right',
-                                                marginTop: 10,
-                                                marginRight: 5,
-                                                marginLeft: 5,
-                                                flex: 1,
-                                                alignSelf: 'center',
-                                                fontSize: 16,
-                                            }}
+                                            <Text style={styles.label}
                                             >زیر خدمت</Text>
                                         </View>
                                     </Body>}
@@ -981,46 +867,15 @@ export default class AdvanceSearchScreen extends Component {
                                                     }
                                                 )
                                             }}
-                                            bordered style={{
-                                            textAlign: 'center',
-                                            justifyContent: 'center',
-                                            alignItems: 'center',
-                                            borderRadius: 2,
-                                            margin: 1,
-                                            flex: 2,
-                                            borderWidth: 1,
-                                            borderColor: '#fff',
-
-                                        }}>
-                                            <Text style={{
-                                                fontFamily: 'IRANMarker',
-                                                padding: 1,
-                                                textAlign: 'center',
-                                                borderRadius: 2,
-                                                flex: 2,
-                                                fontSize: 13,
-                                                color: '#23b9b9',
-                                                borderWidth: 1,
-                                                borderColor: '#23b9b9',
-
-                                            }}>{this.state.selectedFacility.value}</Text>
+                                            bordered style={styles.buttonStyle}>
+                                            <Text style={styles.filters}>{this.state.selectedFacility.value}</Text>
                                         </Button>
                                         <View style={{
                                             alignItems: 'center',
                                             justifyContent: 'center',
                                             alignContent: 'center'
                                         }}>
-                                            <Text style={{
-                                                fontFamily: 'IRANMarker',
-                                                padding: 1,
-                                                textAlign: 'right',
-                                                marginTop: 10,
-                                                marginRight: 5,
-                                                marginLeft: 5,
-                                                flex: 1,
-                                                alignSelf: 'center',
-                                                fontSize: 16,
-                                            }}
+                                            <Text style={styles.label}
                                             >امکانات</Text>
                                         </View>
                                     </Body>
@@ -1033,14 +888,7 @@ export default class AdvanceSearchScreen extends Component {
                                         }}/>
                                     </Left>
                                     <Body style={styles.row}>
-                                        <Text style={{
-                                            fontFamily: 'IRANMarker',
-                                            padding: 1,
-                                            textAlign: 'right',
-                                            flex: 1,
-                                            fontSize: 13,
-                                            color: '#23b9b9',
-                                        }}
+                                        <Text style={styles.locationText}
                                               onPress={() => {
                                                   this.setState({checkAddress: !this.state.checkAddress})
                                               }}
@@ -1168,7 +1016,7 @@ const styles = StyleSheet.create({
         borderColor: '#23b9b9',
     },
     label: {
-        color:'#000',
+        color: '#000',
         fontFamily: 'IRANMarker',
         padding: 1,
         textAlign: 'right',
@@ -1178,13 +1026,32 @@ const styles = StyleSheet.create({
         flex: 1,
         alignSelf: 'center',
         fontSize: 16,
+
     },
-    searchButton:
-        {
-            fontFamily: 'IRANMarker',
-            color: '#fff',
-            textAlign: 'center',
-            fontSize: 15
-        }
+    searchButton: {
+        fontFamily: 'IRANMarker',
+        color: '#fff',
+        textAlign: 'center',
+        fontSize: 15
+    },
+    locationText: {
+        fontFamily: 'IRANMarker',
+        padding: 1,
+        textAlign: 'right',
+        flex: 1,
+        fontSize: 13,
+        color: '#23b9b9',
+    },
+    buttonStyle: {
+        textAlign: 'center',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 2,
+        margin: 1,
+        flex: 2,
+        borderWidth: 1,
+        borderColor: '#fff',
+
+    }
 
 });

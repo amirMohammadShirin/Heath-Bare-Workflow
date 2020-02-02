@@ -1,5 +1,15 @@
 import React, {Component} from 'react';
-import {ActivityIndicator, AsyncStorage, StatusBar, StyleSheet, Text, Keyboard, View, Platform} from 'react-native';
+import {
+    ActivityIndicator,
+    AsyncStorage,
+    StatusBar,
+    StyleSheet,
+    Text,
+    Keyboard,
+    View,
+    Platform,
+    BackHandler
+} from 'react-native';
 import {Alert} from 'react-native'
 import {
     List,
@@ -26,6 +36,9 @@ export default class SearchMedicalCenter extends Component {
 
     constructor(props) {
         super(props);
+        if (Platform.OS === 'android') {
+            this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
+        }
         this.state = {
             selectedMedicalCenter: {},
             title: '',
@@ -51,8 +64,36 @@ export default class SearchMedicalCenter extends Component {
             {medicalCenter: value, doctor: null, backRoute: 'SearchMedicalCenter'})
     }
 
+    handleBackButtonClick() {
+        // alert('pressed')
+
+        console.log(JSON.stringify(this.props.navigation.state))
+
+        if (this.props.navigation.state.isDrawerOpen) {
+            this.props.navigation.closeDrawer()
+        } else {
+
+            if (!this.state.progressModalVisible) {
+                if (this.state.visible) {
+                    this.setState({visible: false})
+                }
+            } else if (!this.state.progressModalVisible) {
+                this.onBackPressed()
+            }
+
+
+        }
+        return true;
+    }
+
+    onBackPressed() {
+        this.props.navigation.goBack(null);
+    }
 
     async componentWillMount(): void {
+        if (Platform.OS === 'android') {
+            BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+        }
         var token = await AsyncStorage.getItem('token');
         var baseUrl = await AsyncStorage.getItem('baseUrl')
         await this.setState({baseUrl: baseUrl, token: token}, () => {

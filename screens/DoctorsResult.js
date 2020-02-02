@@ -7,7 +7,7 @@ import {
     Text,
     Keyboard,
     View,
-    ScrollView, Platform
+    ScrollView, Platform, BackHandler
 } from 'react-native';
 import {
     ActionSheet,
@@ -33,6 +33,9 @@ export default class DoctorsResult extends Component {
 
     constructor(props) {
         super(props);
+        if (Platform.OS === 'android') {
+            this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
+        }
         this.state = {
             selectedDoctor: {},
             result: null,
@@ -65,8 +68,28 @@ export default class DoctorsResult extends Component {
 
     }
 
+    handleBackButtonClick() {
+        // alert('pressed')
+
+        console.log(JSON.stringify(this.props.navigation.state))
+
+        if (this.props.navigation.state.isDrawerOpen) {
+            this.props.navigation.closeDrawer()
+        } else {
+            if (!this.state.visible) {
+                this.onBackPressed()
+            } else {
+                this.setState({visible: false})
+            }
+
+        }
+        return true;
+    }
 
     async componentWillMount(): void {
+        if (Platform.OS === 'android') {
+            BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+        }
         var token = await AsyncStorage.getItem('token');
         var baseUrl = await AsyncStorage.getItem('baseUrl')
         var result = await this.props.navigation.getParam('result')
@@ -84,6 +107,18 @@ export default class DoctorsResult extends Component {
             // alert(JSON.stringify(this.state.filters))
         })
 
+    }
+
+    onBackPressed() {
+        Keyboard.dismiss();
+        if (typeof this.props.navigation.getParam('medicalCenter') !== 'undefined' ||
+            typeof this.props.navigation.getParam('medicalCenter') != null) {
+
+            this.props.navigation.navigate('SearchDoctorScreen',
+                {medicalCenter: typeof this.props.navigation.getParam('medicalCenter')})
+        } else {
+            this.props.navigation.navigate('SearchDoctorScreen')
+        }
     }
 
     render() {
@@ -105,15 +140,7 @@ export default class DoctorsResult extends Component {
                                 }}>
                             <Icon style={styles.headerMenuIcon} name='arrow-back'
                                   onPress={() => {
-                                      Keyboard.dismiss();
-                                      if (typeof this.props.navigation.getParam('medicalCenter') !== 'undefined' ||
-                                          typeof this.props.navigation.getParam('medicalCenter') != null) {
-
-                                          this.props.navigation.navigate('SearchDoctorScreen',
-                                              {medicalCenter: typeof this.props.navigation.getParam('medicalCenter')})
-                                      } else {
-                                          this.props.navigation.navigate('SearchDoctorScreen')
-                                      }
+                                      this.onBackPressed()
                                   }}/>
                         </Button>
                     </Left>
@@ -221,7 +248,7 @@ export default class DoctorsResult extends Component {
                                         textStyle={styles.modalCancelButtonText}
                                         text="رزرو نوبت"
                                         onPress={() => {
-                                            this.setState({visible: false},()=>{
+                                            this.setState({visible: false}, () => {
                                                 this.goToReserveScreen()
                                             })
 
@@ -348,7 +375,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#23b9b9',
     },
     modalTitleText: {
-        fontFamily:'IRANMarker',
+        fontFamily: 'IRANMarker',
         color: '#fff',
         textAlign: 'right'
     },
@@ -357,7 +384,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(47,246,246,0.06)'
     },
     modalCancelButton: {
-        fontFamily:'IRANMarker',
+        fontFamily: 'IRANMarker',
         flex: 1,
         backgroundColor: '#fff',
         borderRadius: 3,
@@ -374,14 +401,14 @@ const styles = StyleSheet.create({
         margin: 5
     },
     modalSuccessButtonText: {
-        fontFamily:'IRANMarker',
+        fontFamily: 'IRANMarker',
         color: '#fff',
         fontWeight: 'bold',
         fontSize: 12,
         textAlign: 'right'
     },
     modalCancelButtonText: {
-        fontFamily:'IRANMarker',
+        fontFamily: 'IRANMarker',
         color: '#23b9b9',
         fontSize: 12,
         textAlign: 'right'
@@ -393,7 +420,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(47,246,246,0.06)'
     },
     filterText: {
-        fontFamily:'IRANMarker',
+        fontFamily: 'IRANMarker',
         color: 'gray',
         textAlign: 'right',
         fontWeight: 'bold'

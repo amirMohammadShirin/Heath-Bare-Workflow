@@ -32,7 +32,7 @@ export default class MyChatScreen extends Component {
 
     onBackPressed() {
         Keyboard.dismiss();
-        this.props.navigation.goBack()
+        this.props.navigation.goBack(null)
     }
 
     render() {

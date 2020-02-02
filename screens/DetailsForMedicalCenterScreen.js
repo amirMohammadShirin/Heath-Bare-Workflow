@@ -7,7 +7,7 @@ import {
     Text,
     TextInput,
     View,
-    NativeModules, Platform
+    NativeModules, Platform, BackHandler
 } from 'react-native';
 import {
     Button,
@@ -38,6 +38,9 @@ export default class DetailsForMedicalCenterScreen extends Component {
 
     constructor(props) {
         super(props);
+        if (Platform.OS === 'android') {
+            this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
+        }
         this.state = {
             id: null,
             title: null,
@@ -60,7 +63,27 @@ export default class DetailsForMedicalCenterScreen extends Component {
 
     }
 
+    handleBackButtonClick() {
+        // alert('pressed')
+
+        console.log(JSON.stringify(this.props.navigation.state))
+
+        if (this.props.navigation.state.isDrawerOpen) {
+            this.props.navigation.closeDrawer()
+        } else {
+
+            if (!this.state.progressModalVisible) {
+                this.onBackPressed()
+            }
+
+        }
+        return true;
+    }
+
     async componentWillMount(): void {
+        if (Platform.OS === 'android') {
+            BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+        }
         var token = await AsyncStorage.getItem('token');
         var baseUrl = await AsyncStorage.getItem('baseUrl')
         const medicalCenter = this.props.navigation.getParam('medicalCenter');

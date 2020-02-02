@@ -7,7 +7,7 @@ import {
     TextInput,
     AsyncStorage,
     ActivityIndicator,
-    Keyboard, Platform
+    Keyboard, Platform, BackHandler
 } from 'react-native';
 import Modal, {ModalButton, ModalFooter, ModalTitle, SlideAnimation, ModalContent} from 'react-native-modals';
 import PersianCalendarPicker from 'react-native-persian-calendar-picker';
@@ -37,6 +37,9 @@ export default class ReserveScreen extends Component {
 
     constructor(props) {
         super(props);
+        if (Platform.OS === 'android') {
+            this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
+        }
         this.firstActionSheet = null;
         this.secondActionSheet = null;
         this.thirdActionSheet = null;
@@ -92,16 +95,35 @@ export default class ReserveScreen extends Component {
     }
 
 
-    componentWillUnmount(): void {
-        console.log('reserve will unmounted')
+    handleBackButtonClick() {
+        // alert('pressed')
+        console.log(JSON.stringify(this.props.navigation.state))
+        console.log('n0r00zi j00n')
+        if (!this.state.progressModalVisible) {
+            console.log('progress is not visible')
+            if (this.state.startDateModalVisible) {
+                console.log('startDate is visible')
+                this.setState({startDateModalVisible: false})
+            } else if (this.state.endDateModalVisible) {
+                console.log('endDate iss visible')
+                this.setState({endDateModalVisible: false})
+            } else {
+                this.onBackPressed()
+            }
+        }
+        console.log('test')
+        return true;
     }
+
 
     componentDidMount(): void {
         console.log('reserve did mounted')
     }
 
     async componentWillMount(): void {
-        console.log('reserve will mount')
+        if (Platform.OS === 'android') {
+            BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+        }
         // alert("Medical : " + JSON.stringify(this.props.navigation.getParam('medicalCenter')))
         // alert("doctor : " + JSON.stringify(this.props.navigation.getParam('doctor')))
         const token = await AsyncStorage.getItem('token');
@@ -382,8 +404,16 @@ export default class ReserveScreen extends Component {
     }
 
     onBackPressed() {
-        // this.props.navigation.navigate('HomeScreen')
-        this.props.navigation.goBack(null)
+        console.log(this.props.navigation.state)
+        const back = this.props.navigation.getParam('goBack');
+        if (back != null && back === 'home') {
+
+            this.props.navigation.push('HomeScreen')
+
+
+        } else {
+            this.props.navigation.goBack(null)
+        }
     }
 
     render() {
@@ -393,7 +423,7 @@ export default class ReserveScreen extends Component {
             <Root>
                 <Container>
                     {(typeof DOCTOR != 'undefined' || typeof MEDICALCENTER != 'undefined') && (MEDICALCENTER != null ||
-                    DOCTOR != null) ?
+                        DOCTOR != null) ?
                         <Header hasTabs style={{backgroundColor: '#23b9b9'}}>
                             <Left>
                                 <Button transparent style={styles.headerMenuIcon}
@@ -1002,7 +1032,7 @@ export default class ReserveScreen extends Component {
                                 this.state.selectedEndDate
                             )
                         }}>
-                            <Text style={[{color: '#fff', fontSize: 15,fontFamily:'IRANMarker'}]}>جستجو</Text>
+                            <Text style={[{color: '#fff', fontSize: 15, fontFamily: 'IRANMarker'}]}>جستجو</Text>
                         </Button>
                     </Footer>
 
@@ -1107,7 +1137,7 @@ const styles = StyleSheet.create({
     },
     label: {
         fontFamily: 'IRANMarker',
-        color:'#000',
+        color: '#000',
         alignSelf: 'flex-end',
         alignContent: 'center',
         justifyContent: 'center',
@@ -1120,7 +1150,7 @@ const styles = StyleSheet.create({
         textAlign: 'right'
     },
     Input: {
-        color:'#000',
+        color: '#000',
         fontFamily: 'IRANMarker',
         margin: 1,
         marginRight: 2,

@@ -7,7 +7,7 @@ import {
     Text,
     Keyboard,
     View,
-    ScrollView, Platform,
+    ScrollView, Platform, BackHandler,
 } from 'react-native';
 import {
 
@@ -36,6 +36,9 @@ export default class MedicalCentersResult extends Component {
 
     constructor(props) {
         super(props);
+        if (Platform.OS === 'android') {
+            this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
+        }
         this.state = {
             selectedMedicalCenter: {},
             result: null,
@@ -67,6 +70,9 @@ export default class MedicalCentersResult extends Component {
     // }
 
     async componentWillMount(): void {
+        if (Platform.OS === 'android') {
+            BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+        }
         var token = await AsyncStorage.getItem('token');
         var baseUrl = await AsyncStorage.getItem('baseUrl')
         var result = await this.props.navigation.getParam('result')
@@ -86,6 +92,31 @@ export default class MedicalCentersResult extends Component {
             // alert(JSON.stringify(this.state.filters))
         })
 
+    }
+
+    handleBackButtonClick() {
+        // alert('pressed')
+
+        console.log(JSON.stringify(this.props.navigation.state))
+
+        if (this.props.navigation.state.isDrawerOpen) {
+            this.props.navigation.closeDrawer()
+        } else {
+
+            if (!this.state.progressModalVisible) {
+                if (this.state.visible) {
+                    this.setState({visible: false})
+                } else {
+                    this.onBackPressed()
+                }
+            }
+
+        }
+        return true;
+    }
+
+    onBackPressed() {
+        this.props.navigation.goBack(null);
     }
 
     render() {
@@ -178,7 +209,7 @@ export default class MedicalCentersResult extends Component {
                                     >
                                         <Body style={{height: '100%', marginRight: 5, alignSelf: 'center'}}>
                                             <Text style={{
-                                                fontFamily:'IRANMarker',
+                                                fontFamily: 'IRANMarker',
                                                 color: '#000',
                                                 textAlign: 'right',
                                                 fontSize: 15,
@@ -187,7 +218,7 @@ export default class MedicalCentersResult extends Component {
 
                                             }}>{item.Title}</Text>
                                             <Text style={{
-                                                fontFamily:'IRANMarker',
+                                                fontFamily: 'IRANMarker',
                                                 color: '#a9a9a9',
                                                 textAlign: 'right',
                                                 fontSize: 12,
@@ -324,7 +355,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#23b9b9',
     },
     modalTitleText: {
-        fontFamily:'IRANMarker',
+        fontFamily: 'IRANMarker',
         color: '#fff',
         textAlign: 'right'
     },
@@ -349,14 +380,14 @@ const styles = StyleSheet.create({
         margin: 5
     },
     modalSuccessButtonText: {
-        fontFamily:'IRANMarker',
+        fontFamily: 'IRANMarker',
         color: '#fff',
         fontWeight: 'bold',
         fontSize: 12,
         textAlign: 'right'
     },
     modalCancelButtonText: {
-        fontFamily:'IRANMarker',
+        fontFamily: 'IRANMarker',
         color: '#23b9b9',
         fontSize: 12,
         textAlign: 'right'

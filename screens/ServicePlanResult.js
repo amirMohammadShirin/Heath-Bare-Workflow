@@ -8,7 +8,7 @@ import {
     StatusBar,
     AsyncStorage,
     Keyboard,
-    Alert, Platform
+    Alert, Platform, BackHandler
 } from 'react-native';
 import {
     Container,
@@ -39,9 +39,10 @@ const RESERVE = '/api/Reserve';
 export default class ServicePlanResult extends Component {
 
     constructor(props) {
-
-
         super(props);
+        if (Platform.OS === 'android') {
+            this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
+        }
         this.state = {
             animate: true,
             progressModalVisible: false,
@@ -70,7 +71,30 @@ export default class ServicePlanResult extends Component {
         }
     }
 
+
+    handleBackButtonClick() {
+        // alert('pressed')
+
+        console.log(JSON.stringify(this.props.navigation.state))
+
+        if (this.props.navigation.state.isDrawerOpen) {
+            this.props.navigation.closeDrawer()
+        } else {
+
+            if (this.state.visible) {
+                this.setState({visible: false})
+            } else if (!this.state.progressModalVisible) {
+                this.onBackPressed()
+            }
+
+        }
+        return true;
+    }
+
     async componentWillMount(): void {
+        if (Platform.OS === 'android') {
+            BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+        }
         var token = await AsyncStorage.getItem('token');
         var baseUrl = await AsyncStorage.getItem('baseUrl');
         var result = await this.props.navigation.getParam('result');
@@ -98,7 +122,7 @@ export default class ServicePlanResult extends Component {
     }
 
     async reserve(body) {
-        this.setState({progressModalVisible: true})
+        this.setState({progressModalVisible: true/*, selectedMedicalCenter: null, selectedDay: null*/})
         await fetch(this.state.baseUrl + RESERVE, {
             method: 'POST',
             headers: {
@@ -458,7 +482,7 @@ export default class ServicePlanResult extends Component {
                                                         style={{
                                                             borderColor: '#c5c5c5',
                                                             borderWidth: 1,
-                                                            padding:2
+                                                            padding: 2
                                                         }}
                                                         circular
                                                         defaultSource={require(
@@ -468,7 +492,7 @@ export default class ServicePlanResult extends Component {
                                                         style={{
                                                             borderColor: '#c5c5c5',
                                                             borderWidth: 1,
-                                                            padding:2
+                                                            padding: 2
                                                         }}
                                                         circular
                                                         defaultSource={require(
