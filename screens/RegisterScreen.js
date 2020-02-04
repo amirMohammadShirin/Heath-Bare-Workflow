@@ -1,5 +1,16 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Text, StatusBar, TextInput, Keyboard, Platform, BackHandler, Alert} from 'react-native';
+import {
+    StyleSheet,
+    View,
+    Text,
+    StatusBar,
+    TextInput,
+    Keyboard,
+    Platform,
+    BackHandler,
+    Alert,
+    AsyncStorage
+} from 'react-native';
 import {PermissionsAndroid} from 'react-native';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button'
 import DatePicker from 'react-native-jalaali-date-picker'
@@ -22,6 +33,7 @@ import {
     Card, Tab, Accordion
 } from 'native-base';
 import Modal, {ModalButton, ModalContent, ModalFooter, ModalTitle, SlideAnimation} from "react-native-modals";
+import awaitAsyncGenerator from "@babel/runtime/helpers/esm/awaitAsyncGenerator";
 
 
 const options = {
@@ -32,6 +44,8 @@ const options = {
     },
 };
 
+
+const REGISTER = '/api/Register'
 export default class ReserveScreen extends Component {
 
     constructor(props) {
@@ -40,6 +54,8 @@ export default class ReserveScreen extends Component {
             this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
         }
         this.state = {
+            token: null,
+            baseUrl: null,
             patientUsername: '',
             nationalCode: '',
             cellPhone: '',
@@ -69,10 +85,58 @@ export default class ReserveScreen extends Component {
         (this).onStartDateChange = this.onStartDateChange.bind(this);
     }
 
-    componentWillMount(): void {
+
+    async registerUser(body) {
+        this.setState({startDateModalVisible: true}, async () => {
+            await fetch(this.state.baseUrl + REGISTER, {
+                method: 'POST',
+                headers: {
+                    'content-type': 'application/json',
+                    Accept: 'application/json',
+                    'Authorization': 'Bearer ' + new String(this.state.token)
+                },
+                body: JSON.stringify(body)
+            }).then(async (response) => response.json())
+                .then(async (responseData) => {
+                    if (responseData['StatusCode'] === 200) {
+                        if (responseData['Data'] != null) {
+                            let data = responseData['Data'];
+                            await this.setState({progressModalVisible: false}, async () => {
+                                await this.setState({data: data})
+
+                            })
+                        }
+                    } else if (responseData['StatusCode'] === 601) {
+                        await this.setState({progressModalVisible: false}, () => {
+                            alert('کد ملی وارد شده معتبر نمیباشد')
+                        })
+                    } else if (responseData['StatusCode'] === 602) {
+                        await this.setState({progressModalVisible: false}, () => {
+                            alert('کد ملی وارد شده قبلا در سیستم ثبت شده است')
+                        })
+                    } else {
+                        await this.setState({progressModalVisible: false}, () => {
+                            alert(JSON.stringify('خطا در دسترسی به سرویس'))
+                            console.log(JSON.stringify(responseData))
+                        })
+
+                    }
+                })
+                .catch((error) => {
+                    console.error(error)
+                    // alert(error)
+                })
+        })
+    }
+
+    async componentWillMount(): void {
         if (Platform.OS === 'android') {
             BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
         }
+        const token = await AsyncStorage.getItem("token");
+        const baseUrl = await AsyncStorage.getItem("baseUrl");
+
+        this.setState({baseUrl: baseUrl, token: token});
     }
 
     handleBackButtonClick() {
@@ -277,6 +341,17 @@ export default class ReserveScreen extends Component {
                                 </CardItem>
 
                                 <CardItem style={styles.row}>
+                                    <Text style={styles.label}>کد پستی</Text>
+                                    <TextInput
+                                        keyboardType={'numeric'}
+                                        value={this.state.zipCode}
+                                        onChangeText={(text) => this.setState({zipCode: text})}
+                                        style={[styles.textInput]}
+                                        multiline={false}
+                                    />
+                                </CardItem>
+
+                                <CardItem style={styles.row}>
                                     <Text style={styles.label}>نام کاربری</Text>
                                     <TextInput
                                         value={this.state.patientUsername}
@@ -452,9 +527,10 @@ export default class ReserveScreen extends Component {
                                 gender: this.state.gender,
                                 description: this.state.description,
                                 address: this.state.address,
-                                zipCode: ''
+                                zipCode: this.state.zipCode
                             }
                             console.log(JSON.stringify(body))
+                            this.registerUser(body)
                         }
 
                     }}>
@@ -542,12 +618,12 @@ const styles = StyleSheet.create({
         borderColor: '#23b9b9',
     },
     label: {
+        color: '#000',
         fontFamily: 'IRANMarker',
         padding: 1,
         flex: 1,
         margin: 1,
         fontSize: 15,
-        fontWeight: 'bold',
         textAlign: 'right'
     },
     modalTitle: {

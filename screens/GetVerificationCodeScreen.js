@@ -1,9 +1,11 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Text, StatusBar, Image, Platform, Alert} from 'react-native';
+import {StyleSheet, View, Text, StatusBar, Image, Platform, Alert, AsyncStorage, ActivityIndicator} from 'react-native';
 import {BackHandler} from 'react-native';
 import {Button, Input, Item, Container, Content, Card, Icon} from 'native-base'
+import Modal, {ModalContent, SlideAnimation} from "react-native-modals";
 
 
+const GETVERIFICATIONCODE = '/api/GetVerificationCode';
 export default class GetVerificationCodeScreen extends Component {
     constructor(props) {
         super(props);
@@ -18,7 +20,8 @@ export default class GetVerificationCodeScreen extends Component {
             color: '#db1c09',
             icon: 'close-circle',
             check: 'checkmark-circle',
-            error: 'close-circle'
+            error: 'close-circle',
+            progressModalVisible: false
         }
     }
 
@@ -29,6 +32,44 @@ export default class GetVerificationCodeScreen extends Component {
         }
     }
 
+
+    async getVerificationCode(body) {
+        const baseUrl = await AsyncStorage.getItem("baseUrl");
+        console.log(JSON.stringify(body))
+        this.setState({progressModalVisible: true}, async () => {
+            await fetch(baseUrl + GETVERIFICATIONCODE, {
+                method: 'POST',
+                headers: {
+                    'content-type': 'application/json',
+                    Accept: 'application/json',
+                    'Authorization': 'Bearer ' + new String(this.state.token)
+                },
+                body: JSON.stringify(body),
+            }).then((response) => response.json())
+                .then(async (responseData) => {
+                    if (responseData['StatusCode'] === 200) {
+                        this.setState({progressModalVisible: false}, () => {
+                            this.props.navigation.push('VerifyScreen');
+                        })
+                    } else if (responseData['StatusCode'] === 600) {
+                        this.setState({progressModalVisible: false}, () => {
+                            this.props.navigation.push('RegisterScreen');
+
+                        })
+                    } else {
+                        this.setState({progressModalVisible: false}, () => {
+                            alert('خطا در اتصال به سرویس')
+                        })
+
+                    }
+                })
+                .catch((error) => {
+                    console.error(error)
+                    // alert(error)
+                })
+        })
+
+    }
 
     handleBackButtonClick() {
         // alert('pressed')
@@ -93,7 +134,11 @@ export default class GetVerificationCodeScreen extends Component {
                                 light style={styles.buttonStyle} onPress={() => {
                                 if (this.phoneNumberValidation(this.state.phone)) {
                                     // alert('Sent')
-                                    this.props.navigation.push('VerifyScreen');
+
+                                    var body = {
+                                        phoneNumber: this.state.phone
+                                    }
+                                    this.getVerificationCode(body)
                                 } else {
                                     if (this.state.phone.length < 11) {
                                         alert('لطفا شماره تلفن خود را وارد کنید')
@@ -106,6 +151,18 @@ export default class GetVerificationCodeScreen extends Component {
                             </Button>
                         </Card>
                     </View>
+                    <Modal style={{opacity: 0.7}}
+                           width={300}
+                           visible={this.state.progressModalVisible}
+                           modalAnimation={new SlideAnimation({
+                               slideFrom: 'bottom'
+                           })}
+                    >
+                        <ModalContent style={[styles.modalContent, {backgroundColor: 'rgba(47,246,246,0.02)'}]}>
+                            <ActivityIndicator animating={true} size="small" color={"#23b9b9"}/>
+                        </ModalContent>
+                    </Modal>
+
                 </Content>
             </Container>
         );

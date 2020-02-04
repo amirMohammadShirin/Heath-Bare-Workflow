@@ -533,7 +533,6 @@ export default class AdvanceSearchScreen extends Component {
         if (this.props.navigation.getParam('doctor')) {
             return (
                 <Container>
-
                     <Header style={styles.header}>
                         <Left style={{flex: 1}}>
                             <Button transparent style={styles.headerMenuIcon}
@@ -644,13 +643,8 @@ export default class AdvanceSearchScreen extends Component {
                                     >
                                         <Text style={styles.filters}>{this.state.selectedCertificate.value}</Text>
                                     </Button>
-                                    <View style={{
-                                        flex: 1,
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        alignContent: 'center'
-                                    }}>
-                                        <Text style={styles.label}
+                                    <View>
+                                        <Text style={[styles.label,{textAlign:'left'}]}
                                         >سطح علمی</Text>
                                     </View>
                                 </Body>
@@ -1021,9 +1015,8 @@ const styles = StyleSheet.create({
         padding: 1,
         textAlign: 'right',
         marginTop: 10,
-        marginRight: 5,
-        marginLeft: 5,
-        flex: 1,
+        marginRight: 2,
+        marginLeft: 2,
         alignSelf: 'center',
         fontSize: 16,
 
@@ -1043,12 +1036,14 @@ const styles = StyleSheet.create({
         color: '#23b9b9',
     },
     buttonStyle: {
+        minWidth:'65%',
+        maxWidth:'70%',
+        // width: '70%',
         textAlign: 'center',
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 2,
         margin: 1,
-        flex: 2,
         borderWidth: 1,
         borderColor: '#fff',
 

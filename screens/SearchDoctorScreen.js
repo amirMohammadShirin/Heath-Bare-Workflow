@@ -445,9 +445,9 @@ export default class SearchMedicalCenter extends Component {
                                         >
                                             <Body>
                                                 <Text style={{
+                                                    fontFamily:'IRANMarker',
                                                     color: '#000',
                                                     width: '100%',
-                                                    height: '100%',
                                                     textAlign: 'right',
                                                     fontSize: 15,
                                                 }}>{this.generateTitle(item)}</Text>
@@ -682,6 +682,7 @@ const styles = StyleSheet.create({
         color: '#23b9b9'
     },
     resultText: {
+        fontFamily:'IRANMarker',
         color: '#000',
         textAlign: 'right',
         fontSize: 15,
@@ -689,6 +690,7 @@ const styles = StyleSheet.create({
         marginTop: 5,
     },
     filters: {
+        fontFamily:'IRANMarker',
         color: '#23b9b9',
         textAlign: 'right',
         fontSize: 13,

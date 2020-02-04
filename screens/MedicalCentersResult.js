@@ -411,8 +411,8 @@ const styles = StyleSheet.create({
         margin: 1
     },
     badgeText: {
-        fontFamily: 'IRANMarker',
         color: '#fff',
+        fontSize: 13
     },
     titleStyle: {
         color: '#1f9292',

@@ -123,6 +123,7 @@ export default class ServicePlanResult extends Component {
 
     async reserve(body) {
         this.setState({progressModalVisible: true/*, selectedMedicalCenter: null, selectedDay: null*/})
+        console.log(JSON.stringify(body))
         await fetch(this.state.baseUrl + RESERVE, {
             method: 'POST',
             headers: {
@@ -550,7 +551,7 @@ export default class ServicePlanResult extends Component {
                                         }
                                     >
                                         <Text style={[styles.modalCancelButtonText,
-                                            {alignSelf: 'center', textAlignVertical: 'center'}]}>انصراف</Text>
+                                            {alignSelf: 'center', textAlignVertical: 'center',fontFamily:'IRANMarker'}]}>انصراف</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity
                                         style={[styles.modalSuccessButton, {
@@ -599,7 +600,7 @@ export default class ServicePlanResult extends Component {
                                                 MedicalCenterId: this.state.selectedMedicalCenter.Id.toString(),
                                                 ActorId: this.state.selectedServicePlan.DoctorId.toString(),
                                                 ReserveDate: this.state.selectedDay.Day.Day.Date.toString()
-                                                    .substring(0, 10),
+                                                    .substring(0, 9),
                                                 StartTime: this.state.selectedTime.value.toString()
                                             }
                                             this.reserve(body)
@@ -654,6 +655,7 @@ export default class ServicePlanResult extends Component {
 
                                         }}>
                                             <Text style={{
+                                                fontFamily:'IRANMarker',
                                                 padding: 1,
                                                 textAlign: 'center',
                                                 borderRadius: 2,
@@ -679,6 +681,7 @@ export default class ServicePlanResult extends Component {
 
                                         }}>
                                             <Text style={{
+                                                fontFamily:'IRANMarker',
                                                 padding: 1,
                                                 textAlign: 'center',
                                                 borderRadius: 2,
@@ -735,6 +738,7 @@ export default class ServicePlanResult extends Component {
 
                                     }}>
                                         <Text style={{
+                                            fontFamily:'IRANMarker',
                                             padding: 1,
                                             textAlign: 'center',
                                             borderRadius: 2,
@@ -786,6 +790,7 @@ export default class ServicePlanResult extends Component {
 
                                     }}>
                                         <Text style={{
+                                            fontFamily:'IRANMarker',
                                             padding: 1,
                                             textAlign: 'center',
                                             borderRadius: 2,
@@ -918,6 +923,7 @@ const styles = StyleSheet.create({
         margin: 5
     },
     modalSuccessButtonText: {
+        fontFamily:'IRANMarker',
         color: '#fff',
         fontWeight: 'bold',
         fontSize: 15,

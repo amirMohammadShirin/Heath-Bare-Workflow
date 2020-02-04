@@ -15,7 +15,7 @@ import Modal, {ModalContent, SlideAnimation} from "react-native-modals";
 
 const BASE = 'http://clinicapi.adproj.ir';
 const AUTHENTICATE = "/Api/Authenticate";
-;
+
 export default class VerifyScreen extends Component {
     constructor(props) {
         super(props);
@@ -71,11 +71,13 @@ export default class VerifyScreen extends Component {
                             let data = responseData['Data'];
                             let token = data['token'];
                             let userInfo = data['userinfo'];
-                            this.setState({progressModalVisible: false}, () => {
-                                AsyncStorage.setItem('token', token).then(() => {
-                                    AsyncStorage.setItem('baseUrl', BASE).then(() => {
-                                        this.props.navigation.navigate('HomeScreen',
-                                            {user: {userInfo}, baseUrl: BASE})
+                            this.setState({progressModalVisible: false}, async () => {
+                                await AsyncStorage.setItem('username', body.username).then(() => {
+                                    AsyncStorage.setItem('token', token).then(() => {
+                                        AsyncStorage.setItem('baseUrl', BASE).then(() => {
+                                            this.props.navigation.navigate('HomeScreen',
+                                                {user: {userInfo}, baseUrl: BASE})
+                                        })
                                     })
                                 })
                             })
