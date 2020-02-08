@@ -14,10 +14,10 @@ import {Button, Card, Container, Content, Input, Item} from 'native-base'
 import Modal, {ModalContent, SlideAnimation} from "react-native-modals";
 
 const BASE = 'http://clinicapi.adproj.ir';
-// const AUTHENTICATE = "/Api/Authenticate";
 const VERIFY = '/Api/Verify';
+const AUTHENTICATE = "/Api/Authenticate";
 
-export default class VerifyScreen extends Component {
+export default class NationalCodeScreen extends Component {
     constructor(props) {
         super(props);
         if (Platform.OS === 'android') {
@@ -26,13 +26,15 @@ export default class VerifyScreen extends Component {
         this.state = {
             progressModalVisible: false,
             phoneNumber: null,
-            verificationCode: null
+            nationalCode: null,
+            baseUrl: null
         }
     }
 
-    componentDidMount(): void {
+    async componentDidMount(): void {
         const phoneNumber = this.props.navigation.getParam('phoneNumber');
-        this.setState({phoneNumber: phoneNumber});
+        const baseUrl = await AsyncStorage.getItem("baseUrl");
+        this.setState({phoneNumber: phoneNumber, baseUrl: baseUrl});
         if (Platform.OS === 'android') {
             BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
         }
@@ -57,65 +59,51 @@ export default class VerifyScreen extends Component {
         return true;
     }
 
-
-    goToNationalCodeScreen(phoneNumber) {
-        this.props.navigation.navigate('NationalCodeScreen', {phoneNumber: phoneNumber});
-    }
-
-    // goToHomeScreen = async (body) => {
-    //
-    //     fetch(BASE + AUTHENTICATE, {
-    //         method: 'POST',
-    //         headers: {'content-type': 'application/json'},
-    //         body: JSON.stringify(body)
-    //     }).then((response) => response.json())
-    //         .then(async (responseData) => {
-    //             if (responseData['StatusCode'] === 200) {
-    //                 if (responseData['Data'] != null) {
-    //                     try {
-    //                         let data = responseData['Data'];
-    //                         let token = data['token'];
-    //                         let userInfo = data['userinfo'];
-    //                         this.setState({progressModalVisible: false}, async () => {
-    //                             await AsyncStorage.setItem('username', body.username).then(() => {
-    //                                 AsyncStorage.setItem('token', token).then(() => {
-    //                                     AsyncStorage.setItem('baseUrl', BASE).then(() => {
-    //                                         this.props.navigation.navigate('HomeScreen',
-    //                                             {user: {userInfo}, baseUrl: BASE})
-    //                                     })
-    //                                 })
-    //                             })
-    //                         })
-    //                     } catch (e) {
-    //                         // alert(e)
-    //                         console.error(e)
-    //                     }
-    //                 }
-    //             } else if (responseData['StatusCode'] === 600) {
-    //                 this.setState({progressModalVisible: false}, () => {
-    //                     alert('کاربر یافت نشد')
-    //                 })
-    //             } else {
-    //                 this.setState({progressModalVisible: false}, () => {
-    //                     // alert('خطا در اتصال به سرویس')
-    //                     alert(JSON.stringify(responseData))
-    //                 })
-    //             }
-    //         })
-    //         .catch((error) => {
-    //             console.error(error)
-    //         })
-    //     // fetch(BASE + AUTHENTICATE, {
-    //     //     method: 'POST',
-    //     //     Accept: 'application/json',
-    //     //     credentials: 'include',
-    //     //     headers: {'content-type': 'application/json'},
-    //     //     body: JSON.stringify(body)
-    //     // }).then((response) => console.log(JSON.stringify(response)))
-    //     //     .catch((error) => {
-    //     //         console.error(error)
-    //     //     })
-    // };
+    goToHomeScreen = async (body) => {
+        const baseUrl = this.state.baseUrl;
+        fetch(baseUrl + AUTHENTICATE, {
+            method: 'POST',
+            headers: {'content-type': 'application/json'},
+            body: JSON.stringify(body)
+        }).then((response) => response.json())
+            .then(async (responseData) => {
+                console.log(JSON.stringify(responseData))
+                if (responseData['StatusCode'] === 200) {
+                    if (responseData['Data'] != null) {
+                        try {
+                            let data = responseData['Data'];
+                            let token = data['token'];
+                            let userInfo = data['userinfo'];
+                            this.setState({progressModalVisible: false}, async () => {
+                                await AsyncStorage.setItem('username', body.phoneNumber).then(async () => {
+                                    await AsyncStorage.setItem('nationalCode', body.nationalCode, async () => {
+                                        await AsyncStorage.setItem('token', token).then(() => {
+                                            this.props.navigation.navigate('HomeScreen',
+                                                {user: {userInfo}, baseUrl: baseUrl})
+                                        })
+                                    })
+                                })
+                            })
+                        } catch (e) {
+                            // alert(e)
+                            console.error(e)
+                        }
+                    }
+                } else if (responseData['StatusCode'] === 600) {
+                    this.setState({progressModalVisible: false}, () => {
+                        alert('کاربر یافت نشد')
+                    })
+                } else {
+                    this.setState({progressModalVisible: false}, () => {
+                        alert('خطا در اتصال به سرویس')
+                        // alert(JSON.stringify(responseData))
+                    })
+                }
+            })
+            .catch((error) => {
+                console.error(error)
+            })
+    };
 
     verify = async (body) => {
         fetch(BASE + VERIFY, {
@@ -126,7 +114,7 @@ export default class VerifyScreen extends Component {
             .then(async (responseData) => {
                 if (responseData['StatusCode'] === 200) {
                     this.setState({progressModalVisible: false}, () => {
-                        this.goToNationalCodeScreen(body.phoneNumber)
+                        this.goToNationalCodeScreen()
                     })
                 } else if (responseData['StatusCode'] === 902) {
                     this.setState({progressModalVisible: false}, () => {
@@ -161,24 +149,22 @@ export default class VerifyScreen extends Component {
                     <View style={[styles.main, {width: '100%', height: '50%'}]}>
                         <Card style={styles.myCard}>
                             <Item style={styles.itemStyle}>
-                                <Input placeholder='کد فعال سازی را وارد کنید' placeholderTextColor={'gray'}
+                                <Input placeholder='کد ملی خود را وارد کنید' placeholderTextColor={'gray'}
                                        style={styles.inputStyle} keyboardType={'numeric'}
-                                       onChangeText={async (text) => {
-                                           this.setState({verificationCode: text}, async () => {
-                                               if (text.length === 4) {
-                                                   // alert('Sent')
-                                                   await Keyboard.dismiss()
-                                                   this.setState({progressModalVisible: true}, async () => {
-                                                       // this.goToHomeScreen()
-                                                       let body = {
-                                                           phoneNumber: this.state.phoneNumber,
-                                                           verificationCode: this.state.verificationCode,
-                                                       }
-                                                       this.verify(body)
-                                                   })
+                                       onChangeText={(text) => {
+                                           if (true) { // Todo : validate NationalCode
+                                               // alert('Sent')
+                                               //Keyboard.dismiss()
+                                               this.setState({progressModalVisible: true}, async () => {
+                                                   let body = {
+                                                       username: this.state.phoneNumber,
+                                                       nationalCode: this.state.nationalCode
+                                                   }
 
-                                               }
-                                           })
+                                                   this.goToHomeScreen(body)
+                                               })
+
+                                           }
                                        }}/>
                             </Item>
                             <Button light style={styles.buttonStyle}>
@@ -209,7 +195,7 @@ export default class VerifyScreen extends Component {
 
 }
 
-VerifyScreen.navigationOptions = {
+NationalCodeScreen.navigationOptions = {
     header: null
 };
 

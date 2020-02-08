@@ -30,6 +30,7 @@ import MedicalCentersResult from "./screens/MedicalCentersResult";
 import DoctorsResult from "./screens/DoctorsResult";
 import ServicePlanResult from "./screens/ServicePlanResult";
 import MapScreen from "./screens/MapScreen";
+import NationalCodeScreen from './screens/NationalCodeScreen';
 
 const ReserveStackNavigator = createStackNavigator({
     ReserveScreen: {screen: ReserveScreen},
@@ -139,7 +140,8 @@ const SplashStackNavigator = createStackNavigator({
     SplashScreen: {screen: SplashScreen},
     GetVerificationCodeScreen: {screen: GetVerificationCodeScreen},
     VerifyScreen: {screen: VerifyScreen},
-    RegisterScreen: {screen: RegisterScreen}
+    RegisterScreen: {screen: RegisterScreen},
+    NationalCodeScreen: {screen: NationalCodeScreen}
 }, {
     initialRouteName: 'SplashScreen',
     defaultNavigationOptions: {

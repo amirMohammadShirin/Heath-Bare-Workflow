@@ -24,8 +24,11 @@ export default class SplashScreen extends Component {
         console.log(token);
         const baseUrl = await AsyncStorage.getItem("baseUrl");
         console.log(baseUrl)
+        const nationalCode = await AsyncStorage.getItem("nationalCode");
+        console.log(nationalCode)
 
-        if (token != null && typeof token !== 'undefined' && baseUrl != null && typeof baseUrl !== 'undefined') {
+        if (token != null && typeof token !== 'undefined' && baseUrl != null && typeof baseUrl !== 'undefined' &&
+            nationalCode != null && typeof nationalCode !== 'undefined') {
             console.log('token and base are not null')
             console.log('no.1 fetch started')
             await fetch(baseUrl + AUTHORIZE, {
@@ -45,7 +48,7 @@ export default class SplashScreen extends Component {
                             let body = {
                                 username: username,
                                 // username: '09191111111',
-                                deviceId: 'deviceId'
+                                nationalCode: nationalCode
                             };
                             console.log(JSON.stringify(body))
                             console.log('no.2 fetch started')

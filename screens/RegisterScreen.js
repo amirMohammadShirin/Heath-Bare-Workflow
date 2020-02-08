@@ -67,6 +67,8 @@ export default class ReserveScreen extends Component {
             address: '',
             zipCode: '',
             patientPassword: '',
+            file: null,
+            fileName: null,
             selectedStartDate: null,
             red: '#db1c09',
             green: '#00b452',
@@ -187,6 +189,8 @@ export default class ReserveScreen extends Component {
                     imageFromDevice: 'data:image/jpeg;base64,' +
                         response.data
                 });
+
+                //Todo: init fileName and file
             }
         });
     }
@@ -512,12 +516,16 @@ export default class ReserveScreen extends Component {
                             this.state.birthDate === '' ||
                             this.state.gender === '' ||
                             this.state.patientPassword === '' ||
-                            this.state.selectedStartDate === null
+                            this.state.selectedStartDate === null ||
+                            this.state.file !== null ||
+                            this.state.fileCoverage !== null
                         ) {
                             alert('لطفا اطلاعات خود را به درستی وارد کنید')
                         } else {
                             //myString.replace(/\D/g,'');
                             let body = {
+                                fileName: this.state.fileName,
+                                file: this.state.file,
                                 patientUsername: this.state.patientUsername,
                                 nationalCode: this.state.nationalCode,
                                 cellPhone: this.state.cellPhone,

@@ -49,12 +49,32 @@ export default class GetVerificationCodeScreen extends Component {
                 .then(async (responseData) => {
                     if (responseData['StatusCode'] === 200) {
                         this.setState({progressModalVisible: false}, () => {
-                            this.props.navigation.push('VerifyScreen');
+                            this.props.navigation.push('VerifyScreen', {phoneNumber: body.phoneNumber});
                         })
-                    } else if (responseData['StatusCode'] === 600) {
+                    } else if (responseData['StatusCode'] === 800) {
                         this.setState({progressModalVisible: false}, () => {
-                            this.props.navigation.push('RegisterScreen');
+                            // this.props.navigation.push('RegisterScreen');
+                            Alert.alert(
+                                "خطا در ارتباط با سرویس ارسال پیامک",
+                                '',
+                                [
+                                    {
+                                        text: "تلاش مجدد", onPress: async () => {
+                                            await this.getVerificationCode(body)
+                                            // await this.componentWillMount();
 
+                                        },
+
+                                    },
+                                    {
+                                        text: "انصراف"
+
+                                    }
+                                ],
+                                {
+                                    cancelable: false,
+                                }
+                            )
                         })
                     } else {
                         this.setState({progressModalVisible: false}, () => {
