@@ -13,8 +13,6 @@ import {
 import {Button, Card, Container, Content, Input, Item} from 'native-base'
 import Modal, {ModalContent, SlideAnimation} from "react-native-modals";
 
-const BASE = 'http://clinicapi.adproj.ir';
-const VERIFY = '/Api/Verify';
 const AUTHENTICATE = "/Api/Authenticate";
 
 export default class NationalCodeScreen extends Component {
@@ -39,7 +37,6 @@ export default class NationalCodeScreen extends Component {
             BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
         }
     }
-
 
     handleBackButtonClick() {
         // alert('pressed')
@@ -93,6 +90,10 @@ export default class NationalCodeScreen extends Component {
                     this.setState({progressModalVisible: false}, () => {
                         alert('کاربر یافت نشد')
                     })
+                } else if (responseData['StatusCode'] === 601) {
+                    this.setState({progressModalVisible: false}, () => {
+                        alert('کد ملی وارد شده معتبر نمی باشد')
+                    })
                 } else {
                     this.setState({progressModalVisible: false}, () => {
                         alert('خطا در اتصال به سرویس')
@@ -104,35 +105,6 @@ export default class NationalCodeScreen extends Component {
                 console.error(error)
             })
     };
-
-    verify = async (body) => {
-        fetch(BASE + VERIFY, {
-            method: 'POST',
-            headers: {'content-type': 'application/json'},
-            body: JSON.stringify(body)
-        }).then((response) => response.json())
-            .then(async (responseData) => {
-                if (responseData['StatusCode'] === 200) {
-                    this.setState({progressModalVisible: false}, () => {
-                        this.goToNationalCodeScreen()
-                    })
-                } else if (responseData['StatusCode'] === 902) {
-                    this.setState({progressModalVisible: false}, () => {
-                        alert('کد وارد شده معتبر نمیباشد')
-                    })
-                } else {
-                    this.setState({progressModalVisible: false}, () => {
-                        alert('خطا در اتصال به سرویس')
-                        // alert(JSON.stringify(responseData))
-                    })
-                }
-            })
-            .catch((error) => {
-                console.error(error)
-            })
-
-    }
-
 
     render() {
         return (
@@ -152,9 +124,8 @@ export default class NationalCodeScreen extends Component {
                                 <Input placeholder='کد ملی خود را وارد کنید' placeholderTextColor={'gray'}
                                        style={styles.inputStyle} keyboardType={'numeric'}
                                        onChangeText={(text) => {
-                                           if (true) { // Todo : validate NationalCode
-                                               // alert('Sent')
-                                               //Keyboard.dismiss()
+                                           if (true) {
+                                               Keyboard.dismiss()
                                                this.setState({progressModalVisible: true}, async () => {
                                                    let body = {
                                                        username: this.state.phoneNumber,

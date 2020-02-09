@@ -27,8 +27,7 @@ export default class SplashScreen extends Component {
         const nationalCode = await AsyncStorage.getItem("nationalCode");
         console.log(nationalCode)
 
-        if (token != null && typeof token !== 'undefined' && baseUrl != null && typeof baseUrl !== 'undefined' &&
-            nationalCode != null && typeof nationalCode !== 'undefined') {
+        if (token != null && typeof token !== 'undefined' && baseUrl != null && typeof baseUrl !== 'undefined') {
             console.log('token and base are not null')
             console.log('no.1 fetch started')
             await fetch(baseUrl + AUTHORIZE, {
@@ -43,8 +42,10 @@ export default class SplashScreen extends Component {
                     console.log(JSON.stringify(responseData))
                     if (responseData['StatusCode'] === 200) {
                         const username = await AsyncStorage.getItem('username');
-                        if (username != null && typeof username !== 'undefined') {
+                        if (username != null && typeof username !== 'undefined' && nationalCode != null &&
+                            typeof nationalCode !== 'undefined') {
                             console.log('username is not null')
+                            console.log('nationalCode is not null')
                             let body = {
                                 username: username,
                                 // username: '09191111111',
@@ -63,14 +64,18 @@ export default class SplashScreen extends Component {
                                         if (responseData['Data'] != null) {
                                             try {
                                                 let data = responseData['Data'];
-                                                let token = data['token'];
+                                                // let token = data['token'];
                                                 let userInfo = data['userinfo'];
-                                                AsyncStorage.setItem('username', username).then(() => {
-                                                    AsyncStorage.setItem('token', token).then(() => {
-                                                        this.props.navigation.navigate('HomeScreen',
-                                                            {user: {userInfo}, baseUrl: baseUrl})
-                                                    })
-                                                })
+
+                                                // AsyncStorage.setItem('username', username).then(() => {
+                                                //     AsyncStorage.setItem('token', token).then(() => {
+                                                //         this.props.navigation.navigate('HomeScreen',
+                                                //             {user: {userInfo}, baseUrl: BASE})
+                                                //     })
+                                                // })
+
+                                                this.props.navigation.navigate('HomeScreen',
+                                                    {user: {userInfo}, baseUrl: BASE})
                                             } catch (e) {
                                                 // alert(e)
                                                 console.error(e)

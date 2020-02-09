@@ -4,7 +4,6 @@ import {BackHandler} from 'react-native';
 import {Button, Input, Item, Container, Content, Card, Icon} from 'native-base'
 import Modal, {ModalContent, SlideAnimation} from "react-native-modals";
 
-
 const GETVERIFICATIONCODE = '/api/GetVerificationCode';
 export default class GetVerificationCodeScreen extends Component {
     constructor(props) {
@@ -67,8 +66,8 @@ export default class GetVerificationCodeScreen extends Component {
 
                                     },
                                     {
-                                        text: "انصراف"
-
+                                        text: "انصراف",
+                                        styles: 'cancel'
                                     }
                                 ],
                                 {
@@ -151,22 +150,23 @@ export default class GetVerificationCodeScreen extends Component {
                             </Item>
                             <Button
                                 textStyle={{fontFamily: 'IRANMarker'}}
-                                light style={styles.buttonStyle} onPress={() => {
-                                if (this.phoneNumberValidation(this.state.phone)) {
-                                    // alert('Sent')
-
-                                    var body = {
-                                        phoneNumber: this.state.phone
-                                    }
-                                    this.getVerificationCode(body)
-                                } else {
-                                    if (this.state.phone.length < 11) {
-                                        alert('لطفا شماره تلفن خود را وارد کنید')
+                                light style={styles.buttonStyle}
+                                onPress={() => {
+                                    if (this.phoneNumberValidation(this.state.phone)) {
+                                        let body = {
+                                            phoneNumber: this.state.phone
+                                        }
+                                        this.getVerificationCode(body)
                                     } else {
-                                        alert('شماره تلفن شما صحیح نمی باشد')
+                                        if (this.state.length === 0) {
+                                            alert('لطفا شماره تلفن خود را وارد کنید')
+                                        } else if (this.state.phone.length < 11) {
+                                            alert('لطفا شماره تلفن خود را کامل وارد کنید')
+                                        } else {
+                                            alert('شماره تلفن شما صحیح نمی باشد')
+                                        }
                                     }
-                                }
-                            }}>
+                                }}>
                                 <Text style={styles.textStyle}>دریافت کد فعال سازی</Text>
                             </Button>
                         </Card>

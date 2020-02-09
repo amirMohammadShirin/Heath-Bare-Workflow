@@ -13,8 +13,7 @@ import {
 import {Button, Card, Container, Content, Input, Item} from 'native-base'
 import Modal, {ModalContent, SlideAnimation} from "react-native-modals";
 
-const BASE = 'http://clinicapi.adproj.ir';
-// const AUTHENTICATE = "/Api/Authenticate";
+const GETVERIFICATIONCODE = '/api/GetVerificationCode';
 const VERIFY = '/Api/Verify';
 
 export default class VerifyScreen extends Component {
@@ -117,8 +116,63 @@ export default class VerifyScreen extends Component {
     //     //     })
     // };
 
+    async getVerificationCode(body) {
+        const baseUrl = await AsyncStorage.getItem("baseUrl");
+        console.log(JSON.stringify(body))
+        this.setState({progressModalVisible: true}, async () => {
+            await fetch(baseUrl + GETVERIFICATIONCODE, {
+                method: 'POST',
+                headers: {
+                    'content-type': 'application/json',
+                    Accept: 'application/json',
+                    'Authorization': 'Bearer ' + new String(this.state.token)
+                },
+                body: JSON.stringify(body),
+            }).then((response) => response.json())
+                .then(async (responseData) => {
+                    if (responseData['StatusCode'] === 200) {
+                        this.setState({progressModalVisible: false},)
+                    } else if (responseData['StatusCode'] === 800) {
+                        this.setState({progressModalVisible: false}, () => {
+                            Alert.alert(
+                                "خطا در ارتباط با سرویس ارسال پیامک",
+                                '',
+                                [
+                                    {
+                                        text: "تلاش مجدد", onPress: async () => {
+                                            await this.getVerificationCode(body)
+                                        },
+
+                                    },
+                                    {
+                                        text: "انصراف",
+                                        styles: 'cancel'
+                                    }
+                                ],
+                                {
+                                    cancelable: false,
+                                }
+                            )
+                        })
+                    } else {
+                        this.setState({progressModalVisible: false}, () => {
+                            alert('خطا در اتصال به سرویس')
+                        })
+
+                    }
+                })
+                .catch((error) => {
+                    console.error(error)
+                    // alert(error)
+                })
+        })
+
+    }
+
+
     verify = async (body) => {
-        fetch(BASE + VERIFY, {
+        const baseUrl = await AsyncStorage.getItem("baseUrl");
+        fetch(baseUrl + VERIFY, {
             method: 'POST',
             headers: {'content-type': 'application/json'},
             body: JSON.stringify(body)
@@ -182,7 +236,13 @@ export default class VerifyScreen extends Component {
                                        }}/>
                             </Item>
                             <Button light style={styles.buttonStyle}>
-                                <Text style={styles.textStyle} onPress={() => alert('clicked')}>ارسال مجدد کد فعال
+                                <Text style={styles.textStyle} onPress={() => {
+                                    let body = {
+                                        phoneNumber: this.state.phoneNumber
+                                    }
+                                    Keyboard.dismiss();
+                                    this.getVerificationCode(body)
+                                }}>ارسال مجدد کد فعال
                                     سازی</Text>
                             </Button>
                             <Text style={[styles.textStyle, {color: '#23b9b9', marginTop: 40}]} onPress={() => {
@@ -198,6 +258,7 @@ export default class VerifyScreen extends Component {
                                slideFrom: 'bottom'
                            })}
                     >
+
                         <ModalContent style={styles.modalContent}>
                             <ActivityIndicator animating={true} size="small" color={"#23b9b9"}/>
                         </ModalContent>
