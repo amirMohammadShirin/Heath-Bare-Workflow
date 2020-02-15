@@ -78,21 +78,19 @@ export default class HistoryScreen extends Component {
                 </Header>
                 <Tabs tabBarPosition={'top'} tabContainerStyle={[styles.tabHeading]} locked
                       tabBarUnderlineStyle={{height: 5, backgroundColor: "#1e8080"}} tabBarActiveTextColor={'#1e8080'}>
-                    <Tab heading={<TabHeading style={styles.tabHeading}><Icon
+                    {false && <Tab heading={<TabHeading style={styles.tabHeading}><Icon
                         type={'FontAwesome5'} style={styles.tabIcon} name="notes-medical"/><Text style={styles.tabText}>نسخه
-                        ها</Text></TabHeading>}>
-                        <MedicalFilesScreen/>
-                    </Tab>
+                        ها</Text></TabHeading>}> </Tab>}
                     <Tab heading={<TabHeading style={styles.tabHeading}><Icon
                         type={'FontAwesome5'} style={styles.tabIcon} name="calendar-alt"/><Text style={styles.tabText}>نوبت
                         ها</Text></TabHeading>}>
                         <ShowReservesScreen/>
                     </Tab>
-                    <Tab heading={<TabHeading style={styles.tabHeading}><Icon
+                    {false && <Tab heading={<TabHeading style={styles.tabHeading}><Icon
                         type={'FontAwesome5'} style={styles.tabIcon} name="inbox"/><Text style={styles.tabText}>پیام
                         ها</Text></TabHeading>}>
                         <InboxScreen myNavigator={this.props.navigation}/>
-                    </Tab>
+                    </Tab>}
                 </Tabs>
                 {/*<Content padder style={styles.content}>*/}
                 {/*    <View style={{width: '100%', height: '100%'}}>*/}

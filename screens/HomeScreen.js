@@ -180,6 +180,7 @@ export default class HomeScreen extends Component {
         }
 
 
+
     }
 
     async getAllLocations() {

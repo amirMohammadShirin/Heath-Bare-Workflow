@@ -1,5 +1,16 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Text, StatusBar, Image, Platform, Alert, AsyncStorage, ActivityIndicator} from 'react-native';
+import {
+    StyleSheet,
+    View,
+    Text,
+    StatusBar,
+    Image,
+    Platform,
+    Alert,
+    AsyncStorage,
+    ActivityIndicator,
+    Keyboard
+} from 'react-native';
 import {BackHandler} from 'react-native';
 import {Button, Input, Item, Container, Content, Card, Icon} from 'native-base'
 import Modal, {ModalContent, SlideAnimation} from "react-native-modals";
@@ -37,13 +48,15 @@ export default class GetVerificationCodeScreen extends Component {
         console.log(JSON.stringify(body))
         this.setState({progressModalVisible: true}, async () => {
             await fetch(baseUrl + GETVERIFICATIONCODE, {
+                // await fetch('https://91.92.208.142/api/GetVerificationCode', {
                 method: 'POST',
                 headers: {
                     'content-type': 'application/json',
                     Accept: 'application/json',
-                    'Authorization': 'Bearer ' + new String(this.state.token)
+                    // 'Authorization': 'Bearer ' + new  String(this.state.token)
                 },
-                body: JSON.stringify(body),
+                // body: JSON.stringify(body),
+                body: JSON.stringify({phoneNumber: this.state.phone}),
             }).then((response) => response.json())
                 .then(async (responseData) => {
                     if (responseData['StatusCode'] === 200) {
@@ -52,6 +65,7 @@ export default class GetVerificationCodeScreen extends Component {
                         })
                     } else if (responseData['StatusCode'] === 800) {
                         this.setState({progressModalVisible: false}, () => {
+                            console.log(JSON.stringify(responseData))
                             // this.props.navigation.push('RegisterScreen');
                             Alert.alert(
                                 "خطا در ارتباط با سرویس ارسال پیامک",
@@ -77,7 +91,8 @@ export default class GetVerificationCodeScreen extends Component {
                         })
                     } else {
                         this.setState({progressModalVisible: false}, () => {
-                            alert('خطا در اتصال به سرویس')
+                            // alert('خطا در اتصال به سرویس')
+                            console.log(JSON.stringify(responseData))
                         })
 
                     }
@@ -92,7 +107,6 @@ export default class GetVerificationCodeScreen extends Component {
 
     handleBackButtonClick() {
         // alert('pressed')
-
         Alert.alert(
             'خروج',
             ' مایل به خروج از برنامه هستید؟ ',
@@ -156,6 +170,7 @@ export default class GetVerificationCodeScreen extends Component {
                                         let body = {
                                             phoneNumber: this.state.phone
                                         }
+                                        Keyboard.dismiss();
                                         this.getVerificationCode(body)
                                     } else {
                                         if (this.state.length === 0) {
