@@ -178,11 +178,15 @@ export default class VerifyScreen extends Component {
             body: JSON.stringify(body)
         }).then((response) => response.json())
             .then(async (responseData) => {
-                if (responseData['StatusCode'] === 200) {
+                if (responseData['StatusCode'] === 901) {
                     this.setState({progressModalVisible: false}, () => {
                         this.goToNationalCodeScreen(body.phoneNumber)
                     })
                 } else if (responseData['StatusCode'] === 902) {
+                    this.setState({progressModalVisible: false}, () => {
+                        alert('کد وارد شده منقضی شده است')
+                    })
+                } else if (responseData['StatusCode'] === 900) {
                     this.setState({progressModalVisible: false}, () => {
                         alert('کد وارد شده معتبر نمیباشد')
                     })
@@ -190,6 +194,7 @@ export default class VerifyScreen extends Component {
                     this.setState({progressModalVisible: false}, () => {
                         alert('خطا در اتصال به سرویس')
                         // alert(JSON.stringify(responseData))
+                        console.log(JSON.stringify(responseData))
                     })
                 }
             })

@@ -58,7 +58,7 @@ export default class NationalCodeScreen extends Component {
 
     goToHomeScreen = async (body) => {
         const baseUrl = this.state.baseUrl;
-        fetch(baseUrl + AUTHENTICATE, {
+        await fetch(baseUrl + AUTHENTICATE, {
             method: 'POST',
             headers: {'content-type': 'application/json'},
             body: JSON.stringify(body)
@@ -71,16 +71,22 @@ export default class NationalCodeScreen extends Component {
                             let data = responseData['Data'];
                             let token = data['token'];
                             let userInfo = data['userinfo'];
-                            this.setState({progressModalVisible: false}, async () => {
-                                await AsyncStorage.setItem('username', body.phoneNumber).then(async () => {
-                                    await AsyncStorage.setItem('nationalCode', body.nationalCode, async () => {
-                                        await AsyncStorage.setItem('token', token).then(() => {
-                                            this.props.navigation.navigate('HomeScreen',
-                                                {user: {userInfo}, baseUrl: baseUrl})
-                                        })
-                                    })
+                            console.log(
+                                'token : ' + token + '\n' + 'username : ' + body.username + '\n' + 'nationalCode : ' +
+                                body.nationalCode)
+                            await AsyncStorage.multiSet([
+                                ["username", body.phoneNumber],
+                                ["nationalCode", body.nationalCode],
+                                ["token", token]
+                            ]).then(() => {
+                                this.setState({progressModalVisible: false}, () => {
+                                    console.log('inserted')
+                                    this.props.navigation.navigate('HomeScreen',
+                                        {user: {userInfo}, baseUrl: baseUrl})
                                 })
-                            })
+                            });
+
+
                         } catch (e) {
                             // alert(e)
                             console.error(e)
@@ -124,27 +130,27 @@ export default class NationalCodeScreen extends Component {
                                 <Input placeholder='کد ملی خود را وارد کنید' placeholderTextColor={'gray'}
                                        style={styles.inputStyle} keyboardType={'numeric'}
                                        onChangeText={(text) => {
-                                           if (true) {
-                                               Keyboard.dismiss()
-                                               this.setState({progressModalVisible: true}, async () => {
-                                                   let body = {
-                                                       username: this.state.phoneNumber,
-                                                       nationalCode: this.state.nationalCode
-                                                   }
+                                           this.setState({nationalCode: text}, () => {
+                                               if (text.length == 10) {
+                                                   Keyboard.dismiss();
+                                                   this.setState({progressModalVisible: true}, async () => {
+                                                       let body = {
+                                                           username: this.state.phoneNumber,
+                                                           nationalCode: this.state.nationalCode
+                                                       }
 
-                                                   this.goToHomeScreen(body)
-                                               })
+                                                       await this.goToHomeScreen(body)
+                                                   })
 
-                                           }
-                                       }}/>
+                                               }
+                                           })
+
+                                       }}
+                                />
                             </Item>
-                            <Button light style={styles.buttonStyle}>
-                                <Text style={styles.textStyle} onPress={() => alert('clicked')}>ارسال مجدد کد فعال
-                                    سازی</Text>
-                            </Button>
                             <Text style={[styles.textStyle, {color: '#23b9b9', marginTop: 40}]} onPress={() => {
-                                this.props.navigation.goBack()
-                            }}>ویرایش شماره تماس</Text>
+                                this.goToHomeScreen(body);
+                            }}>تلاش مجدد</Text>
                         </Card>
                     </View>
 
