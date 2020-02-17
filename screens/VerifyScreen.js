@@ -25,13 +25,15 @@ export default class VerifyScreen extends Component {
         this.state = {
             progressModalVisible: false,
             phoneNumber: null,
-            verificationCode: null
+            verificationCode: null,
+            baseUrl: null
         }
     }
 
-    componentDidMount(): void {
+    async componentDidMount(): void {
         const phoneNumber = this.props.navigation.getParam('phoneNumber');
-        this.setState({phoneNumber: phoneNumber});
+        const baseUrl = await AsyncStorage.getItem('baseUrl');
+        this.setState({phoneNumber: phoneNumber, baseUrl: baseUrl});
         if (Platform.OS === 'android') {
             BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
         }
@@ -171,7 +173,9 @@ export default class VerifyScreen extends Component {
 
 
     verify = async (body) => {
-        const baseUrl = await AsyncStorage.getItem("baseUrl");
+        console.log('verify body : ' + JSON.stringify(body))
+        // const baseUrl = await AsyncStorage.getItem("baseUrl");
+        const baseUrl = this.state.baseUrl;
         fetch(baseUrl + VERIFY, {
             method: 'POST',
             headers: {'content-type': 'application/json'},

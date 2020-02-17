@@ -57,12 +57,13 @@ export default class NationalCodeScreen extends Component {
     }
 
     goToHomeScreen = async (body) => {
+        console.log('National Code Body : ' + JSON.stringify(body))
         const baseUrl = this.state.baseUrl;
         await fetch(baseUrl + AUTHENTICATE, {
             method: 'POST',
             headers: {'content-type': 'application/json'},
             body: JSON.stringify(body)
-        }).then((response) => response.json())
+        }).then(async (response) => response.json())
             .then(async (responseData) => {
                 console.log(JSON.stringify(responseData))
                 if (responseData['StatusCode'] === 200) {
@@ -71,20 +72,18 @@ export default class NationalCodeScreen extends Component {
                             let data = responseData['Data'];
                             let token = data['token'];
                             let userInfo = data['userinfo'];
+                            await AsyncStorage.setItem('token', token);
+                            await AsyncStorage.setItem('nationalCode', body.nationalCode);
+                            await AsyncStorage.setItem('username', body.username);
                             console.log(
-                                'token : ' + token + '\n' + 'username : ' + body.username + '\n' + 'nationalCode : ' +
+                                'token : ' + token + '\n' + 'username : ' + body.username + '\n' +
+                                'nationalCode : ' +
                                 body.nationalCode)
-                            await AsyncStorage.multiSet([
-                                ["username", body.phoneNumber],
-                                ["nationalCode", body.nationalCode],
-                                ["token", token]
-                            ]).then(() => {
-                                this.setState({progressModalVisible: false}, () => {
-                                    console.log('inserted')
-                                    this.props.navigation.navigate('HomeScreen',
-                                        {user: {userInfo}, baseUrl: baseUrl})
-                                })
-                            });
+                            this.setState({progressModalVisible: false}, () => {
+                                console.log('inserted')
+                                this.props.navigation.navigate('HomeScreen',
+                                    {user: {userInfo}, baseUrl: baseUrl})
+                            })
 
 
                         } catch (e) {
@@ -149,6 +148,10 @@ export default class NationalCodeScreen extends Component {
                                 />
                             </Item>
                             <Text style={[styles.textStyle, {color: '#23b9b9', marginTop: 40}]} onPress={() => {
+                                let body = {
+                                    username: this.state.phoneNumber,
+                                    nationalCode: this.state.nationalCode
+                                }
                                 this.goToHomeScreen(body);
                             }}>تلاش مجدد</Text>
                         </Card>

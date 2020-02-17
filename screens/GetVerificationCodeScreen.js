@@ -48,14 +48,11 @@ export default class GetVerificationCodeScreen extends Component {
         console.log(JSON.stringify(body))
         this.setState({progressModalVisible: true}, async () => {
             await fetch(baseUrl + GETVERIFICATIONCODE, {
-                // await fetch('https://91.92.208.142/api/GetVerificationCode', {
                 method: 'POST',
                 headers: {
                     'content-type': 'application/json',
                     Accept: 'application/json',
-                    // 'Authorization': 'Bearer ' + new  String(this.state.token)
                 },
-                // body: JSON.stringify(body),
                 body: JSON.stringify({phoneNumber: this.state.phone}),
             }).then((response) => response.json())
                 .then(async (responseData) => {
@@ -109,14 +106,11 @@ export default class GetVerificationCodeScreen extends Component {
         console.log(JSON.stringify(body))
         this.setState({progressModalVisible: true}, async () => {
             await fetch(baseUrl + GETVERIFICATIONCODE, {
-                // await fetch('https://91.92.208.142/api/GetVerificationCode', {
                 method: 'POST',
                 headers: {
                     'content-type': 'application/json',
                     Accept: 'application/json',
-                    // 'Authorization': 'Bearer ' + new  String(this.state.token)
                 },
-                // body: JSON.stringify(body),
                 body: JSON.stringify({phoneNumber: this.state.phone}),
             }).then((response) => response.json())
                 .then(async (responseData) => {
@@ -127,7 +121,6 @@ export default class GetVerificationCodeScreen extends Component {
                     } else if (responseData['StatusCode'] === 800) {
                         this.setState({progressModalVisible: false}, () => {
                             console.log(JSON.stringify(responseData))
-                            // this.props.navigation.push('RegisterScreen');
                             Alert.alert(
                                 "خطا در ارتباط با سرویس ارسال پیامک",
                                 '',
@@ -135,7 +128,6 @@ export default class GetVerificationCodeScreen extends Component {
                                     {
                                         text: "تلاش مجدد", onPress: async () => {
                                             await this.getVerificationCode(body)
-                                            // await this.componentWillMount();
 
                                         },
 

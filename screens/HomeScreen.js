@@ -200,8 +200,8 @@ export default class HomeScreen extends Component {
                 if (responseData['StatusCode'] === 200) {
                     if (responseData['Data'] != null) {
                         let data = responseData['Data'];
-                        await this.setState({progressModalVisible: false}, async () => {
-                            await this.setState({medicalCenters: data}, () => {
+                         this.setState({progressModalVisible: false}, async () => {
+                             this.setState({medicalCenters: data}, () => {
                                 console.log(JSON.stringify(this.state.medicalCenters))
                             })
                         })

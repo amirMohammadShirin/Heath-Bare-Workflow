@@ -35,7 +35,7 @@ const GETNOTICES = '/api/GetNotices';
 const GETSERVICEPLANDETAIL = '/api/SearchServicePlanDetail';
 const CANCEL_TEXT = 'انصراف';
 const RESERVE = '/api/Reserve';
-
+let myTimes = [];
 export default class ServicePlanResult extends Component {
 
     constructor(props) {
@@ -243,12 +243,16 @@ export default class ServicePlanResult extends Component {
     }
 
     getTimeOptions(array) {
+        myTimes = [];
         let options = [];
         for (let item of array) {
-            if (item.Valid) {
+            if (item['Valid'] == true) {
                 options.push(item.TimeSlice.substring(0, 5))
+                myTimes.push(item.TimeSlice.substring(0, 5));
             }
         }
+        myTimes.push(CANCEL_TEXT);
+        console.log('My Timessss ::::::::::::::::::::::::::: ' + JSON.stringify(myTimes))
         options.push(CANCEL_TEXT)
         return options;
     }
@@ -551,7 +555,11 @@ export default class ServicePlanResult extends Component {
                                         }
                                     >
                                         <Text style={[styles.modalCancelButtonText,
-                                            {alignSelf: 'center', textAlignVertical: 'center',fontFamily:'IRANMarker'}]}>انصراف</Text>
+                                            {
+                                                alignSelf: 'center',
+                                                textAlignVertical: 'center',
+                                                fontFamily: 'IRANMarker'
+                                            }]}>انصراف</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity
                                         style={[styles.modalSuccessButton, {
@@ -655,7 +663,7 @@ export default class ServicePlanResult extends Component {
 
                                         }}>
                                             <Text style={{
-                                                fontFamily:'IRANMarker',
+                                                fontFamily: 'IRANMarker',
                                                 padding: 1,
                                                 textAlign: 'center',
                                                 borderRadius: 2,
@@ -681,7 +689,7 @@ export default class ServicePlanResult extends Component {
 
                                         }}>
                                             <Text style={{
-                                                fontFamily:'IRANMarker',
+                                                fontFamily: 'IRANMarker',
                                                 padding: 1,
                                                 textAlign: 'center',
                                                 borderRadius: 2,
@@ -738,7 +746,7 @@ export default class ServicePlanResult extends Component {
 
                                     }}>
                                         <Text style={{
-                                            fontFamily:'IRANMarker',
+                                            fontFamily: 'IRANMarker',
                                             padding: 1,
                                             textAlign: 'center',
                                             borderRadius: 2,
@@ -755,23 +763,29 @@ export default class ServicePlanResult extends Component {
                                 <View style={{minHeight: 60, maxHeight: 65}}>
                                     <Button
                                         onPress={() => {
+                                            this.getTimeOptions(this.state.times)
                                             Keyboard.dismiss()
                                             ActionSheet.show(
                                                 {
-                                                    options: this.getTimeOptions(this.state.times),
+                                                    options: myTimes,
                                                     cancelButtonIndex: this.getCancelButtonIndex(
-                                                        this.getTimeOptions(this.state.times)),
+                                                        myTimes),
                                                     title: "انتخابی ساعت"
                                                 },
                                                 buttonIndex => {
                                                     if (this.state.times.length > 0) {
-                                                        if (buttonIndex <= this.state.times.length - 1)
+                                                        console.log('times : ', JSON.stringify(myTimes))
+                                                        console.log('index : ', buttonIndex)
+                                                        console.log(' times.length :', myTimes.length)
+                                                        console.log('buttonIndex <= this.state.myTimes.length - 1 : ' +
+                                                            buttonIndex + "<=" + myTimes.length)
+                                                        console.log(JSON.stringify(myTimes[buttonIndex]))
+                                                        if (buttonIndex <= myTimes.length - 1)
                                                             this.setState(
                                                                 {
                                                                     selectedTime: {
                                                                         Id: 0,
-                                                                        value: this.state.times[buttonIndex].TimeSlice.substring(
-                                                                            0, 5)
+                                                                        value: myTimes[buttonIndex]
                                                                     }
                                                                 });
                                                     }
@@ -790,7 +804,7 @@ export default class ServicePlanResult extends Component {
 
                                     }}>
                                         <Text style={{
-                                            fontFamily:'IRANMarker',
+                                            fontFamily: 'IRANMarker',
                                             padding: 1,
                                             textAlign: 'center',
                                             borderRadius: 2,
@@ -923,7 +937,7 @@ const styles = StyleSheet.create({
         margin: 5
     },
     modalSuccessButtonText: {
-        fontFamily:'IRANMarker',
+        fontFamily: 'IRANMarker',
         color: '#fff',
         fontWeight: 'bold',
         fontSize: 15,

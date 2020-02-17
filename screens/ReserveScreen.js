@@ -352,8 +352,8 @@ export default class ReserveScreen extends Component {
                         })
                     } else {
                         this.setState({progressModalVisible: false}, () => {
-                            alert('خطا در اتصال به سرویس')
-                            // alert(JSON.stringify(responseData))
+                            // alert('خطا در اتصال به سرویس')
+                            console.log(JSON.stringify(responseData))
                         })
 
                     }
@@ -540,7 +540,7 @@ export default class ReserveScreen extends Component {
                                 </Button>
                                 <Text style={styles.label}>جنسیت</Text>
                             </View>
-                            <View style={styles.row}>
+                            {false && <View style={styles.row}>
                                 <Button
                                     onPress={() => {
                                         Keyboard.dismiss()
@@ -572,7 +572,7 @@ export default class ReserveScreen extends Component {
                                     >{this.state.selectedState.value}</Text>
                                 </Button>
                                 <Text style={styles.label}>منطقه</Text>
-                            </View>
+                            </View>}
                             <View style={styles.row}>
                                 <Button
                                     onPress={() => {

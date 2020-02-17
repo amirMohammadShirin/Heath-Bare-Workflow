@@ -38,10 +38,10 @@ const MyPost = (props) => {
         <Card style={[styles.post]}>
             <CardItem bordered header style={{flexDirection: 'row-reverse', backgroundColor: props.headerColor}}>
                 <Right>
-                    <Text style={[styles.title,{color:'#fff'}]}>تاریخ</Text>
+                    <Text style={[styles.title, {color: '#fff'}]}>تاریخ</Text>
                 </Right>
                 <Body>
-                    <Text style={[styles.title,{color:'#fff'}]}>{props.date}</Text>
+                    <Text style={[styles.title, {color: '#fff'}]}>{props.date}</Text>
                 </Body>
             </CardItem>
             <CardItem style={{backgroundColor: props.myColor, flexDirection: 'row-reverse'}}>
@@ -76,7 +76,7 @@ const MyPost = (props) => {
                     <Text style={styles.value}>{props.type}</Text>
                 </Body>
             </CardItem>
-            <CardItem footer bordered style={{backgroundColor: props.myColor, flexDirection: 'row-reverse'}}>
+            <CardItem style={{backgroundColor: props.myColor, flexDirection: 'row-reverse'}}>
                 <Right>
                     <Text style={styles.title}>ساعت</Text>
                 </Right>
@@ -84,6 +84,16 @@ const MyPost = (props) => {
                     <Text style={styles.value}>{props.time}</Text>
                 </Body>
             </CardItem>
+            {props.disable &&
+            <CardItem footer bordered style={{backgroundColor: props.myColor, flexDirection: 'row-reverse'}}>
+                <Right>
+                    {/*<Icon type={'FontAwesome5'} name='calendar-times' style={{color: 'rgba(215,1,0,0.75)'}}/>*/}
+                    <Text style={[styles.title, {color: 'rgba(215,1,0,0.75)'}]}>لغو نوبت</Text>
+                </Right>
+                <Body>
+                    <Icon type={'FontAwesome5'} name='calendar-times' style={{color: 'rgba(215,1,0,0.75)'}}/>
+                </Body>
+            </CardItem>}
         </Card>
     )
 }
@@ -151,6 +161,7 @@ export default class ShowReservesScreen extends Component {
                                         text: "تایید", onPress: async () => {
                                             await this.getReservationReports()
                                             // await this.componentWillMount();
+                                            // this.props.navigation.push('ShowReservesScreen')
 
                                         }
                                     }
@@ -226,7 +237,7 @@ export default class ShowReservesScreen extends Component {
                                 date={value.date.substring(0, 10)}
                                 myColor={'#cfcfcf'}
                                 headerColor={'rgba(215,1,0,0.75)'}
-
+                                disable={false}
 
                         />
                     </Swipeable>
@@ -276,6 +287,7 @@ export default class ShowReservesScreen extends Component {
                                 medicalCenter={value.medicalCenter} actor={value.actor} date={value.date}
                                 myColor={'#fff'}
                                 headerColor={'rgba(0,138,50,0.78)'}
+                                disable={true}
                         />
                     </Swipeable>
                 </View>
@@ -455,12 +467,12 @@ const styles = StyleSheet.create({
         color: 'gray',
         textAlign: 'right',
         fontFamily: 'IRANMarker',
-        fontSize:13
+        fontSize: 13
     },
     value: {
         color: 'gray',
         textAlign: 'right',
         fontFamily: 'IRANMarker',
-        fontSize:11
+        fontSize: 11
     }
 });

@@ -208,7 +208,8 @@ export default class SideMenu extends Component {
                         </ListItem>}
                         {false && this.getAccess('personalInfo', 'admin') &&
                         <ListItem icon style={styles.listItem} onPress={() => {
-                            this.props.navigation.navigate('HistoryScreen')
+                            // this.props.navigation.navigate('HistoryScreen')
+                            this.props.navigation.push('HistoryScreen')
                         }}>
                             <Right>
                                 <Icon type='FontAwesome' name='history' style={styles.icons}/>
