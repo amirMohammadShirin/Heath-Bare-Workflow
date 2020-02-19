@@ -9,7 +9,7 @@ import {
     Platform,
     BackHandler,
     Alert,
-    AsyncStorage
+    AsyncStorage, ActivityIndicator
 } from 'react-native';
 import {PermissionsAndroid} from 'react-native';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button'
@@ -46,6 +46,8 @@ const options = {
 
 
 const REGISTER = '/api/Register'
+const AUTHENTICATE = "/Api/Authenticate";
+
 export default class ReserveScreen extends Component {
 
     constructor(props) {
@@ -54,6 +56,7 @@ export default class ReserveScreen extends Component {
             this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
         }
         this.state = {
+            progressModalVisible: false,
             token: null,
             baseUrl: null,
             patientUsername: '',
@@ -88,8 +91,64 @@ export default class ReserveScreen extends Component {
     }
 
 
+    goToHomeScreen = async (body) => {
+        console.log('National Code Body : ' + JSON.stringify(body))
+        const baseUrl = this.state.baseUrl;
+        await fetch(baseUrl + AUTHENTICATE, {
+            method: 'POST',
+            headers: {'content-type': 'application/json'},
+            body: JSON.stringify(body)
+        }).then(async (response) => response.json())
+            .then(async (responseData) => {
+                console.log(JSON.stringify(responseData))
+                if (responseData['StatusCode'] === 200) {
+                    if (responseData['Data'] != null) {
+                        try {
+                            let data = responseData['Data'];
+                            let token = data['token'];
+                            let userInfo = data['userinfo'];
+                            await AsyncStorage.setItem('token', token);
+                            await AsyncStorage.setItem('nationalCode', body.nationalCode);
+                            await AsyncStorage.setItem('username', body.username);
+                            console.log(
+                                'token : ' + token + '\n' + 'username : ' + body.username + '\n' +
+                                'nationalCode : ' +
+                                body.nationalCode)
+                            this.setState({progressModalVisible: false}, () => {
+                                console.log('inserted')
+                                this.props.navigation.navigate('HomeScreen',
+                                    {user: {userInfo}, baseUrl: baseUrl})
+                            })
+
+
+                        } catch (e) {
+                            // alert(e)
+                            console.error(e)
+                        }
+                    }
+                } else if (responseData['StatusCode'] === 600) {
+                    this.setState({progressModalVisible: false}, () => {
+                        // alert('کاربر یافت نشد')
+                        this.props.navigation.push('RegisterScreen');
+                    })
+                } else if (responseData['StatusCode'] === 601) {
+                    this.setState({progressModalVisible: false}, () => {
+                        alert('کد ملی وارد شده معتبر نمی باشد')
+                    })
+                } else {
+                    this.setState({progressModalVisible: false}, () => {
+                        alert('خطا در اتصال به سرویس')
+                        // alert(JSON.stringify(responseData))
+                    })
+                }
+            })
+            .catch((error) => {
+                console.error(error)
+            })
+    };
+
     async registerUser(body) {
-        this.setState({startDateModalVisible: true}, async () => {
+        this.setState({progressModalVisible: true}, async () => {
             await fetch(this.state.baseUrl + REGISTER, {
                 method: 'POST',
                 headers: {
@@ -104,7 +163,8 @@ export default class ReserveScreen extends Component {
                         if (responseData['Data'] != null) {
                             let data = responseData['Data'];
                             await this.setState({progressModalVisible: false}, async () => {
-                                await this.setState({data: data})
+                                // await this.setState({data: data})
+                                await this.goToHomeScreen(data)
 
                             })
                         }
@@ -187,10 +247,16 @@ export default class ReserveScreen extends Component {
             } else {
                 this.setState({
                     imageFromDevice: 'data:image/jpeg;base64,' +
-                        response.data
+                        response.data,
+                    file: response.data,
+                    fileName: response.fileName
+                }, () => {
+                    console.log('photo : ' + JSON.stringify({
+                        file: this.state.file,
+                        fileName: this.state.fileName
+                    }))
                 });
 
-                //Todo: init fileName and file
             }
         });
     }
@@ -355,7 +421,7 @@ export default class ReserveScreen extends Component {
                                     />
                                 </CardItem>
 
-                                <CardItem style={styles.row}>
+                                {false && <CardItem style={styles.row}>
                                     <Text style={styles.label}>نام کاربری</Text>
                                     <TextInput
                                         value={this.state.patientUsername}
@@ -363,8 +429,8 @@ export default class ReserveScreen extends Component {
                                         style={[styles.textInput]}
                                         multiline={false}
                                     />
-                                </CardItem>
-                                <CardItem style={styles.row}>
+                                </CardItem>}
+                                {false && <CardItem style={styles.row}>
                                     <Text style={styles.label}>رمز عبور</Text>
                                     <TextInput
                                         secureTextEntry={true}
@@ -373,7 +439,7 @@ export default class ReserveScreen extends Component {
                                         style={[styles.textInput]}
                                         multiline={false}
                                     />
-                                </CardItem>
+                                </CardItem>}
                                 <CardItem style={styles.row}>
                                     <Text style={styles.label}>موبایل</Text>
                                     <TextInput
@@ -489,7 +555,7 @@ export default class ReserveScreen extends Component {
                                         <DatePicker
                                             defDateString={this.state.selectedStartDate != null ?
                                                 this.state.selectedStartDate : moment([1950, 2, 21])}
-                                            refDate={moment([1921, 3, 21])}
+                                            refDate={moment([1951, 3, 21])}
                                             style={{marginTop: 5}}
                                             btnUnderlayColor={'#23b9b9'}
                                             TitleDateStyle={{backgroundColor: '#23b9b9'}}
@@ -501,44 +567,66 @@ export default class ReserveScreen extends Component {
                                 </ModalContent>
                             </Modal>
 
+                            <Modal style={{opacity: 0.9}}
+                                   width={300}
+                                   visible={this.state.progressModalVisible}
+                                   modalAnimation={new SlideAnimation({
+                                       slideFrom: 'bottom'
+                                   })}
+                            >
+                                <ModalContent style={styles.modalContent}>
+                                    <ActivityIndicator animating={true} size="small" color={"#23b9b9"}/>
+                                </ModalContent>
+                            </Modal>
+
                         </View>
                     </View>
                 </Content>
                 <Footer style={styles.footer}>
                     <Button style={styles.button} onPress={() => {
-
+                        // if (this.state.fileName != null && this.state.file != null) {
+                        //     this.setState({
+                        //         fileName: this.state.nationalCode.toString() != +'_' + this.state.cellPhone.toString() +
+                        //             '_image'
+                        //     })
+                        // }
                         if (
-                            this.state.patientUsername === '' ||
+                            //this.state.patientUsername === '' ||
                             this.state.nationalCode === '' ||
                             this.state.cellPhone === '' ||
                             this.state.firstName === '' ||
                             this.state.lastName === '' ||
                             this.state.birthDate === '' ||
                             this.state.gender === '' ||
-                            this.state.patientPassword === '' ||
+                            //this.state.patientPassword === '' ||
                             this.state.selectedStartDate === null ||
-                            this.state.file !== null ||
-                            this.state.fileCoverage !== null
+                            this.state.file == null ||
+                            this.state.fileName == null
                         ) {
                             alert('لطفا اطلاعات خود را به درستی وارد کنید')
                         } else {
-                            //myString.replace(/\D/g,'');
-                            let body = {
-                                fileName: this.state.fileName,
-                                file: this.state.file,
-                                patientUsername: this.state.patientUsername,
-                                nationalCode: this.state.nationalCode,
-                                cellPhone: this.state.cellPhone,
-                                firstName: this.state.firstName,
-                                lastName: this.state.lastName,
-                                birthDate: this.state.selectedStartDate.format("YYYY/MM/DD"),
-                                gender: this.state.gender,
-                                description: this.state.description,
-                                address: this.state.address,
-                                zipCode: this.state.zipCode
+                            if (!this.phoneNumberValidation(this.state.cellPhone)) {
+                                alert('شماره موبایل وارد شده معتبر نیست')
+                            } else {
+                                //myString.replace(/\D/g,'');
+                                let body = {
+                                    fileName: this.state.fileName,
+                                    file: this.state.file,
+                                    patientUsername: this.state.cellPhone,
+                                    nationalCode: this.state.nationalCode,
+                                    cellPhone: this.state.cellPhone,
+                                    firstName: this.state.firstName,
+                                    lastName: this.state.lastName,
+                                    // birthDate: this.state.selectedStartDate.format("YYYY/MM/DD"),
+                                    birthDate: this.state.selectedStartDate,
+                                    gender: this.state.gender,
+                                    description: this.state.description,
+                                    address: this.state.address,
+                                    zipCode: this.state.zipCode,
+                                }
+                                console.log(JSON.stringify(body))
+                                this.registerUser(body)
                             }
-                            console.log(JSON.stringify(body))
-                            this.registerUser(body)
                         }
 
                     }}>
@@ -712,5 +800,6 @@ const styles = StyleSheet.create({
         margin: 2,
         flex: 1,
         textAlign: 'right'
-    }
+    },
+
 });

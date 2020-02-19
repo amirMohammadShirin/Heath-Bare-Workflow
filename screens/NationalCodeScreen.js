@@ -93,7 +93,8 @@ export default class NationalCodeScreen extends Component {
                     }
                 } else if (responseData['StatusCode'] === 600) {
                     this.setState({progressModalVisible: false}, () => {
-                        alert('کاربر یافت نشد')
+                        // alert('کاربر یافت نشد')
+                        this.props.navigation.push('RegisterScreen');
                     })
                 } else if (responseData['StatusCode'] === 601) {
                     this.setState({progressModalVisible: false}, () => {

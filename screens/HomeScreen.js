@@ -24,7 +24,7 @@ import {Marker} from 'react-native-maps'
 // import * as Font from 'expo-font';
 
 let utmObj = require('utm-latlng');
-
+let convertor = new utmObj();
 // import DeviceInfo from 'react-native-device-info'
 //
 // const map = '<!DOCTYPE html>\n' +
@@ -180,7 +180,6 @@ export default class HomeScreen extends Component {
         }
 
 
-
     }
 
     async getAllLocations() {
@@ -200,8 +199,8 @@ export default class HomeScreen extends Component {
                 if (responseData['StatusCode'] === 200) {
                     if (responseData['Data'] != null) {
                         let data = responseData['Data'];
-                         this.setState({progressModalVisible: false}, async () => {
-                             this.setState({medicalCenters: data}, () => {
+                        this.setState({progressModalVisible: false}, async () => {
+                            this.setState({medicalCenters: data}, () => {
                                 console.log(JSON.stringify(this.state.medicalCenters))
                             })
                         })
@@ -219,16 +218,16 @@ export default class HomeScreen extends Component {
             })
     }
 
-    openSettings = async () => {
-        if (Platform.OS === 'ios') {
-            await Linking.openURL('app-settings:');
-        } else {
-            await IntentLauncher.startActivityAsync(
-                IntentLauncher.ACTION_LOCATION_SOURCE_SETTINGS
-            );
-        }
-
-    }
+    // openSettings = async () => {
+    //     if (Platform.OS === 'ios') {
+    //         await Linking.openURL('app-settings:');
+    //     } else {
+    //         await IntentLauncher.startActivityAsync(
+    //             IntentLauncher.ACTION_LOCATION_SOURCE_SETTINGS
+    //         );
+    //     }
+    //
+    // }
 
     _getLocationAsync = async () => {
         try {
@@ -304,6 +303,7 @@ export default class HomeScreen extends Component {
         if (Platform.OS === 'android') {
             BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
         }
+
     }
 
     render() {

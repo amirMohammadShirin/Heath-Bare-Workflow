@@ -9,7 +9,9 @@ import {
     ActivityIndicator,
     StatusBar,
     Platform,
-    BackHandler, Alert
+    BackHandler,
+    Alert,
+    BackAndroid
 } from 'react-native';
 import {
     Content,
@@ -196,7 +198,7 @@ export default class SideMenu extends Component {
                             this.props.navigation.navigate('ReserveScreen', {
                                 medicalCenter: null,
                                 doctor: null,
-                                goBack:'home'
+                                goBack: 'home'
                             })
                         }}>
                             <Right>
@@ -285,7 +287,10 @@ export default class SideMenu extends Component {
                         </ListItem>}
                         {this.getAccess('exit', 'admin') &&
                         <ListItem icon style={styles.listItem} onPress={() => {
-                            RNExitApp.exitApp()
+                            // RNExitApp.exitApp()
+                            if (Platform.OS === 'android') {
+                                BackHandler.exitApp();
+                            }
                         }}>
                             <Right>
                                 <Icon type='FontAwesome' name='power-off' style={styles.icons}/>
