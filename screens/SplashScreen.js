@@ -3,8 +3,8 @@ import {StyleSheet, ImageBackground, AsyncStorage} from 'react-native';
 
 
 const AUTHORIZE = '/api/Authorize';
-// const BASE = 'http://clinicapi.adproj.ir';
-const BASE = 'https://cisservices.tehran.ir/TM.Services.ClinicManagementApi.Ver1';
+const BASE = 'http://clinicapi.adproj.ir';
+// const BASE = 'https://cisservices.tehran.ir/TM.Services.ClinicManagementApi.Ver1';
 const AUTHENTICATE = "/Api/Authenticate";
 export default class SplashScreen extends Component {
 

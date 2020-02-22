@@ -53,11 +53,10 @@ export default class GetVerificationCodeScreen extends Component {
             headers: {
 
                 'content-type': 'application/json',
-                // Accept: 'application/json',
                 Accept: 'application/json',
             },
             body: JSON.stringify({phoneNumber: this.state.phone}),
-        }).then((response) => console.log(response))
+        }).then((response) => response.json())
             .then(async (responseData) => {
                 if (responseData['StatusCode'] === 200) {
                     this.setState({progressModalVisible: false}, () => {
@@ -154,45 +153,45 @@ export default class GetVerificationCodeScreen extends Component {
                     Accept: 'application/json',
                 },
                 body: JSON.stringify({phoneNumber: this.state.phone}),
-            }).then((response) => console.log(response))
-                // .then((response) => response.json())
-                // .then(async (responseData) => {
-                //     if (responseData['StatusCode'] === 200) {
-                //         this.setState({progressModalVisible: false}, () => {
-                //             this.props.navigation.push('VerifyScreen', {phoneNumber: body.phoneNumber});
-                //         })
-                //     } else if (responseData['StatusCode'] === 800) {
-                //         this.setState({progressModalVisible: false}, () => {
-                //             console.log(JSON.stringify(responseData))
-                //             Alert.alert(
-                //                 "خطا در ارتباط با سرویس ارسال پیامک",
-                //                 '',
-                //                 [
-                //                     {
-                //                         text: "تلاش مجدد", onPress: async () => {
-                //                             await this.getVerificationCode(body)
-                //
-                //                         },
-                //
-                //                     },
-                //                     {
-                //                         text: "انصراف",
-                //                         styles: 'cancel'
-                //                     }
-                //                 ],
-                //                 {
-                //                     cancelable: false,
-                //                 }
-                //             )
-                //         })
-                //     } else {
-                //         this.setState({progressModalVisible: false}, () => {
-                //             // alert('خطا در اتصال به سرویس')
-                //             console.log(JSON.stringify(responseData))
-                //         })
-                //
-                //     }
-                // })
+            })
+                .then((response) => response.json())
+                .then(async (responseData) => {
+                    if (responseData['StatusCode'] === 200) {
+                        this.setState({progressModalVisible: false}, () => {
+                            this.props.navigation.push('VerifyScreen', {phoneNumber: body.phoneNumber});
+                        })
+                    } else if (responseData['StatusCode'] === 800) {
+                        this.setState({progressModalVisible: false}, () => {
+                            console.log(JSON.stringify(responseData))
+                            Alert.alert(
+                                "خطا در ارتباط با سرویس ارسال پیامک",
+                                '',
+                                [
+                                    {
+                                        text: "تلاش مجدد", onPress: async () => {
+                                            await this.getVerificationCode(body)
+
+                                        },
+
+                                    },
+                                    {
+                                        text: "انصراف",
+                                        styles: 'cancel'
+                                    }
+                                ],
+                                {
+                                    cancelable: false,
+                                }
+                            )
+                        })
+                    } else {
+                        this.setState({progressModalVisible: false}, () => {
+                            // alert('خطا در اتصال به سرویس')
+                            console.log(JSON.stringify(responseData))
+                        })
+
+                    }
+                })
                 .catch((error) => {
                     console.error(error)
                     // alert(error)
@@ -267,8 +266,8 @@ export default class GetVerificationCodeScreen extends Component {
                                             phoneNumber: this.state.phone
                                         }
                                         Keyboard.dismiss();
-                                        this.getVerificationCode(body)
-                                        // this.demo(body);
+                                        // this.getVerificationCode(body)
+                                        this.demo(body);
                                     } else {
                                         if (this.state.length === 0) {
                                             alert('لطفا شماره تلفن خود را وارد کنید')
