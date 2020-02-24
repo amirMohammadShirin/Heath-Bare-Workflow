@@ -1,16 +1,18 @@
 import React, {Component} from 'react';
 import {
-    StyleSheet,
-    View,
-    Text,
-    StatusBar,
-    Image,
-    AsyncStorage,
     ActivityIndicator,
+    Alert,
+    AsyncStorage,
+    BackHandler,
+    Image,
     Keyboard,
-    Platform, BackHandler, Alert
+    Platform,
+    StatusBar,
+    StyleSheet,
+    Text,
+    View
 } from 'react-native';
-import {Button, Card, Container, Content, Input, Item} from 'native-base'
+import {Card, Container, Content, Input, Item} from 'native-base'
 import Modal, {ModalContent, SlideAnimation} from "react-native-modals";
 
 const AUTHENTICATE = "/Api/Authenticate";
@@ -57,6 +59,7 @@ export default class NationalCodeScreen extends Component {
     }
 
     goToHomeScreen = async (body) => {
+        this.setState({progressModalVisible: true})
         console.log('National Code Body : ' + JSON.stringify(body))
         const baseUrl = this.state.baseUrl;
         await fetch(baseUrl + AUTHENTICATE, {
@@ -79,12 +82,9 @@ export default class NationalCodeScreen extends Component {
                                 'token : ' + token + '\n' + 'username : ' + body.username + '\n' +
                                 'nationalCode : ' +
                                 body.nationalCode)
-                            this.setState({progressModalVisible: false}, () => {
-                                console.log('inserted')
-                                this.props.navigation.navigate('HomeScreen',
-                                    {user: {userInfo}, baseUrl: baseUrl})
-                            })
-
+                            await this.setState({progressModalVisible: false})
+                            this.props.navigation.navigate('HomeScreen',
+                                {user: {userInfo}, baseUrl: baseUrl})
 
                         } catch (e) {
                             // alert(e)
@@ -130,20 +130,18 @@ export default class NationalCodeScreen extends Component {
                                 <Input placeholder='کد ملی خود را وارد کنید' placeholderTextColor={'gray'}
                                        style={styles.inputStyle} keyboardType={'numeric'}
                                        onChangeText={(text) => {
-                                           this.setState({nationalCode: text}, () => {
+                                           this.setState({nationalCode: text}, async () => {
                                                if (text.length == 10) {
                                                    Keyboard.dismiss();
-                                                   this.setState({progressModalVisible: true}, async () => {
-                                                       let body = {
-                                                           username: this.state.phoneNumber,
-                                                           nationalCode: this.state.nationalCode
-                                                       }
-
-                                                       await this.goToHomeScreen(body)
-                                                   })
-
+                                                   let body = {
+                                                       username: this.state.phoneNumber,
+                                                       nationalCode: this.state.nationalCode
+                                                   }
+                                                   await this.goToHomeScreen(body)
                                                }
+
                                            })
+
 
                                        }}
                                 />

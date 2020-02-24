@@ -11,7 +11,7 @@ import {
     Platform,
     BackHandler,
     Alert,
-    BackAndroid
+    BackAndroid, AsyncStorage
 } from 'react-native';
 import {
     Content,
@@ -286,10 +286,26 @@ export default class SideMenu extends Component {
                             </Body>
                         </ListItem>}
                         {this.getAccess('exit', 'admin') &&
-                        <ListItem icon style={styles.listItem} onPress={() => {
-                            // RNExitApp.exitApp()
-                            if (Platform.OS === 'android') {
-                                BackHandler.exitApp();
+                        <ListItem icon style={styles.listItem} onPress={async () => {
+                            if (Platform.OS == 'android') {
+                                await AsyncStorage.removeItem("token").then(
+                                    async () => {
+                                        if (Platform.OS === 'android') {
+                                            Alert.alert(
+                                                'خروج',
+                                                ' مایل به خروج از برنامه هستید؟ ',
+                                                [
+                                                    {
+                                                        text: 'خیر',
+                                                        style: 'cancel',
+                                                    },
+                                                    {text: 'بله', onPress: () => BackHandler.exitApp()},
+                                                ],
+                                                {cancelable: false},
+                                            );
+                                        }
+                                    }
+                                )
                             }
                         }}>
                             <Right>

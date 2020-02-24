@@ -251,6 +251,7 @@ export default class SearchMedicalCenter extends Component {
                     if (responseData['Data'] != null) {
                         let data = responseData['Data'];
                         await this.setState({progressModalVisible: false}, async () => {
+                            console.log(JSON.stringify(data))
                             await this.setState({favoriteDoctors: data})
                         })
                     }
@@ -437,7 +438,7 @@ export default class SearchMedicalCenter extends Component {
                                                         Description: item.Description,
                                                         Gender: item.Gender,
                                                         LastCertificate: item.Certificate,
-                                                        Skill: item.Skills[0].Title,
+                                                        Skill: (item.Skills.length > 0) ? item.Skills[0].Title : null,
                                                     }, visible: true
                                                 })
                                             }
@@ -445,7 +446,7 @@ export default class SearchMedicalCenter extends Component {
                                         >
                                             <Body>
                                                 <Text style={{
-                                                    fontFamily:'IRANMarker',
+                                                    fontFamily: 'IRANMarker',
                                                     color: '#000',
                                                     width: '100%',
                                                     textAlign: 'right',
@@ -682,7 +683,7 @@ const styles = StyleSheet.create({
         color: '#23b9b9'
     },
     resultText: {
-        fontFamily:'IRANMarker',
+        fontFamily: 'IRANMarker',
         color: '#000',
         textAlign: 'right',
         fontSize: 15,
@@ -690,7 +691,7 @@ const styles = StyleSheet.create({
         marginTop: 5,
     },
     filters: {
-        fontFamily:'IRANMarker',
+        fontFamily: 'IRANMarker',
         color: '#23b9b9',
         textAlign: 'right',
         fontSize: 13,

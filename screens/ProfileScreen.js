@@ -115,14 +115,14 @@ export default class ProfileScreen extends Component {
                                    }}
                                    defaultSource={require(
                                        'D:\\E\\react native projects\\Health\\bare\\salamat\\assets\\images\\account.png')}
-                                   source={{uri: 'https://i.pinimg.com/5s64x/f3/25/82/f32582233e16aecb8d7f4062bf895allcb.jpg'}}/> :
+                                   /> :
                             <Image style={styles.avatar}
                                    onLoadEnd={() => {
                                        this.setState({animated: !this.state.animated})
                                    }}
                                    defaultSource={require(
                                        'D:\\E\\react native projects\\Health\\bare\\salamat\\assets\\images\\hijab.png')}
-                                   source={{uri: 'https://i.pinimg.com/56s4x/f3/25/82/f32582233e16aecb8d7f4062bfll895acb.jpg'}}/>
+                                   />
                         }
                         <ActivityIndicator size={'small'} color={'gray'} animating={this.state.animated}/>
                         <View style={styles.body}>

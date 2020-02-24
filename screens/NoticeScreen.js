@@ -50,11 +50,13 @@ class Post extends Component {
                                     this.setState({animate: !this.state.animate})
                                 }}
                                 style={[styles.postImage]}
+                                defaultSource={require(
+                                    'D:\\E\\react native projects\\Health\\bare\\salamat\\assets\\images\\pic.png')}
                                 source={{uri: this.state.postContentImage}}/>
                         </Body>
                     </CardItem>
                     <CardItem footer>
-                        <Body style={{flexDirection:'row-reverse'}}>
+                        <Body style={{flexDirection: 'row-reverse'}}>
                             <Text style={styles.postText}>{this.state.postContentText}</Text>
                         </Body>
                     </CardItem>
