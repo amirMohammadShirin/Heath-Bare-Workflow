@@ -157,6 +157,7 @@ export default class SplashScreen extends Component {
             <ImageBackground style={styles.container}
                              source={require(
                                  'D:\\E\\react native projects\\Health\\bare\\salamat\\assets\\images\\splash.png')}
+
                 // onPress={() => {
                 //     // this.props.navigation.user.username = 'adrian';
                 //     // this.props.navigation.user.password = '1234';

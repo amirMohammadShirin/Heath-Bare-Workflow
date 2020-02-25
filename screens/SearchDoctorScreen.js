@@ -518,7 +518,7 @@ export default class SearchMedicalCenter extends Component {
                                                 padding: 1
                                             }]}>{(this.state.selectedDoctor.Description != null &&
                                             this.state.selectedDoctor.Description !== '') ?
-                                            this.state.selectedDoctor.Description : ''}</Text>
+                                            this.state.selectedDoctor.Description : null}</Text>
                                         <Text style={[styles.modalCancelButtonText,
                                             {
                                                 margin: 1,
@@ -528,7 +528,7 @@ export default class SearchMedicalCenter extends Component {
                                                 fontWeight: 'bold'
                                             }]}>{(this.state.selectedDoctor.LastCertificate != null &&
                                             this.state.selectedDoctor.LastCertificate !== '') ?
-                                            this.state.selectedDoctor.LastCertificate : ''}</Text>
+                                            this.state.selectedDoctor.LastCertificate : null}</Text>
                                         <Text style={[styles.modalCancelButtonText,
                                             {
                                                 fontSize: 13, fontWeight: 'bold', margin: 1,
@@ -537,7 +537,7 @@ export default class SearchMedicalCenter extends Component {
                                             }]}>{(this.state.selectedDoctor.Skill !=
                                             null &&
                                             this.state.selectedDoctor.Skill !== '') ?
-                                            this.state.selectedDoctor.Skill : ''}</Text>
+                                            this.state.selectedDoctor.Skill : null}</Text>
                                     </View>
                                     }
                                 </View>
