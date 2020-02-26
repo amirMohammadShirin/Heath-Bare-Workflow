@@ -103,13 +103,17 @@ export default class MapScreen extends Component {
     async componentWillMount(): void {
         // this.setState(
         //     {user: this.props.navigation.getParam('user'), baseUrl: this.props.navigation.getParam('baseUrl')})
+        this.mapRef.fitToSuppliedMarkers(
+            [this.markerRef],
+            false, // not animated
+        );
         let token = await AsyncStorage.getItem('token');
         let baseUrl = await AsyncStorage.getItem('baseUrl');
         let lat = await AsyncStorage.getItem('Latitude');
         let long = await AsyncStorage.getItem('Longitude');
         await this.setState(
             {baseUrl: baseUrl, token: token, lat: parseFloat(lat), long: parseFloat(long)}, () => {
-                //this.getLocation()
+                this.getLocation()
             })
 
         if (Platform.OS === 'android' && !Constants.isDevice) {
@@ -192,12 +196,14 @@ export default class MapScreen extends Component {
                                hidden={false}/>
                     }
                     <MapView
+                        ref={(ref) => { this.mapRef = ref }}
                         provider={'google'}
                         userLocationAnnotationTitle={"موقعیت من"}
                         showsMyLocationButton={true}
                         loadingEnabled={true}
                         loadingIndicatorColor={'#23b9b9'}
                         showsUserLocation={true}
+
                         minZoomLevel={0}
                         style={{
                             width: Dimensions.get('window').width,
@@ -210,6 +216,7 @@ export default class MapScreen extends Component {
                             longitudeDelta: 0.0421,
                         }}>
                         <MyMarker
+                            ref={(ref) => { this.markerRef = ref }}
                             title={this.state.medicalCenter.Title}
                             coordinate={{
                                 latitude: this.state.lat,
