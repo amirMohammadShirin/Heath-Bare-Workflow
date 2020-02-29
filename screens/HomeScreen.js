@@ -12,19 +12,11 @@ import {
     PermissionsAndroid, BackHandler, Alert
 } from 'react-native';
 import {Container, Header, Footer, Fab, Button, Left, Right, Icon, Text, Input, Content, Item} from 'native-base';
-
-// import * as Permissions from 'expo-permissions'
-// import * as Location from 'expo-location';
-// import Constants from 'expo-constants'
-// import {WebView} from 'react-native-webview';
-// import * as IntentLauncher from 'expo-intent-launcher';
+import Converter from 'geodesy/latlon-spherical.js';
 import Modal, {ModalButton, ModalContent, ModalFooter, ModalTitle, SlideAnimation} from "react-native-modals";
 import MapView from 'react-native-maps';
 import {Marker} from 'react-native-maps'
-// import * as Font from 'expo-font';
 
-let utmObj = require('utm-latlng');
-let convertor = new utmObj();
 // import DeviceInfo from 'react-native-device-info'
 //
 // const map = '<!DOCTYPE html>\n' +
@@ -169,16 +161,16 @@ export default class HomeScreen extends Component {
         return true;
     }
 
-    getLatLong(first, second, isLat) {
-        let operator = new utmObj('WGS 84');
-        let convert = operator.convertUtmToLatLng(parseFloat(first), parseFloat(second), 'WGS 84', 'WGS 84')
-        console.log(JSON.stringify(convert))
-        if (isLat) {
-            return convert.lat;
+    getLatLong(location, type) {
+        let converter = Converter.parse(location);
+        let point = converter.toString('n');
+        let latlong = point.split(',');
+        let pointToShow = {latitude: latlong[0], longitude: latlong[1]}
+        if (type === 'latitude') {
+            return parseFloat(pointToShow.latitude);
         } else {
-            return convert.lang;
+            return parseFloat(pointToShow.longitude);
         }
-
 
     }
 
@@ -282,6 +274,7 @@ export default class HomeScreen extends Component {
 
 
     async componentDidMount(): void {
+        this.getLatLong('35°42\'48.4"N, 51°29\'17.0"E');
         if (Platform.OS === 'android') {
             BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
         }
@@ -386,9 +379,11 @@ export default class HomeScreen extends Component {
                                         this.setState({visible: true})
                                     })}
                                     coordinate={{
-                                        latitude: parseFloat(value.Latitude),
-                                        longitude: parseFloat(value.Longitude),
-                                    }}>
+                                        latitude: this.getLatLong('35°42\'48.4"N, 51°29\'17.0"E', 'latitude'),
+                                        longitude: this.getLatLong('35°42\'48.4"N, 51°29\'17.0"E', 'longitude'),
+                                    }}
+
+                                >
                                     <Icon type={'FontAwesome5'} name={'map-marker-alt'}
                                           style={{color: '#23b9b9', fontSize: 45}}/>
                                 </Marker>
