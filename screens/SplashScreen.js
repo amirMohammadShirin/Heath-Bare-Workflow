@@ -4,6 +4,20 @@ import {StyleSheet, ImageBackground, AsyncStorage} from 'react-native';
 
 const AUTHORIZE = '/api/Authorize';
 const BASE = 'http://clinicapi.adproj.ir';
+const GETCROSS = '/api/GetDefaultImage/Cross';
+const GETDOCTOR = '/api/GetDefaultImage/Doctor';
+const GETHIJAB = '/api/GetDefaultImage/Hijab';
+const GETVEIL = '/api/GetDefaultImage/Veil';
+const GETACCOUNT = '/api/GetDefaultImage/Account';
+const GETPIC = '/api/GetDefaultImage/Pic';
+const imageObject = {
+    doctor: BASE + GETDOCTOR,
+    veil: BASE + GETVEIL,
+    account: BASE + GETACCOUNT,
+    hijab: BASE + GETHIJAB,
+    cross: BASE + GETCROSS,
+    pic: BASE + GETPIC
+}
 // const BASE = 'https://cisservices.tehran.ir/TM.Services.ClinicManagementApi.Ver1';
 const AUTHENTICATE = "/Api/Authenticate";
 export default class SplashScreen extends Component {
@@ -76,18 +90,18 @@ export default class SplashScreen extends Component {
                                                 // })
 
                                                 this.props.navigation.navigate('HomeScreen',
-                                                    {user: {userInfo}, baseUrl: BASE})
-                                            } catch (e) {
+                                                { user: { userInfo }, baseUrl: BASE, imageObject: imageObject })
+                                         } catch (e) {
                                                 // alert(e)
                                                 console.error(e)
                                             }
                                         }
                                     } else if (responseData['StatusCode'] === 600) {
-                                        this.setState({progressModalVisible: false}, () => {
+                                        this.setState({ progressModalVisible: false }, () => {
                                             alert('کاربر یافت نشد')
                                         })
                                     } else {
-                                        this.setState({progressModalVisible: false}, () => {
+                                        this.setState({ progressModalVisible: false }, () => {
                                             // alert('خطا در اتصال به سرویس')
                                             // alert(JSON.stringify(responseData))
                                             this.props.navigation.navigate('GetVerificationCodeScreen', {
@@ -95,7 +109,8 @@ export default class SplashScreen extends Component {
                                                     username: 'adrian',
                                                     password: '1234',
                                                     role: 'stranger'
-                                                }
+                                                },
+                                                imageObject: imageObject
                                             })
                                         })
                                     }
@@ -114,7 +129,8 @@ export default class SplashScreen extends Component {
                                 username: 'adrian',
                                 password: '1234',
                                 role: 'stranger'
-                            }
+                            },
+                            imageObject: imageObject
                         })
                     } else {
                         alert('خطا در اتصال به سرویس')
@@ -131,7 +147,8 @@ export default class SplashScreen extends Component {
                     username: 'adrian',
                     password: '1234',
                     role: 'stranger'
-                }
+                },
+                imageObject: imageObject
             })
         }
         // const data = await this.performTimeConsumingTask();

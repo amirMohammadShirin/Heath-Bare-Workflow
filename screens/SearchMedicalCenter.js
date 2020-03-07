@@ -51,7 +51,8 @@ export default class SearchMedicalCenter extends Component {
             messageOfAlert: '',
             progressModalVisible: false,
             previousLength: -1,
-            favoriteMedicalCenters: []
+            favoriteMedicalCenters: [],
+            imageObject:null
 
         };
 
@@ -61,9 +62,8 @@ export default class SearchMedicalCenter extends Component {
 
     async goToDetailsScreen(value) {
         this.props.navigation.navigate('DetailsForMedicalCenterScreen',
-            {medicalCenter: value, doctor: null, backRoute: 'SearchMedicalCenter'})
+            {medicalCenter: value, doctor: null, backRoute: 'SearchMedicalCenter',imageObject:this.state.imageObject})
     }
-
     handleBackButtonClick() {
         // alert('pressed')
 
@@ -89,14 +89,14 @@ export default class SearchMedicalCenter extends Component {
     onBackPressed() {
         this.props.navigation.goBack(null);
     }
-
     async componentWillMount(): void {
+        let image = this.props.navigation.getParam('imageObject');
         if (Platform.OS === 'android') {
             BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
         }
         var token = await AsyncStorage.getItem('token');
-        var baseUrl = await AsyncStorage.getItem('baseUrl')
-        await this.setState({baseUrl: baseUrl, token: token}, () => {
+        var baseUrl = await AsyncStorage.getItem('baseUrl');
+        await this.setState({baseUrl: baseUrl, token: token,imageObject:image} , () => {
             this.getFavoriteMedicalCenters()
         })
 
@@ -227,11 +227,12 @@ export default class SearchMedicalCenter extends Component {
                         </Item>
                         <View style={[styles.row, {flexDirection: this.state.flexDirection}]}>
                             <Button transparent style={{alignSelf: 'flex-start', margin: 2, padding: 2}}
-                                    onPress={() => {
+                                     onPress={() => {
                                         Keyboard.dismiss()
                                         this.props.navigation.navigate('AdvanceSearchScreen', {
                                             medicalCenter: true,
                                             doctor: false,
+                                            imageObject : this.state.imageObject
                                             // headerFontSize : 20
                                         })
                                     }}>

@@ -47,6 +47,9 @@ export default class DoctorsResult extends Component {
             Gender: null,
             Skill: null,
             Certificate: null,
+            doctorImage:null,
+            hijab:null,
+            doctorImage : null,
         };
 
 
@@ -55,8 +58,9 @@ export default class DoctorsResult extends Component {
     goToReserveScreen() {
 
         this.props.navigation.navigate('ReserveScreen', {
-            doctor: this.state.selectedDoctor
+            doctor: this.state.selectedDoctor,imageObject:this.state.imageObject
         });
+
 
     }
 
@@ -68,7 +72,7 @@ export default class DoctorsResult extends Component {
     }
 
     goToDetailsScreen(value) {
-        this.props.navigation.navigate('DetailsScreen', {doctor: value, medicalCenter: null})
+        this.props.navigation.navigate('DetailsScreen', {doctor: value, medicalCenter: null,imageObject:this.state.imageObject})
 
     }
 
@@ -91,6 +95,7 @@ export default class DoctorsResult extends Component {
     }
 
     async componentWillMount(): void {
+        let image = this.props.navigation.getParam('imageObject')
         if (Platform.OS === 'android') {
             BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
         }
@@ -107,21 +112,23 @@ export default class DoctorsResult extends Component {
             Gender: Gender,
             Skill: Skill,
             Certificate: Certificate,
+            imageObject : image
         }, () => {
             // alert(JSON.stringify(this.state.filters))
         })
 
     }
-
     onBackPressed() {
         Keyboard.dismiss();
         if (typeof this.props.navigation.getParam('medicalCenter') !== 'undefined' ||
             typeof this.props.navigation.getParam('medicalCenter') != null) {
 
             this.props.navigation.navigate('SearchDoctorScreen',
-                {medicalCenter: typeof this.props.navigation.getParam('medicalCenter')})
+                {medicalCenter: typeof this.props.navigation.getParam('medicalCenter') , imageObject:this.state.imageObject})
         } else {
-            this.props.navigation.navigate('SearchDoctorScreen')
+            this.props.navigation.navigate('SearchDoctorScreen',{
+                imageObject:this.state.imageObject
+            })
         }
     }
 
@@ -218,14 +225,16 @@ export default class DoctorsResult extends Component {
                                             <Text style={styles.description}>{item.Description}</Text>
                                         </Body>
                                         {item.Gender !== 'زن' ? <Right>
-                                                <Thumbnail circular
-                                                           defaultSource={{uri: 'data:image/image;base64,' + doctor}}
+                                        <Thumbnail circular
+                                                           source={{uri: (item.image !== null && typeof item.image !== 'undefined')?item.image:this.state.imageObject.doctor}}
+                                                           //    defaultSource={{uri: 'data:image/image;base64,' + doctor}}
                                                 />
                                             </Right> :
                                             <Right>
                                                 <Thumbnail circular
 
-                                                           defaultSource={{uri: 'data:image/image;base64,' + veil}}
+source={{uri:(item.image !== null && typeof item.image !== 'undefined') ? item.image : this.state.imageObject.hijab}}
+//    defaultSource={{uri: 'data:image/image;base64,' + veil}}
                                                 />
                                             </Right>}
                                     </ListItem>

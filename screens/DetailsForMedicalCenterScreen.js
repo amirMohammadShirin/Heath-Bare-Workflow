@@ -59,6 +59,8 @@ export default class DetailsForMedicalCenterScreen extends Component {
             token: null,
             progressModalVisible: false,
             selectedMedicalCenter: null,
+            cross:null,
+            imageObject:null
         }
 
 
@@ -82,6 +84,8 @@ export default class DetailsForMedicalCenterScreen extends Component {
     }
 
     async componentWillMount(): void {
+        let image = this.props.navigation.getParam('imageObject')
+        this.setState({imageObject:image})
         if (Platform.OS === 'android') {
             BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
         }
@@ -89,7 +93,7 @@ export default class DetailsForMedicalCenterScreen extends Component {
         var baseUrl = await AsyncStorage.getItem('baseUrl')
         const medicalCenter = this.props.navigation.getParam('medicalCenter');
         console.log(JSON.stringify(this.props.navigation.state))
-        await this.setState({baseUrl: baseUrl, token: token, selectedMedicalCenter: medicalCenter}, () => {
+        await this.setState({ baseUrl: baseUrl, token: token, selectedMedicalCenter: medicalCenter }, () => {
             this.getMedicalCenterDetails()
         })
     }
@@ -199,6 +203,7 @@ export default class DetailsForMedicalCenterScreen extends Component {
                                 eveningEnd: data['EveningEnd'],
                                 nightStart: data['NightStart'],
                                 nightEnd: data['NightEnd'],
+                                 //image : data['Image']
                             })
                         })
                     }
@@ -241,14 +246,15 @@ export default class DetailsForMedicalCenterScreen extends Component {
                         <Card style={{padding: 5, borderColor: '#23b9b9', elevation: 8, borderWidth: 1}}>
                             {!this.state.progressModalVisible && <CardItem style={{marginTop: 5}}>
                                 <Left>
-                                    <Thumbnail circular
+                                <Thumbnail circular
                                                large style={{
                                         alignSelf: 'center',
                                         tintColor:'#000'
                                     }}
 
                                                resizeMethod={"resize"}
-                                               defaultSource={{uri: 'data:image/png;base64,'+cross}}
+                                               source={{uri: (this.state.image!==null && typeof this.state.image !== 'undefined')? this.state.image : this.state.imageObject.cross  }} 
+                                            //    defaultSource={{uri: 'data:image/png;base64,'+cross}}
 
                                     />
                                     <Body style={{justifyContent: 'center', alignContent: 'center'}}>

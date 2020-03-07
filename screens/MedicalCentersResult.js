@@ -48,7 +48,9 @@ export default class MedicalCentersResult extends Component {
             Service: null,
             ServiceDetail: null,
             IsContract: null,
-            props: props
+            props: props,
+            crossImage: null,
+            imageObject:null
         };
 
 
@@ -56,7 +58,7 @@ export default class MedicalCentersResult extends Component {
 
 
     async goToDetailsScreen(value) {
-        this.props.navigation.navigate('DetailsForMedicalCenterScreen', {medicalCenter: value, doctor: null})
+        this.props.navigation.navigate('DetailsForMedicalCenterScreen', { medicalCenter: value, doctor: null,imageObject:this.state.imageObject })
     }
 
     // onSwipeLeft(gestureState) {
@@ -71,6 +73,7 @@ export default class MedicalCentersResult extends Component {
     // }
 
     async componentWillMount(): void {
+        let image = this.props.navigation.getParam('imageObject');
         if (Platform.OS === 'android') {
             BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
         }
@@ -88,7 +91,8 @@ export default class MedicalCentersResult extends Component {
             Facility: Facility,
             Service: Service,
             ServiceDetails: ServiceDetails,
-            IsContract: IsContract
+            IsContract: IsContract,
+            imageObject:image
         }, () => {
             // alert(JSON.stringify(this.state.filters))
         })
@@ -106,7 +110,7 @@ export default class MedicalCentersResult extends Component {
 
             if (!this.state.progressModalVisible) {
                 if (this.state.visible) {
-                    this.setState({visible: false})
+                    this.setState({ visible: false })
                 } else {
                     this.onBackPressed()
                 }
@@ -129,14 +133,14 @@ export default class MedicalCentersResult extends Component {
             <Container>
                 <Header style={styles.header}>
                     <Left>
-                        <Button transparent style={styles.headerMenuIcon}
-                                onPress={() => {
-                                    this.props.navigation.navigate('SearchMedicalCenter')
-                                }}>
+                    <Button transparent style={styles.headerMenuIcon}
+                            onPress={() => {
+                                this.props.navigation.navigate('SearchMedicalCenter',{imageObject:this.state.imageObject})
+                            }}>
                             <Icon style={styles.headerMenuIcon} name='arrow-back'
-                                  onPress={() => {
-                                      this.props.navigation.navigate('SearchMedicalCenter')
-                                  }}/>
+                                onPress={() => {
+                                    this.props.navigation.navigate('SearchMedicalCenter',{imageObject:this.state.imageObject})
+                                }} />
                         </Button>
                     </Left>
                     <Right>
@@ -202,10 +206,10 @@ export default class MedicalCentersResult extends Component {
                                                   alignItems: 'center',
                                               }}
                                               onPress={() => {
-                                                  Keyboard.dismiss()
-                                                  this.setState({selectedMedicalCenter: item, visible: true})
-                                              }
-                                              }
+                                            Keyboard.dismiss()
+                                            this.setState({ selectedMedicalCenter: item, visible: true })
+                                        }
+                                        }
 
                                     >
                                         <Body style={{height: '100%', marginRight: 5, alignSelf: 'center'}}>
@@ -228,9 +232,11 @@ export default class MedicalCentersResult extends Component {
                                             }}>{item.Description}</Text>
                                         </Body>
                                         <Right>
-                                            <Thumbnail circular
-                                                       defaultSource={{uri: 'data:image/png;base64,'+cross}}/>
-                                        </Right>
+                                        <Thumbnail circular
+                                                  source={{ uri: (item.image!=null && typeof item.image !== 'undefined') ? item.image : this.state.imageObject.cross }}
+                                                  //    defaultSource={{uri: 'data:image/png;base64,'+cross}}
+                                            />
+                                             </Right>
                                     </ListItem>
                                 </View>
                             )) : null}
@@ -240,7 +246,7 @@ export default class MedicalCentersResult extends Component {
                         <Modal
                             width={300}
                             onTouchOutside={() => {
-                                this.setState({visible: false});
+                                this.setState({ visible: false });
                             }}
                             visible={this.state.visible}
                             modalTitle={
@@ -256,9 +262,9 @@ export default class MedicalCentersResult extends Component {
                                         textStyle={styles.modalCancelButtonText}
                                         text="جستجوی پزشک"
                                         onPress={async () => {
-                                            this.setState({visible: false})
+                                            this.setState({ visible: false })
                                             this.props.navigation.navigate('SearchDoctorScreen',
-                                                {medicalCenter: (this.state.selectedMedicalCenter)})
+                                                { medicalCenter: (this.state.selectedMedicalCenter) , imageObject:this.state.imageObject })
                                         }}
                                     />
                                     <ModalButton
@@ -266,7 +272,7 @@ export default class MedicalCentersResult extends Component {
                                         textStyle={[styles.modalSuccessButtonText]}
                                         text="اطلاعات بیشتر"
                                         onPress={async () => {
-                                            await this.setState({visible: false})
+                                            await this.setState({ visible: false })
                                             await this.goToDetailsScreen(this.state.selectedMedicalCenter)
                                         }
                                         }

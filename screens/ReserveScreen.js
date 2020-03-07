@@ -44,6 +44,7 @@ export default class ReserveScreen extends Component {
         this.secondActionSheet = null;
         this.thirdActionSheet = null;
         this.state = {
+            imageObject:null,
             medicalCenterSearchWord: null,
             doctorSearchWord: null,
             //-----------------------Progress Modal States--------------------
@@ -121,6 +122,8 @@ export default class ReserveScreen extends Component {
     }
 
     async componentWillMount(): void {
+        let image = this.props.navigation.getParam('imageObject')
+      
         if (Platform.OS === 'android') {
             BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
         }
@@ -133,6 +136,7 @@ export default class ReserveScreen extends Component {
         this.setState({
             token: token,
             baseUrl: baseUrl,
+            imageObject:image,
             medicalCenterSearchWord: (typeof MEDICALCENTER != 'undefined' && MEDICALCENTER != null) ?
                 MEDICALCENTER.Title :
                 null,
@@ -337,8 +341,9 @@ export default class ReserveScreen extends Component {
                                         skill: skill.id !== -100 ? skill.value : null,
                                         gender: gender.id !== -100 ? gender.value : null,
                                         startDate: startDate != null ? startDate : null,
-                                        endDate: endDate != null ? endDate : null
-                                    })
+                                        endDate: endDate != null ? endDate : null,
+                                        imageObject : this.state.imageObject
+                                                                      })
                                 }
                             })
                         }
@@ -408,7 +413,9 @@ export default class ReserveScreen extends Component {
         const back = this.props.navigation.getParam('goBack');
         if (back != null && back === 'home') {
 
-            this.props.navigation.push('HomeScreen')
+            this.props.navigation.push('HomeScreen',{
+                imageObject:this.state.imageObject
+            })
 
 
         } else {

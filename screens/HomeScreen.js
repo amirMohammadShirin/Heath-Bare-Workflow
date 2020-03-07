@@ -132,7 +132,8 @@ export default class HomeScreen extends Component {
             visible: false,
             token: null,
             medicalCenters: [],
-            selectedMedicalCenter: null
+            selectedMedicalCenter: null,
+            imageObject:null,
         }
 
     }
@@ -162,9 +163,7 @@ export default class HomeScreen extends Component {
     }
 
     getLatLong(location, type) {
-        let converter = Converter.parse(location);
-        let point = converter.toString('n');
-        let latlong = point.split(',');
+        let latlong = location.split(',');
         let pointToShow = {latitude: latlong[0], longitude: latlong[1]}
         if (type === 'latitude') {
             return parseFloat(pointToShow.latitude);
@@ -173,7 +172,6 @@ export default class HomeScreen extends Component {
         }
 
     }
-
     async getAllLocations() {
         await this.setState({progressModalVisible: true})
         await fetch(this.state.baseUrl + GETALLLOCATIONS, {
@@ -252,6 +250,7 @@ export default class HomeScreen extends Component {
     }
 
     async componentWillMount(): void {
+        let image = this.props.navigation.getParam('imageObject')
         if (Platform.OS === 'android') {
             BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
         }
@@ -267,30 +266,29 @@ export default class HomeScreen extends Component {
             this._getLocationAsync();
         }
         this.setState(
-            {user: this.props.navigation.getParam('user'), baseUrl: baseUrl, token: token}, async () => {
+            {user: this.props.navigation.getParam('user'), baseUrl: baseUrl, token: token,imageObject:image}, async () => {
                 await this.getAllLocations()
             })
     }
 
-
     async componentDidMount(): void {
-        this.getLatLong('35°42\'48.4"N, 51°29\'17.0"E');
-        if (Platform.OS === 'android') {
-            BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
-        }
-        const LocationPermission = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION, {
-                title: 'Cool Photo App Camera Permission',
-                message:
-                    'Cool Photo App needs access to your camera ' +
-                    'so you can take awesome pictures.',
-                buttonNeutral: 'Ask Me Later',
-                buttonNegative: 'Cancel',
-                buttonPositive: 'OK',
+        //        this.getLatLong('35°42\'48.4"N, 51°29\'17.0"E')
+                if (Platform.OS === 'android') {
+                    BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+                }
+                const LocationPermission = await PermissionsAndroid.request(
+                    PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION, {
+                        title: 'Cool Photo App Camera Permission',
+                        message:
+                            'Cool Photo App needs access to your camera ' +
+                            'so you can take awesome pictures.',
+                        buttonNeutral: 'Ask Me Later',
+                        buttonNegative: 'Cancel',
+                        buttonPositive: 'OK',
+                    }
+                )
+        
             }
-        )
-
-    }
 
     componentWillUnmount(): void {
         if (Platform.OS === 'android') {
@@ -379,8 +377,12 @@ export default class HomeScreen extends Component {
                                         this.setState({visible: true})
                                     })}
                                     coordinate={{
-                                        latitude: this.getLatLong('35°42\'48.4"N, 51°29\'17.0"E', 'latitude'),
-                                        longitude: this.getLatLong('35°42\'48.4"N, 51°29\'17.0"E', 'longitude'),
+                                        // latitude: this.getLatLong('35°42\'48.4"N, 51°29\'17.0"E', 'latitude'),
+                                        // longitude: this.getLatLong('35°42\'48.4"N, 51°29\'17.0"E', 'longitude'),
+                                       // latitude:this.getLatLong('373028.488043769, 438244665317.138',"latitude"),
+                                       // longitude:this.getLatLong('373028.488043769, 438244665317.138',"longitude")
+                                         latitude:this.getLatLong(value.Location,'latitude'),
+                                         longitude: this.getLatLong(value.Location,'longitude')
                                     }}
 
                                 >
@@ -412,7 +414,7 @@ export default class HomeScreen extends Component {
                                         onPress={async () => {
                                             this.setState({visible: false})
                                             this.props.navigation.navigate('MapSearchDoctorScreen',
-                                                {medicalCenter: this.state.selectedMedicalCenter})
+                                                {medicalCenter: this.state.selectedMedicalCenter,imageObject:this.state.imageObject})
                                         }}
                                     />
                                     <ModalButton
@@ -424,7 +426,8 @@ export default class HomeScreen extends Component {
                                             this.props.navigation.push('DetailsForMedicalCenterScreen',
                                                 {
                                                     medicalCenter: this.state.selectedMedicalCenter,
-                                                    backRoute: 'HomeScreen'
+                                                    backRoute: 'HomeScreen',
+                                                    imageObject:this.state.imageObject
                                                 })
                                         }
                                         }

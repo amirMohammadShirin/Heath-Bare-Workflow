@@ -48,13 +48,14 @@ export default class SearchMedicalCenter extends Component {
             token: null,
             progressModalVisible: false,
             headerFontSize: 20,
-            favoriteDoctors: []
+            favoriteDoctors: [],
+            imageObject :null
         };
     }
 
     goToDetailsScreen(value) {
 
-        this.props.navigation.navigate('DetailsScreen', {doctor: value, medicalCenter: null})
+        this.props.navigation.navigate('DetailsScreen', {doctor: value, medicalCenter: null,imageObject:this.state.imageObject})
 
 
     }
@@ -84,12 +85,14 @@ export default class SearchMedicalCenter extends Component {
             this.props.navigation.navigate('ReserveScreen', {
                 doctor: this.state.selectedDoctor,
                 medicalCenter: this.state.selectedMedicalCenter,
-                goBack: null
+                goBack: null,
+                imageObject:this.state.imageObject
             })
         } else {
             this.props.navigation.navigate('ReserveScreen', {
                 doctor: this.state.selectedDoctor,
-                goBack: null
+                goBack: null,
+                imageObject:this.state.imageObject
             })
         }
 
@@ -119,6 +122,8 @@ export default class SearchMedicalCenter extends Component {
     }
 
     async componentWillMount(): void {
+        let image = this.props.navigation.getParam('imageObject')
+      
         if (Platform.OS === 'android') {
             BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
         }
@@ -134,12 +139,14 @@ export default class SearchMedicalCenter extends Component {
                     headerFontSize: length >= 20 ? 15 : 20,
                     baseUrl: baseUrl,
                     token: token,
+                    imageObject:image
                 })
             } catch (e) {
                 await this.setState({
-                        baseUrl: baseUrl,
-                        token: token,
-                    },
+                    baseUrl: baseUrl,
+                    token: token,
+                    imageObject:image
+                },
                     () => {
 
                         this.getFavoriteDoctors()
@@ -150,9 +157,10 @@ export default class SearchMedicalCenter extends Component {
 
         } else {
             await this.setState({
-                    baseUrl: baseUrl,
-                    token: token,
-                },
+                baseUrl: baseUrl,
+                token: token,
+                imageObject:image
+            },
                 () => {
 
                     this.getFavoriteDoctors()
@@ -344,10 +352,11 @@ export default class SearchMedicalCenter extends Component {
                         </Item>
                         <View style={styles.row}>
                             <Button transparent style={{padding: 1, alignSelf: 'flex-start'}}
-                                    onPress={() => (this.props.navigation.navigate('AdvanceSearchScreen', {
+                                     onPress={() => (this.props.navigation.navigate('AdvanceSearchScreen', {
                                         doctor: true,
                                         medicalCenter: this.state.selectedMedicalCenter,
-                                        headerFontSize: this.state.headerFontSize
+                                        headerFontSize: this.state.headerFontSize,
+                                        imageObject : this.state.imageObject
                                     }))}>
                                 <Text style={styles.advanceSearchText}>جستجوی پیشرفته</Text>
                             </Button>

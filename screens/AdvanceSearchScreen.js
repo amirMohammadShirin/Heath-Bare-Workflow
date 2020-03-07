@@ -162,21 +162,24 @@ export default class AdvanceSearchScreen extends Component {
     onBackPressed() {
         if (this.props.navigation.getParam('doctor')) {
             this.props.navigation.navigate('SearchDoctorScreen',
-                {medicalCenter: this.props.navigation.getParam('medicalCenter')})
+                {medicalCenter: this.props.navigation.getParam('medicalCenter'),
+                imageObject:this.state.imageObject
+            })
         } else {
             this.props.navigation.goBack()
         }
 
     }
 
-
     async componentWillMount(): void {
+        let image = this.props.navigation.getParam('imageObject')
+        this.setState({imageObject:image})
         if (Platform.OS === 'android') {
             BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
         }
         var token = await AsyncStorage.getItem('token');
         var baseUrl = await AsyncStorage.getItem('baseUrl')
-        this.setState({baseUrl: baseUrl, token: token}, () => {
+        this.setState({baseUrl: baseUrl, token: token,imageObject:image}, () => {
             if (this.props.navigation.getParam('doctor')) {
                 this.getGenders()
             } else {
@@ -209,7 +212,7 @@ export default class AdvanceSearchScreen extends Component {
                         Gender: gender.id === -200 ? null : gender.value,
                         Certificate: certificate.value,
                         medicalCenter: this.state.medicalCenter,
-                        headerFontSize: this.props.navigation.getParam('headerFontSize')
+                     //   headerFontSize: this.props.navigation.getParam('headerFontSize')
                     })
                 }).then((response) => response.json())
                     .then(async (responseData) => {
@@ -226,7 +229,8 @@ export default class AdvanceSearchScreen extends Component {
                                                 Gender: gender.id === -200 ? 'مرد یا زن' : gender.value,
                                                 Certificate: certificate.value,
                                                 Skill: skill.value,
-                                                MedicalCenter: this.state.medicalCenter.Title
+                                                MedicalCenter: this.state.medicalCenter.Title,
+                                                imageObject:this.state.imageObject
                                             });
                                         })
                                     })
@@ -282,7 +286,7 @@ export default class AdvanceSearchScreen extends Component {
                                                 Gender: gender.id === -200 ? 'مرد یا زن' : gender.value,
                                                 Certificate: certificate.value,
                                                 Skill: skill.value,
-
+                                                imageObject:this.state.imageObject
                                             });
                                         })
                                     })
@@ -504,8 +508,8 @@ export default class AdvanceSearchScreen extends Component {
                                             Service: service.value,
                                             ServiceDetails: serviceDetail.id === -100 ? null : serviceDetail.value,
                                             // State: await state.value,
-                                            Facility: facility.value
-
+                                            Facility: facility.value,
+                                            imageObject:this.state.imageObject
                                         });
                                     })
                                 })

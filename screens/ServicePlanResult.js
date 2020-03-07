@@ -48,6 +48,7 @@ export default class ServicePlanResult extends Component {
         }
         this.state = {
             animate: true,
+            imageObject: null,
             progressModalVisible: false,
             token: null,
             baseUrl: null,
@@ -95,6 +96,8 @@ export default class ServicePlanResult extends Component {
     }
 
     async componentWillMount(): void {
+        let image = this.props.navigation.getParam('imageObject')
+
         if (Platform.OS === 'android') {
             BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
         }
@@ -117,7 +120,8 @@ export default class ServicePlanResult extends Component {
             skill: skill,
             gender: gender,
             startDate: startDate,
-            endDate: endDate
+            endDate: endDate,
+            imageObject: image
         }, () => {
             // this.getNotices()
         })
@@ -487,13 +491,16 @@ export default class ServicePlanResult extends Component {
                                             </Body>
                                             <Right>
                                                 {item.Gender == 12 ? <Thumbnail
-                                                        style={{
-                                                            borderColor: '#c5c5c5',
-                                                            borderWidth: 1,
-                                                            padding: 2
-                                                        }}
-                                                        circular
-                                                        defaultSource={{uri: 'data:image/image;base64,' + veil}}/> :
+                                                    style={{
+                                                        borderColor: '#c5c5c5',
+                                                        borderWidth: 1,
+                                                        padding: 2
+                                                    }}
+                                                    circular
+                                                    source={{ uri: (this.state.image != null && typeof this.state.image !== 'undefined') ? this.state.image : this.state.imageObject.hijab }}
+                                                // defaultSource={{uri: 'data:image/image;base64,' + veil}}
+
+                                                /> :
                                                     <Thumbnail
                                                         style={{
                                                             borderColor: '#c5c5c5',
@@ -501,7 +508,9 @@ export default class ServicePlanResult extends Component {
                                                             padding: 2
                                                         }}
                                                         circular
-                                                        defaultSource={{uri: 'data:image/image;base64,' + doctor}}/>
+                                                        source={{ uri: (this.state.image != null && typeof this.state.image !== 'undefined') ? this.state.image : this.state.imageObject.doctor }}
+                                                    // defaultSource={{uri: 'data:image/image;base64,' + doctor}}
+                                                    />
                                                 }
 
                                             </Right>
