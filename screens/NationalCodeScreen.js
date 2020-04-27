@@ -27,19 +27,26 @@ export default class NationalCodeScreen extends Component {
             progressModalVisible: false,
             phoneNumber: null,
             nationalCode: null,
-            baseUrl: null
+            baseUrl: null,
+            imageObject : null
         }
     }
 
     async componentDidMount(): void {
         const phoneNumber = this.props.navigation.getParam('phoneNumber');
         const baseUrl = await AsyncStorage.getItem("baseUrl");
-        this.setState({phoneNumber: phoneNumber, baseUrl: baseUrl});
+        this.setState({ phoneNumber: phoneNumber, baseUrl: baseUrl });
         if (Platform.OS === 'android') {
             BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
         }
     }
 
+    componentWillMount(){
+        let image = this.props.navigation.getParam('imageObject')
+        this.setState({
+            imageObject : image
+        })
+    }
     handleBackButtonClick() {
         // alert('pressed')
 
@@ -51,20 +58,20 @@ export default class NationalCodeScreen extends Component {
                     text: 'خیر',
                     style: 'cancel',
                 },
-                {text: 'بله', onPress: () => BackHandler.exitApp()},
+                { text: 'بله', onPress: () => BackHandler.exitApp() },
             ],
-            {cancelable: false},
+            { cancelable: false },
         );
         return true;
     }
 
     goToHomeScreen = async (body) => {
-        this.setState({progressModalVisible: true})
+        this.setState({progressModalVisible:true});
         console.log('National Code Body : ' + JSON.stringify(body))
         const baseUrl = this.state.baseUrl;
         await fetch(baseUrl + AUTHENTICATE, {
             method: 'POST',
-            headers: {'content-type': 'application/json'},
+            headers: { 'content-type': 'application/json' },
             body: JSON.stringify(body)
         }).then(async (response) => response.json())
             .then(async (responseData) => {
@@ -82,9 +89,16 @@ export default class NationalCodeScreen extends Component {
                                 'token : ' + token + '\n' + 'username : ' + body.username + '\n' +
                                 'nationalCode : ' +
                                 body.nationalCode)
-                            await this.setState({progressModalVisible: false})
-                            this.props.navigation.navigate('HomeScreen',
-                                {user: {userInfo}, baseUrl: baseUrl})
+                                this.setState({progressModalVisible:false})
+                                
+                                this.props.navigation.navigate('HomeScreen',
+                                { user: { userInfo }, baseUrl: baseUrl,imageObject:this.state.imageObject })
+                            // this.setState({ progressModalVisible: false },async () => {
+                            //     console.log('inserted')
+                            //    this.props.navigation.navigate('HomeScreen',
+                            //         { user: { userInfo }, baseUrl: baseUrl,imageObject:this.state.imageObject })
+                            // })
+
 
                         } catch (e) {
                             // alert(e)
@@ -92,16 +106,20 @@ export default class NationalCodeScreen extends Component {
                         }
                     }
                 } else if (responseData['StatusCode'] === 600) {
-                    this.setState({progressModalVisible: false}, () => {
+                    this.setState({ progressModalVisible: false }, () => {
                         // alert('کاربر یافت نشد')
-                        this.props.navigation.push('RegisterScreen');
+                        this.props.navigation.push('RegisterScreen',{
+                            imageObject:this.state.imageObject,
+                            phoneNumber : this.state.phoneNumber,
+                            nationalCode:this.state.nationalCode
+                        });
                     })
                 } else if (responseData['StatusCode'] === 601) {
-                    this.setState({progressModalVisible: false}, () => {
+                    this.setState({ progressModalVisible: false }, () => {
                         alert('کد ملی وارد شده معتبر نمی باشد')
                     })
                 } else {
-                    this.setState({progressModalVisible: false}, () => {
+                    this.setState({ progressModalVisible: false }, () => {
                         alert('خطا در اتصال به سرویس')
                         // alert(JSON.stringify(responseData))
                     })
@@ -115,38 +133,44 @@ export default class NationalCodeScreen extends Component {
     render() {
         return (
             <Container>
-                <Content scrollEnabled={false} contentContainerStyle={{flex: 1}}
-                         style={{flex: 1, width: '100%', height: '100%'}}>
-                    <StatusBar hidden translucent backgroundColor="transparent"/>
-                    <View style={{width: '100%', height: '50%'}}>
+                <Content scrollEnabled={false} contentContainerStyle={{ flex: 1 }}
+                    style={{ flex: 1, width: '100%', height: '100%' }}>
+                    <StatusBar hidden translucent backgroundColor="transparent" />
+                    <View style={{ width: '100%', height: '50%' }}>
                         <Image style={styles.container}
                                source={require(
-                                   'D:\\E\\react native projects\\Health\\bare\\salamat\\assets\\images\\splash.png')}>
+                                   'D:\\E\\react native projects\\Health\\bare\\salamat\\assets\\images\\splash.png')}
+                        // source={require(
+                        //            'D:\\Adrian Jobs\\Heath-Bare-Workflow-master\\Heath-Bare-Workflow-master\\assets\\images\\splash.png')
+                        //        }
+                        >
                         </Image>
                     </View>
-                    <View style={[styles.main, {width: '100%', height: '50%'}]}>
+                    <View style={[styles.main, { width: '100%', height: '50%' }]}>
                         <Card style={styles.myCard}>
                             <Item style={styles.itemStyle}>
                                 <Input placeholder='کد ملی خود را وارد کنید' placeholderTextColor={'gray'}
                                        style={styles.inputStyle} keyboardType={'numeric'}
                                        onChangeText={(text) => {
-                                           this.setState({nationalCode: text}, async () => {
-                                               if (text.length == 10) {
-                                                   Keyboard.dismiss();
-                                                   let body = {
-                                                       username: this.state.phoneNumber,
-                                                       nationalCode: this.state.nationalCode
-                                                   }
-                                                   await this.goToHomeScreen(body)
-                                               }
+                                        this.setState({ nationalCode: text }, () => {
+                                            if (text.length == 10) {
+                                                Keyboard.dismiss();
 
-                                           })
+                                                let body = {
+                                                    username: this.state.phoneNumber,
+                                                    nationalCode: this.state.nationalCode
+                                                }
+
+                                                this.goToHomeScreen(body)
 
 
-                                       }}
+                                            }
+                                        })
+
+                                    }}
                                 />
                             </Item>
-                            <Text style={[styles.textStyle, {color: '#23b9b9', marginTop: 40}]} onPress={() => {
+                            <Text style={[styles.textStyle, { color: '#23b9b9', marginTop: 40 }]} onPress={() => {
                                 let body = {
                                     username: this.state.phoneNumber,
                                     nationalCode: this.state.nationalCode
@@ -156,15 +180,15 @@ export default class NationalCodeScreen extends Component {
                         </Card>
                     </View>
 
-                    <Modal style={{opacity: 0.7}}
-                           width={300}
-                           visible={this.state.progressModalVisible}
-                           modalAnimation={new SlideAnimation({
-                               slideFrom: 'bottom'
-                           })}
+                    <Modal style={{ opacity: 0.7 }}
+                        width={300}
+                        visible={this.state.progressModalVisible}
+                        modalAnimation={new SlideAnimation({
+                            slideFrom: 'bottom'
+                        })}
                     >
-                        <ModalContent style={styles.modalContent}>
-                            <ActivityIndicator animating={true} size="small" color={"#23b9b9"}/>
+                         <ModalContent style={styles.modalContent}>
+                            <ActivityIndicator animating={true} size="small" color={"#23b9b9"} />
                         </ModalContent>
                     </Modal>
                 </Content>

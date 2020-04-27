@@ -1,78 +1,92 @@
 import React, {Component} from 'react';
 import {Dimentions} from 'react-native';
-import {AppRegistry, StatusBar} from "react-native";
-import {createAppContainer, createSwitchNavigator} from "react-navigation";
+import {AppRegistry, StatusBar} from 'react-native';
+import {createAppContainer, createSwitchNavigator} from 'react-navigation';
 import {createDrawerNavigator} from 'react-navigation-drawer';
-import {createStackNavigator} from 'react-navigation-stack'
+import {createStackNavigator} from 'react-navigation-stack';
 import HomeScreen from './screens/HomeScreen';
-import SplashScreen from "./screens/SplashScreen";
-import SideMenu from "./Menu/SideMenu";
-import ReserveScreen from "./screens/ReserveScreen";
-import HistoryScreen from "./screens/HistoryScreen";
-import ProfileScreen from "./screens/ProfileScreen";
-import GuidScreen from "./screens/GuidScreen";
-import NoticeScreen from "./screens/NoticeScreen";
-import MoreInfo from "./screens/MoreInfo";
-import SearchMedicalCenter from "./screens/SearchMedicalCenter";
-import ShowReservesScreen from "./screens/ShowReservesScreen"
-import InboxScreen from "./screens/InboxScreen";
-import MedicalFilesScreen from "./screens/MedicalFilesScreen";
-import OldReservesScreen from "./screens/OldReservesScreen";
-import ChatScreen from "./screens/MyChatScreen";
-import GetVerificationCodeScreen from "./screens/GetVerificationCodeScreen";
-import VerifyScreen from "./screens/VerifyScreen";
-import SearchDoctorScreen from "./screens/SearchDoctorScreen";
-import AdvanceSearchScreen from "./screens/AdvanceSearchScreen";
-import DetailsScreen from "./screens/DetailsScreen";
-import RegisterScreen from "./screens/RegisterScreen";
+import SplashScreen from './screens/SplashScreen';
+import SideMenu from './Menu/SideMenu';
+import ReserveScreen from './screens/ReserveScreen';
+import HistoryScreen from './screens/HistoryScreen';
+import ProfileScreen from './screens/ProfileScreen';
+import GuidScreen from './screens/GuidScreen';
+import NoticeScreen from './screens/NoticeScreen';
+import MoreInfo from './screens/MoreInfo';
+import SearchMedicalCenter from './screens/SearchMedicalCenter';
+import ShowReservesScreen from './screens/ShowReservesScreen';
+import InboxScreen from './screens/InboxScreen';
+import MedicalFilesScreen from './screens/MedicalFilesScreen';
+import OldReservesScreen from './screens/OldReservesScreen';
+import ChatScreen from './screens/MyChatScreen';
+import GetVerificationCodeScreen from './screens/GetVerificationCodeScreen';
+import VerifyScreen from './screens/VerifyScreen';
+import SearchDoctorScreen from './screens/SearchDoctorScreen';
+import AdvanceSearchScreen from './screens/AdvanceSearchScreen';
+import DetailsScreen from './screens/DetailsScreen';
+import RegisterScreen from './screens/RegisterScreen';
 import DetailsForMedicalCenterScreen from './screens/DetailsForMedicalCenterScreen';
-import MedicalCentersResult from "./screens/MedicalCentersResult";
-import DoctorsResult from "./screens/DoctorsResult";
-import ServicePlanResult from "./screens/ServicePlanResult";
-import MapScreen from "./screens/MapScreen";
+import MedicalCentersResult from './screens/MedicalCentersResult';
+import DoctorsResult from './screens/DoctorsResult';
+import ServicePlanResult from './screens/ServicePlanResult';
+import MapScreen from './screens/MapScreen';
 import NationalCodeScreen from './screens/NationalCodeScreen';
+import {I18nManager} from 'react-native';
+import MyChatScreen from './screens/MyChatScreen';
 
-const ReserveStackNavigator = createStackNavigator({
+const ReserveStackNavigator = createStackNavigator(
+  {
     ReserveScreen: {screen: ReserveScreen},
     ServicePlanResultScreen: {screen: ServicePlanResult},
-}, {
+  },
+  {
     defaultNavigationOptions: {
-        headerShown: false
-    }
-});
-const SearchDoctorNavigator = createStackNavigator({
+      headerShown: false,
+    },
+  },
+);
+
+const SearchDoctorNavigator = createStackNavigator(
+  {
     SearchDoctorScreen: {screen: SearchDoctorScreen},
     AdvanceSearchScreen: {screen: AdvanceSearchScreen},
     DetailsScreen: {screen: DetailsScreen},
     DoctorsResultScreen: {screen: DoctorsResult},
-    ReserveScreen: ReserveStackNavigator,
-    HomeScreen: {screen: HomeScreen}
-}, {
+    ReserveScreenFromDoctorScreen: {screen:ReserveScreen},
+    // ReserveStack: ReserveStackNavigator,
+    HomeScreen: {screen: HomeScreen},
+  },
+  {
     defaultNavigationOptions: {
-        // gesturesEnabled: false,
-        gestureEnabled: false,
-        // header: null,
-        headerShown: false
-    }
-});
-const SearchMedicalCenterNavigator = createStackNavigator({
+      // gesturesEnabled: false,
+      gestureEnabled: false,
+      // header: null,
+      headerShown: false,
+    },
+  },
+);
+const SearchMedicalCenterNavigator = createStackNavigator(
+  {
     SearchMedicalCenter: {screen: SearchMedicalCenter},
     AdvanceSearchScreen: {screen: AdvanceSearchScreen},
     DetailsForMedicalCenterScreen: {screen: DetailsForMedicalCenterScreen},
     MedicalCenterResultScreen: {screen: MedicalCentersResult},
-    SearchDoctorScreen: SearchDoctorNavigator,
-    ReserveScreen: ReserveStackNavigator,
-    MapScreen: {screen: MapScreen}
-
-}, {
+    // SearchDoctorScreen: {screen:SearchDoctorNavigator},
+    SearchDoctorScreen: {screen:SearchDoctorScreen},
+    ReserveScreenFromMedicalCenterScreen: {screen:ReserveScreen},
+    // ReserveNavigator: ReserveStackNavigator,
+    // ReserveScreen: ReserveStackNavigator,
+    MapScreen: {screen: MapScreen},
+  },
+  {
     defaultNavigationOptions: {
-        // header: null,
-        // gesturesEnabled: false,
-        gestureEnabled: false,
-        headerShown: false
-    }
-});
-
+      // header: null,
+      // gesturesEnabled: false,
+      gestureEnabled: false,
+      headerShown: false,
+    },
+  },
+);
 
 // const SearchDoctorNavigator = createStackNavigator({
 //     SearchDoctorScreen: {screen: SearchDoctorScreen},
@@ -87,107 +101,129 @@ const SearchMedicalCenterNavigator = createStackNavigator({
 //     }
 // });
 
-
-const VerificationStackNavigator = createStackNavigator({
+const VerificationStackNavigator = createStackNavigator(
+  {
     GetVerificationCodeScreen: {screen: GetVerificationCodeScreen},
-    VerifyScreen: {screen: VerifyScreen}
-}, {
+    VerifyScreen: {screen: VerifyScreen},
+  },
+  {
     defaultNavigationOptions: {
-        headerShown: false
-    }
-});
+      headerShown: false,
+    },
+  },
+);
 
-const ChatStackNavigator = createStackNavigator({
+const ChatStackNavigator = createStackNavigator(
+  {
     InboxScreen: {screen: InboxScreen},
-    ChatScreen: {screen: ChatScreen}
-}, {
+    ChatScreen: {screen: ChatScreen},
+  },
+  {
     defaultNavigationOptions: {
-        // header: null,
-        // gesturesEnabled: false,
-        gestureEnabled: false,
-        headerShown: false
-    }
-});
+      // header: null,
+      // gesturesEnabled: false,
+      gestureEnabled: false,
+      headerShown: false,
+    },
+  },
+);
 
-const GuidStackNavigator = createStackNavigator({
+const GuidStackNavigator = createStackNavigator(
+  {
     GuideScreen: {screen: GuidScreen},
-    MoreInfo: {screen: MoreInfo}
-}, {
+    MoreInfo: {screen: MoreInfo},
+  },
+  {
     defaultNavigationOptions: {
-        // gesturesEnabled: false,
-        gestureEnabled: false,
-        headerShown: false
-    }
-})
-const HistoryStackNavigator = createStackNavigator({
+      // gesturesEnabled: false,
+      gestureEnabled: false,
+      headerShown: false,
+    },
+  },
+);
+const HistoryStackNavigator = createStackNavigator(
+  {
     HistoryScreen: {screen: HistoryScreen},
     InboxScreen: ChatStackNavigator,
     // InboxScreen:{screen:InboxScreen},
     ChatScreen: {screen: ChatScreen},
     MedicalFilesScreen: {screen: MedicalFilesScreen},
     ShowReservesScreen: {screen: ShowReservesScreen},
-    OldReservesScreen: {screen: OldReservesScreen}
-}, {
+    OldReservesScreen: {screen: OldReservesScreen},
+  },
+  {
     initialRouteName: 'HistoryScreen',
     defaultNavigationOptions: {
-        // header: null,
-        // gesturesEnabled: false,
-        gestureEnabled: false,
-        headerShown: false
-    }
-});
-const SplashStackNavigator = createStackNavigator({
+      // header: null,
+      // gesturesEnabled: false,
+      gestureEnabled: false,
+      headerShown: false,
+    },
+  },
+);
+const SplashStackNavigator = createStackNavigator(
+  {
+    test:{screen:MyChatScreen},
     SplashScreen: {screen: SplashScreen},
     GetVerificationCodeScreen: {screen: GetVerificationCodeScreen},
     VerifyScreen: {screen: VerifyScreen},
     RegisterScreen: {screen: RegisterScreen},
-    NationalCodeScreen: {screen: NationalCodeScreen}
-}, {
+    NationalCodeScreen: {screen: NationalCodeScreen},
+  },
+  {
+   
+    // initialRouteName: 'test',
     initialRouteName: 'SplashScreen',
     defaultNavigationOptions: {
-        // gesturesEnabled: false,
-        gestureEnabled: false,
-        headerShown: false
-    }
-});
+      // gesturesEnabled: false,
+      gestureEnabled: false,
+      headerShown: false,
+    },
+  },
+);
 
-const NavigateBetweenMapAndHome = createStackNavigator({
+const NavigateBetweenMapAndHome = createStackNavigator(
+  {
     HomeScreen: {screen: HomeScreen},
     MapSearchDoctorScreen: SearchDoctorNavigator,
-    MapSearchMedicalCenterScreen: SearchMedicalCenterNavigator
-}, {
+    MapSearchMedicalCenterScreen: SearchMedicalCenterNavigator,
+  },
+  {
     defaultNavigationOptions: {
-        // header: null,
-        // gesturesEnabled: false,
-        gestureEnabled: false,
-        headerShown: false
-    }
-});
+      // header: null,
+      // gesturesEnabled: false,
+      gestureEnabled: false,
+      headerShown: false,
+    },
+  },
+);
 
-
-const AppDrawerNavigator = createDrawerNavigator({
+const AppDrawerNavigator = createDrawerNavigator(
+  {
     RegisterScreen: {screen: RegisterScreen},
     // HomeScreen: {screen: HomeScreen},
     HomeScreen: NavigateBetweenMapAndHome,
-    ReserveScreen: ReserveStackNavigator,
+    ReserveNavigator: ReserveStackNavigator,
+    // ReserveScreen: ReserveStackNavigator,
     HistoryScreen: HistoryStackNavigator,
     ProfileScreen: {screen: ProfileScreen},
     GuideScreen: GuidStackNavigator,
     InfoScreen: {screen: NoticeScreen},
     SearchMedicalCenterScreen: SearchMedicalCenterNavigator,
-    SearchDoctorScreen: SearchDoctorNavigator,
+    SearchDoctorNavigator: SearchDoctorNavigator,
+    // SearchDoctorScreen: SearchDoctorNavigator,
     GetVerificationCodeScreen: {screen: GetVerificationCodeScreen},
-    VerifyScreen: VerificationStackNavigator
-
-}, {
-// drawerWidth:'100%',
+    VerifyScreen: VerificationStackNavigator,
+  },
+  {
+    // drawerWidth:'100%',
     hideStatusBar: true,
     statusBarAnimation: 'fade',
-    keyboardDismissMode: "on-drag",
+    keyboardDismissMode: 'on-drag',
     defaultNavigationOptions: {
-        // gesturesEnabled: false,
-        gestureEnabled: false,
-        headerShown: false
+      // gesturesEnabled: false,
+      gestureEnabled: false,
+      headerShown: false,
     },
     initialRouteName: 'HomeScreen',
     contentComponent: SideMenu,
@@ -195,34 +231,44 @@ const AppDrawerNavigator = createDrawerNavigator({
     drawerPosition: 'right',
     drawerOpenRoute: 'DrawerOpen',
     drawerCloseRoute: 'DrawerClose',
-    drawerToggleRoute: 'DrawerToggle'
-});
+    drawerToggleRoute: 'DrawerToggle',
+  },
+);
 
 const defaultGetStateForAction = AppDrawerNavigator.router.getStateForAction;
 
 AppDrawerNavigator.router.getStateForAction = (action, state) => {
-    if (state && action.type === 'Navigation/NAVIGATE' && action.routeName === 'DrawerClose') {
-        StatusBar.setHidden(false);
-    }
+  if (
+    state &&
+    action.type === 'Navigation/NAVIGATE' &&
+    action.routeName === 'DrawerClose'
+  ) {
+    StatusBar.setHidden(false);
+  }
 
-    if (state && action.type === 'Navigation/NAVIGATE' && action.routeName === 'DrawerOpen') {
-        StatusBar.setHidden(true);
-    }
+  if (
+    state &&
+    action.type === 'Navigation/NAVIGATE' &&
+    action.routeName === 'DrawerOpen'
+  ) {
+    StatusBar.setHidden(true);
+  }
 
-
-    return defaultGetStateForAction(action, state);
+  return defaultGetStateForAction(action, state);
 };
 
-const AppSwitchNavigator = createSwitchNavigator({
+const AppSwitchNavigator = createSwitchNavigator(
+  {
     SplashItem: SplashStackNavigator,
     HomeItem: AppDrawerNavigator,
-
-}, {
+  },
+  {
     initialRouteName: 'SplashItem',
     defaultNavigationOptions: {
-        headerShown: false
-    }
-});
+      headerShown: false,
+    },
+  },
+);
 
 // const MyContainer = () => {
 //     return (createAppContainer(AppSwitchNavigator))
@@ -230,8 +276,6 @@ const AppSwitchNavigator = createSwitchNavigator({
 // const MyContainer = createAppContainer(AppSwitchNavigator);
 export default createAppContainer(AppSwitchNavigator);
 
-
 //AppRegistry.registerComponent('salamat', () => MyContainer);
 
 // AppRegistry.registerComponent('salamat', () => App);
-

@@ -26,7 +26,8 @@ export default class VerifyScreen extends Component {
             progressModalVisible: false,
             phoneNumber: null,
             verificationCode: null,
-            baseUrl: null
+            baseUrl: null,
+            imageObject: null
         }
     }
 
@@ -58,9 +59,19 @@ export default class VerifyScreen extends Component {
         return true;
     }
 
+    componentWillMount() {
+        let image = this.props.navigation.getParam('imageObject')
+        this.setState({
+            imageObject: image,
+            phoneNumber: this.state.phoneNumber
+        })
+
+    }
+
 
     goToNationalCodeScreen(phoneNumber) {
-        this.props.navigation.navigate('NationalCodeScreen', {phoneNumber: phoneNumber});
+        this.props.navigation.navigate('NationalCodeScreen',
+            {phoneNumber: phoneNumber, imageObject: this.state.imageObject});
     }
 
     // goToHomeScreen = async (body) => {
@@ -133,7 +144,7 @@ export default class VerifyScreen extends Component {
             }).then((response) => response.json())
                 .then(async (responseData) => {
                     if (responseData['StatusCode'] === 200) {
-                        this.setState({progressModalVisible: false},)
+                        this.setState({progressModalVisible: false})
                     } else if (responseData['StatusCode'] === 800) {
                         this.setState({progressModalVisible: false}, () => {
                             Alert.alert(
@@ -217,8 +228,13 @@ export default class VerifyScreen extends Component {
                     <StatusBar hidden translucent backgroundColor="transparent"/>
                     <View style={{width: '100%', height: '50%'}}>
                         <Image style={styles.container}
+                            // source={require(
+                            //     'D:\\Adrian Jobs\\Heath-Bare-Workflow-master\\Heath-Bare-Workflow-master\\assets\\images\\splash.png')
+                            // }
                                source={require(
-                                   'D:\\E\\react native projects\\Health\\bare\\salamat\\assets\\images\\splash.png')}>
+                                   'D:\\E\\react native projects\\Health\\bare\\salamat\\assets\\images\\splash.png')
+                               }
+                        >
                         </Image>
                     </View>
                     <View style={[styles.main, {width: '100%', height: '50%'}]}>

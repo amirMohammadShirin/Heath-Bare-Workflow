@@ -8,7 +8,8 @@ import {
     ActivityIndicator,
     Dimensions,
     Image,
-    AsyncStorage
+    AsyncStorage,
+    Constants
 } from 'react-native';
 import {Container, Header, Footer, Fab, Button, Left, Right, Icon, Text, Content} from 'native-base';
 import Modal, {ModalContent, SlideAnimation} from "react-native-modals";
@@ -43,6 +44,7 @@ export default class MapScreen extends Component {
             baseUrl: null,
             token: null,
             medicalCenter: {Id: -100, Title: ''},
+            title:null,
             progressModalVisible: false,
             lat: 0,
             long: 0
@@ -80,99 +82,27 @@ export default class MapScreen extends Component {
 
     }
 
-    // async componentWillMount(): void {
-    //     let token = await AsyncStorage.getItem('token');
-    //     let baseUrl = await AsyncStorage.getItem('baseUrl');
-    //     await this.setState(
-    //         {baseUrl: baseUrl, token: token, medicalCenter: this.props.navigation.getParam('MedicalCenter')}, () => {
-    //
-    //             this.getLocation()
-    //         })
-    //
-    //     if (Platform.OS === 'android' && !Constants.isDevice) {
-    //         this.setState({
-    //             errorMessage: 'try on device'
-    //         })
-    //     } else {
-    //         this._getLocationAsync();
-    //     }
-    //     // this.setState(
-    //     //     {user: this.props.navigation.getParam('user'), baseUrl: this.props.navigation.getParam('baseUrl')})
-    // }
 
     async componentWillMount(): void {
-        // this.setState(
-        //     {user: this.props.navigation.getParam('user'), baseUrl: this.props.navigation.getParam('baseUrl')})
-        this.mapRef.fitToSuppliedMarkers(
-            [this.markerRef],
-            false, // not animated
-        );
-        let token = await AsyncStorage.getItem('token');
-        let baseUrl = await AsyncStorage.getItem('baseUrl');
-        let lat = await AsyncStorage.getItem('Latitude');
-        let long = await AsyncStorage.getItem('Longitude');
+        let location = this.props.navigation.getParam('location')
+        let title = this.props.navigation.getParam('title');
         await this.setState(
-            {baseUrl: baseUrl, token: token, lat: parseFloat(lat), long: parseFloat(long)}, () => {
-                this.getLocation()
-            })
+            {lat: location.Latitude, long: location.Longitude,title : title})
 
         if (Platform.OS === 'android' && !Constants.isDevice) {
             this.setState({
                 errorMessage: 'try on device'
             })
         } else {
-            this._getLocationAsync();
+        
         }
-        // this.setState(
-        //     {user: this.props.navigation.getParam('user'), baseUrl: this.props.navigation.getParam('baseUrl')})
     }
 
     onBackPressed() {
         this.props.navigation.goBack()
     }
 
-    async getLocation() {
-        this.setState({progressModalVisible: true})
-        const value = this.state.medicalCenter;
-        let body = '{ Id: ' + JSON.stringify(value.Id) + ',Title:' +
-            JSON.stringify(value.Title) + '}';
-        console.log(body);
-        await fetch(this.state.baseUrl + GETLOCATION, {
-            method: 'POST',
-            headers: {
-                'content-type': 'application/json',
-                Accept: 'application/json',
-                'Authorization': 'Bearer ' + new String(this.state.token)
-            },
-            body: body
-        }).then((response) => response.json())
-            .then(async (responseData) => {
-                if (responseData['StatusCode'] === 200) {
-                    if (responseData['Data'] != null) {
-                        let data = responseData['Data'];
-                        await this.setState({progressModalVisible: false}, async () => {
-                            await this.setState({
-                                lat: parseFloat(data.Latitude),
-                                long: parseFloat(data.Longitude)
-                            }, () => {
-                                console.log((this.state.lat + ',' + this.state.long))
-                            })
-                        })
-
-                    }
-                } else {
-                    this.setState({progressModalVisible: false}, () => {
-                        // alert(JSON.stringify('خطا در دسترسی به سرویس'))
-                        alert(JSON.stringify(responseData))
-                    })
-
-                }
-            })
-            .catch((error) => {
-                console.error(error)
-                // alert(error)
-            })
-    }
+   
 
     render() {
 
@@ -195,35 +125,61 @@ export default class MapScreen extends Component {
                     <StatusBar barStyle={"dark-content"} backgroundColor={'#209b9b'}
                                hidden={false}/>
                     }
-                    <MapView
-                        ref={(ref) => { this.mapRef = ref }}
+
+                    {Platform.OS === 'android' ? <MapView
                         provider={'google'}
                         userLocationAnnotationTitle={"موقعیت من"}
                         showsMyLocationButton={true}
                         loadingEnabled={true}
                         loadingIndicatorColor={'#23b9b9'}
                         showsUserLocation={true}
-
                         minZoomLevel={0}
                         style={{
                             width: Dimensions.get('window').width,
                             height: Dimensions.get('window').height,
                         }}
                         initialRegion={{
-                            latitude: 35.715559,
-                            longitude: 51.425621,
+                            latitude: this.state.lat,
+                            longitude: this.state.long,
                             latitudeDelta: 0.0922,
                             longitudeDelta: 0.0421,
                         }}>
                         <MyMarker
-                            ref={(ref) => { this.markerRef = ref }}
-                            title={this.state.medicalCenter.Title}
+                            title={this.state.title}
+                            coordinate={{
+                                latitude: this.state.lat,
+                                longitude: this.state.long,
+                            }}/>
+
+                    </MapView>: 
+                    <MapView
+                        userLocationAnnotationTitle={"موقعیت من"}
+                        showsMyLocationButton={true}
+                        loadingEnabled={true}
+                        loadingIndicatorColor={'#23b9b9'}
+                        showsUserLocation={true}
+                        minZoomLevel={0}
+                        style={{
+                            width: Dimensions.get('window').width,
+                            height: Dimensions.get('window').height,
+                        }}
+                        initialRegion={{
+                            latitude: this.state.lat,
+                            longitude: this.state.long,
+                            latitudeDelta: 0.0922,
+                            longitudeDelta: 0.0421,
+                        }}>
+                        <MyMarker
+                            title={this.state.title}
                             coordinate={{
                                 latitude: this.state.lat,
                                 longitude: this.state.long,
                             }}/>
 
                     </MapView>
+                    }
+
+                    
 
                     <Modal style={{opacity: 0.7}}
                            width={300}
