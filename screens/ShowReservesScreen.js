@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {AccordionList} from 'accordion-collapse-react-native';
 import {
   StyleSheet,
   View,
@@ -11,7 +12,7 @@ import {
   Platform,
   RefreshControl,
 } from 'react-native';
-import Swipeable from 'react-native-swipeable-row';
+import ProgressiveText from '../component/progressiveText';
 import {
   Container,
   Header,
@@ -30,6 +31,8 @@ import {
   List,
   ListItem,
   Fab,
+  Separator,
+  Accordion,
 } from 'native-base';
 import Modal, {
   ModalButton,
@@ -42,6 +45,25 @@ import PersianCalendarPicker from 'react-native-persian-calendar-picker';
 
 const GETRESREVATIONREPORTS = '/api/GetReservationReports';
 const DISABLERESERVATION = '/api/DisableReservation';
+
+class MyAccordion extends Component {
+  constructor(props) {
+    super(props);
+    this.disableReservationConfirmation = this.props.disableReservationConfirmation.bind(
+      this,
+    );
+    this.disableReservation = this.props.disableReservation.bind(this);
+  }
+  render() {
+    return (
+      <AccordionList
+        list={this.props.list}
+        header={this.props.header}
+        body={this.props.body}
+      />
+    );
+  }
+}
 export default class ShowReservesScreen extends Component {
   constructor(props) {
     super(props);
@@ -51,6 +73,10 @@ export default class ShowReservesScreen extends Component {
       progressModalVisible: true,
       refreshing: false,
     };
+    this.disableReservationConfirmation = this.disableReservationConfirmation.bind(
+      this,
+    );
+    this.disableReservation = this.disableReservation.bind(this);
   }
 
   disableReservationConfirmation(value) {
@@ -71,12 +97,22 @@ export default class ShowReservesScreen extends Component {
     );
   }
   async componentWillMount(): void {
+    console.log('showReserveScreen will mount');
     var token = await AsyncStorage.getItem('token');
     var baseUrl = await AsyncStorage.getItem('baseUrl');
     this.setState({baseUrl: baseUrl, token: token}, () => {
       this.getReservationReports(false);
     });
   }
+
+  componentDidMount() {
+    console.log('showReserveScreen Did mount');
+  }
+
+  componentWillUnmount() {
+    console.log('showReserveScreen will umount');
+  }
+
   async disableReservation(value) {
     this.setState({progressModalVisible: true});
     let body = {
@@ -394,35 +430,233 @@ export default class ShowReservesScreen extends Component {
     this.getReservationReports(true);
   };
 
-  render() {
+  _head(item) {
     return (
-      <Container style={{backgroundColor: 'rgba(34,166,166,0.72)'}}>
-        <Content
-          scrollEnabled={true}
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-              onRefresh={this.onRefresh}
-              progressBackgroundColor="#fff"
-              tintColor="#209b9b"
-              colors={['#209b9b', 'rgba(34,166,166,0.72)']}
-            />
-          }>
-          {/* <Content onMomentumScrollEnd={() => this.getReservationReports()}> */}
-          {Platform.OS === 'android' && (
-            <StatusBar
-              barStyle={'dark-content'}
-              backgroundColor={'#209b9b'}
-              hidden={false}
+      <CardItem
+        style={{
+          flexDirection: 'row-reverse',
+          borderBottomColor: '#c9c9c9',
+          borderBottomWidth: 1,
+        }}>
+        <Body style={{flexDirection: 'row-reverse', flex: 5, margin: 1}}>
+          <Text style={styles.title}>
+            {item.actor} {item.medicalCenter}
+          </Text>
+        </Body>
+        <Left
+          style={{
+            flex: 1,
+            alignSelf: 'flex-end',
+            margin: 1,
+            alignContent: 'flex-start',
+          }}>
+          <Icon
+            style={{fontSize: 15, color: 'gray'}}
+            type="FontAwesome5"
+            name="chevron-down"
+          />
+          {item.statusValue === '8' ||
+          item.statusValue === '1' ||
+          item.status === 'لغو شده' ||
+          item.status === 'لغو حضور توسط مراجعه کننده' ||
+          true ? null : (
+            <Icon
+              onPress={() => this.disableReservationConfirmation(item)}
+              style={{
+                fontSize: 15,
+                color: 'rgba(215,1,0,0.75)',
+                marginLeft: 15,
+              }}
+              type="FontAwesome5"
+              name="calendar-times"
             />
           )}
-          <View style={styles.container}>
-            <ScrollView>
-              {this.state.array != null &&
-                this.state.array.map((value, index) =>
-                  this.renderList(value, index),
-                )}
-            </ScrollView>
+        </Left>
+      </CardItem>
+    );
+  }
+
+  _body(item) {
+    return (
+      <Card style={[styles.post]}>
+        <CardItem
+          style={{
+            flexDirection: 'row-reverse',
+            backgroundColor: '#cfcfcf',
+          }}>
+          <Right>
+            <Text style={[styles.title, {color: 'gray'}]}>تاریخ</Text>
+          </Right>
+          <Body>
+            <Text style={[styles.title, {color: 'gray'}]}>{item.date}</Text>
+          </Body>
+        </CardItem>
+        <CardItem
+          style={{
+            backgroundColor: '#cfcfcf',
+            flexDirection: 'row-reverse',
+          }}>
+          <Right>
+            <Text style={styles.title}>پزشک</Text>
+          </Right>
+          <Body>
+            <Text style={styles.value}>{item.actor}</Text>
+          </Body>
+        </CardItem>
+        <CardItem
+          style={{
+            backgroundColor: '#cfcfcf',
+            flexDirection: 'row-reverse',
+          }}>
+          <Right>
+            <Text style={styles.title}>مرکز درمانی</Text>
+          </Right>
+          <Body>
+            <Text style={styles.value}>{item.medicalCenter}</Text>
+          </Body>
+        </CardItem>
+        <CardItem
+          style={{
+            backgroundColor: '#cfcfcf',
+            flexDirection: 'row-reverse',
+          }}>
+          <Right>
+            <Text style={styles.title}>وضعیت نوبت</Text>
+          </Right>
+          <Body>
+            <Text style={styles.value}>{item.status}</Text>
+          </Body>
+        </CardItem>
+        <CardItem
+          style={{
+            backgroundColor: '#cfcfcf',
+            flexDirection: 'row-reverse',
+          }}>
+          <Right>
+            <Text style={styles.title}>نوع نوبت</Text>
+          </Right>
+          <Body>
+            <Text style={styles.value}>{item.type}</Text>
+          </Body>
+        </CardItem>
+        <CardItem
+          style={{
+            backgroundColor: '#cfcfcf',
+            flexDirection: 'row-reverse',
+          }}>
+          <Right>
+            <Text style={styles.title}>ساعت</Text>
+          </Right>
+          <Body>
+            <Text style={styles.value}>{item.StartTime}</Text>
+          </Body>
+        </CardItem>
+      </Card>
+    );
+  }
+
+  renderAccordion() {
+    return (
+      <MyAccordion
+        disableReservationConfirmation={this.disableReservationConfirmation}
+        disableReservation={this.disableReservation}
+        list={this.state.array}
+        header={this._head}
+        body={this._body}
+      />
+    );
+  }
+
+  render() {
+    if (false) {
+      return (
+        <Container style={{backgroundColor: 'rgba(34,166,166,0.72)'}}>
+          <Content
+            scrollEnabled={true}
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this.onRefresh}
+                progressBackgroundColor="#fff"
+                tintColor="#209b9b"
+                colors={['#209b9b', 'rgba(34,166,166,0.72)']}
+              />
+            }>
+            {/* <Content onMomentumScrollEnd={() => this.getReservationReports()}> */}
+            {Platform.OS === 'android' && (
+              <StatusBar
+                barStyle={'dark-content'}
+                backgroundColor={'#209b9b'}
+                hidden={false}
+              />
+            )}
+            <View style={styles.container}>
+              <ScrollView>
+                {this.state.array != null &&
+                  this.state.array.map((value, index) =>
+                    this.renderList(value, index),
+                  )}
+              </ScrollView>
+              <Modal
+                style={{opacity: 0.7}}
+                width={300}
+                visible={this.state.progressModalVisible}
+                modalAnimation={
+                  new SlideAnimation({
+                    slideFrom: 'bottom',
+                  })
+                }>
+                <ModalContent style={styles.modalContent}>
+                  <ActivityIndicator
+                    animating={true}
+                    size="small"
+                    color={'#23b9b9'}
+                  />
+                </ModalContent>
+              </Modal>
+            </View>
+          </Content>
+          {/*<Footer style={{backgroundColor:'rgba(34,166,166,0.72)'}}>*/}
+          {/*    <Fab*/}
+          {/*        direction="up"*/}
+          {/*        style={{backgroundColor: '#37a39d'}}*/}
+          {/*        position="bottomRight"*/}
+          {/*        onPress={() => this.getReservationReports()}>*/}
+          {/*        <Icon name="refresh" type="FontAwesome" style={{color:'#fff'}}/>*/}
+
+          {/*    </Fab>*/}
+          {/*</Footer>*/}
+        </Container>
+      );
+    } else {
+      return (
+        <Container style={{backgroundColor: 'rgba(34,166,166,0.72)'}}>
+          <Content
+            style={{flex: 1}}
+            scrollEnabled={true}
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this.onRefresh}
+                progressBackgroundColor="#fff"
+                tintColor="#209b9b"
+                colors={['#209b9b', 'rgba(34,166,166,0.72)']}
+              />
+            }>
+            {/* <Content onMomentumScrollEnd={() => this.getReservationReports()}> */}
+            {Platform.OS === 'android' && (
+              <StatusBar
+                barStyle={'dark-content'}
+                backgroundColor={'#209b9b'}
+                hidden={false}
+              />
+            )}
+            <Card style={styles.mainCard}>
+              {this.state.array != null ? (
+                this.renderAccordion()
+               
+              ) : null}
+            </Card>
             <Modal
               style={{opacity: 0.7}}
               width={300}
@@ -440,20 +674,10 @@ export default class ShowReservesScreen extends Component {
                 />
               </ModalContent>
             </Modal>
-          </View>
-        </Content>
-        {/*<Footer style={{backgroundColor:'rgba(34,166,166,0.72)'}}>*/}
-        {/*    <Fab*/}
-        {/*        direction="up"*/}
-        {/*        style={{backgroundColor: '#37a39d'}}*/}
-        {/*        position="bottomRight"*/}
-        {/*        onPress={() => this.getReservationReports()}>*/}
-        {/*        <Icon name="refresh" type="FontAwesome" style={{color:'#fff'}}/>*/}
-
-        {/*    </Fab>*/}
-        {/*</Footer>*/}
-      </Container>
-    );
+          </Content>
+        </Container>
+      );
+    }
   }
 }
 
@@ -536,39 +760,6 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     fontSize: 15,
   },
-  modalTitle: {
-    backgroundColor: '#23b9b9',
-  },
-  modalTitleText: {
-    color: '#fff',
-  },
-  modalFooter: {
-    padding: 2,
-    backgroundColor: 'rgba(47,246,246,0.06)',
-  },
-  modalCancelButton: {
-    backgroundColor: '#fff',
-    borderRadius: 3,
-    borderColor: '#23b9b9',
-    borderWidth: 1,
-    padding: 2,
-    margin: 5,
-  },
-  modalSuccessButton: {
-    backgroundColor: '#23b9b9',
-    borderRadius: 3,
-    padding: 2,
-    margin: 5,
-  },
-  modalSuccessButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 15,
-  },
-  modalCancelButtonText: {
-    color: '#23b9b9',
-    fontSize: 15,
-  },
   modalContent: {
     marginTop: 5,
     padding: 2,
@@ -579,12 +770,20 @@ const styles = StyleSheet.create({
     color: 'gray',
     textAlign: 'right',
     fontFamily: 'IRANMarker',
-    fontSize: 13,
+    fontSize: 10,
   },
   value: {
     color: 'gray',
     textAlign: 'right',
     fontFamily: 'IRANMarker',
     fontSize: 11,
+  },
+  mainCard: {
+    flex: 1,
+    padding: 2,
+    marginRight: 5,
+    marginLeft: 5,
+    marginTop: 2,
+    marginBottom: 2,
   },
 });

@@ -15,7 +15,6 @@ import NoticeScreen from './screens/NoticeScreen';
 import MoreInfo from './screens/MoreInfo';
 import SearchMedicalCenter from './screens/SearchMedicalCenter';
 import ShowReservesScreen from './screens/ShowReservesScreen';
-import InboxScreen from './screens/InboxScreen';
 import MedicalFilesScreen from './screens/MedicalFilesScreen';
 import OldReservesScreen from './screens/OldReservesScreen';
 import ChatScreen from './screens/MyChatScreen';
@@ -115,7 +114,6 @@ const VerificationStackNavigator = createStackNavigator(
 
 const ChatStackNavigator = createStackNavigator(
   {
-    InboxScreen: {screen: InboxScreen},
     ChatScreen: {screen: ChatScreen},
   },
   {
@@ -144,7 +142,7 @@ const GuidStackNavigator = createStackNavigator(
 const HistoryStackNavigator = createStackNavigator(
   {
     HistoryScreen: {screen: HistoryScreen},
-    InboxScreen: ChatStackNavigator,
+    // InboxScreen: ChatStackNavigator,
     // InboxScreen:{screen:InboxScreen},
     ChatScreen: {screen: ChatScreen},
     MedicalFilesScreen: {screen: MedicalFilesScreen},

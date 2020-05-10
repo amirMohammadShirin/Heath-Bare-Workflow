@@ -12,6 +12,7 @@ import {
   BackHandler,
 } from 'react-native';
 import {Dialog} from 'react-native-simple-dialogs';
+import ProgressiveText from '../component/progressiveText';
 import {
   Button,
   Body,
@@ -60,6 +61,7 @@ export default class SearchMedicalCenter extends Component {
       headerFontSize: 20,
       favoriteDoctors: [],
       imageObject: null,
+      isLoading: false,
     };
   }
 
@@ -128,7 +130,7 @@ export default class SearchMedicalCenter extends Component {
 
   async componentWillMount(): void {
     let image = await this.props.navigation.getParam('imageObject');
-    
+
     if (Platform.OS === 'android') {
       BackHandler.addEventListener(
         'hardwareBackPress',
@@ -180,7 +182,7 @@ export default class SearchMedicalCenter extends Component {
   async search(text) {
     if ((await this.state.selectedMedicalCenter) != null) {
       const medicalCenter = this.state.selectedMedicalCenter;
-      await this.setState({progressModalVisible: true});
+      await this.setState({progressModalVisible: false, isLoading: true});
       await fetch(
         this.state.baseUrl + SEARCHALLFIELDOFDOCTOROFSPECIFICMEDICALCENTER,
         {
@@ -201,17 +203,26 @@ export default class SearchMedicalCenter extends Component {
           if (responseData['StatusCode'] === 200) {
             if (responseData['Data'] != null) {
               let data = responseData['Data'];
-              await this.setState({progressModalVisible: false}, async () => {
-                await this.setState({data: data});
-              });
+              await this.setState(
+                {progressModalVisible: false, isLoading: false},
+                async () => {
+                  await this.setState({data: data});
+                },
+              );
             }
           } else if (responseData['StatusCode'] === 400) {
-            await this.setState({progressModalVisible: false}, () => {
-              alert(JSON.stringify('خطا در دسترسی به سرویس'));
-              console.log(JSON.stringify(responseData));
-            });
+            await this.setState(
+              {progressModalVisible: false, isLoading: false},
+              () => {
+                alert(JSON.stringify('خطا در دسترسی به سرویس'));
+                console.log(JSON.stringify(responseData));
+              },
+            );
           } else {
-            await this.setState({progressModalVisible: false});
+            await this.setState({
+              progressModalVisible: false,
+              isLoading: false,
+            });
           }
         })
         .catch(error => {
@@ -219,7 +230,7 @@ export default class SearchMedicalCenter extends Component {
           // alert(error)
         });
     } else {
-      await this.setState({progressModalVisible: true});
+      await this.setState({progressModalVisible: false, isLoading: true});
       await fetch(this.state.baseUrl + SEARCHDOCTORALLFIELD, {
         method: 'POST',
         headers: {
@@ -236,17 +247,26 @@ export default class SearchMedicalCenter extends Component {
           if (responseData['StatusCode'] === 200) {
             if (responseData['Data'] != null) {
               let data = responseData['Data'];
-              await this.setState({progressModalVisible: false}, async () => {
-                await this.setState({data: data});
-              });
+              await this.setState(
+                {progressModalVisible: false, isLoading: false},
+                async () => {
+                  await this.setState({data: data});
+                },
+              );
             }
           } else if (responseData['StatusCode'] === 400) {
-            await this.setState({progressModalVisible: false}, () => {
-              alert(JSON.stringify(JSON.stringify(responseData)));
-              // alert(JSON.stringify('خطا در دسترسی به سرویس'))
-            });
+            await this.setState(
+              {progressModalVisible: false, isLoading: false},
+              () => {
+                alert(JSON.stringify(JSON.stringify(responseData)));
+                // alert(JSON.stringify('خطا در دسترسی به سرویس'))
+              },
+            );
           } else {
-            await this.setState({progressModalVisible: false});
+            await this.setState({
+              progressModalVisible: false,
+              isLoading: false,
+            });
           }
         })
         .catch(error => {
@@ -362,38 +382,37 @@ export default class SearchMedicalCenter extends Component {
                 hidden={false}
               />
             )}
-            <Item regular style={{borderRadius: 5}}>
-              <Input
-                placeholder="جستجوی نام پزشک،تخصص و ..."
-                placeholderTextColor={'#d0d0d0'}
-                style={styles.searchInput}
-                value={this.state.searchTerm}
-                onChangeText={searchTerm => {
-                  if (searchTerm.length > this.state.previousLength) {
-                    this.setState(
-                      {
-                        searchTerm: searchTerm,
-                        previousLength: searchTerm.length,
-                      },
-                      async () => {
-                        if (searchTerm.length === 0) {
-                          await this.setState({data: []});
-                        } else {
-                          if (searchTerm.length >= 3) {
-                            await this.search(searchTerm);
-                          }
-                        }
-                      },
-                    );
-                  } else {
-                    this.setState({
+            <ProgressiveText
+              isLoading={this.state.isLoading}
+              placeholder="جستجوی نام پزشک،تخصص و ..."
+              placeholderTextColor={'#d0d0d0'}
+              searchTerm={this.state.searchTerm}
+              onChangeText={searchTerm => {
+                if (searchTerm.length > this.state.previousLength) {
+                  this.setState(
+                    {
                       searchTerm: searchTerm,
                       previousLength: searchTerm.length,
-                    });
-                  }
-                }}
-              />
-            </Item>
+                    },
+                    async () => {
+                      if (searchTerm.length === 0) {
+                        await this.setState({data: []});
+                      } else {
+                        if (searchTerm.length >= 3) {
+                          await this.search(searchTerm);
+                        }
+                      }
+                    },
+                  );
+                } else {
+                  this.setState({
+                    searchTerm: searchTerm,
+                    previousLength: searchTerm.length,
+                  });
+                }
+              }}
+            />
+            
             <View style={styles.row}>
               <Button
                 transparent
@@ -546,7 +565,7 @@ export default class SearchMedicalCenter extends Component {
             ) : null}
 
             <Dialog
-             dialogStyle={{
+              dialogStyle={{
                 backgroundColor: 'transparent',
                 borderWidth: 0,
                 borderColor: 'transparent',

@@ -241,6 +241,7 @@ export default class DetailsForMedicalCenterScreen extends Component {
                         circular
                         large
                         style={{
+                        
                           //   borderWidth: 1,
                           //   borderColor: '#e0e0e0',
                           //   overflow: 'hidden',
@@ -251,6 +252,7 @@ export default class DetailsForMedicalCenterScreen extends Component {
                         source={{
                           uri: 'data:image/png;base64, ' + this.state.image,
                         }}
+                      
                       />
                     ) : (
                       <Thumbnail

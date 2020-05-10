@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
     StyleSheet,
     View,
@@ -10,8 +10,8 @@ import {
     Keyboard,
     Platform, BackHandler, Alert
 } from 'react-native';
-import {Button, Card, Container, Content, Input, Item} from 'native-base'
-import Modal, {ModalContent, SlideAnimation} from "react-native-modals";
+import { Button, Card, Container, Content, Input, Item } from 'native-base'
+import Modal, { ModalContent, SlideAnimation } from "react-native-modals";
 
 const GETVERIFICATIONCODE = '/api/GetVerificationCode';
 const VERIFY = '/Api/Verify';
@@ -34,7 +34,7 @@ export default class VerifyScreen extends Component {
     async componentDidMount(): void {
         const phoneNumber = this.props.navigation.getParam('phoneNumber');
         const baseUrl = await AsyncStorage.getItem('baseUrl');
-        this.setState({phoneNumber: phoneNumber, baseUrl: baseUrl});
+        this.setState({ phoneNumber: phoneNumber, baseUrl: baseUrl });
         if (Platform.OS === 'android') {
             BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
         }
@@ -52,26 +52,24 @@ export default class VerifyScreen extends Component {
                     text: 'خیر',
                     style: 'cancel',
                 },
-                {text: 'بله', onPress: () => BackHandler.exitApp()},
+                { text: 'بله', onPress: () => BackHandler.exitApp() },
             ],
-            {cancelable: false},
+            { cancelable: false },
         );
         return true;
     }
-
     componentWillMount() {
         let image = this.props.navigation.getParam('imageObject')
         this.setState({
             imageObject: image,
-            phoneNumber: this.state.phoneNumber
+            phoneNumber : this.state.phoneNumber
         })
 
     }
 
 
     goToNationalCodeScreen(phoneNumber) {
-        this.props.navigation.navigate('NationalCodeScreen',
-            {phoneNumber: phoneNumber, imageObject: this.state.imageObject});
+        this.props.navigation.navigate('NationalCodeScreen', { phoneNumber: phoneNumber, imageObject: this.state.imageObject });
     }
 
     // goToHomeScreen = async (body) => {
@@ -132,7 +130,7 @@ export default class VerifyScreen extends Component {
     async getVerificationCode(body) {
         const baseUrl = await AsyncStorage.getItem("baseUrl");
         console.log(JSON.stringify(body))
-        this.setState({progressModalVisible: true}, async () => {
+        this.setState({ progressModalVisible: true }, async () => {
             await fetch(baseUrl + GETVERIFICATIONCODE, {
                 method: 'POST',
                 headers: {
@@ -144,9 +142,9 @@ export default class VerifyScreen extends Component {
             }).then((response) => response.json())
                 .then(async (responseData) => {
                     if (responseData['StatusCode'] === 200) {
-                        this.setState({progressModalVisible: false})
+                        this.setState({ progressModalVisible: false })
                     } else if (responseData['StatusCode'] === 800) {
-                        this.setState({progressModalVisible: false}, () => {
+                        this.setState({ progressModalVisible: false }, () => {
                             Alert.alert(
                                 "خطا در ارتباط با سرویس ارسال پیامک",
                                 '',
@@ -168,7 +166,7 @@ export default class VerifyScreen extends Component {
                             )
                         })
                     } else {
-                        this.setState({progressModalVisible: false}, () => {
+                        this.setState({ progressModalVisible: false }, () => {
                             alert('خطا در اتصال به سرویس')
                         })
 
@@ -189,24 +187,24 @@ export default class VerifyScreen extends Component {
         const baseUrl = this.state.baseUrl;
         fetch(baseUrl + VERIFY, {
             method: 'POST',
-            headers: {'content-type': 'application/json'},
+            headers: { 'content-type': 'application/json' },
             body: JSON.stringify(body)
         }).then((response) => response.json())
             .then(async (responseData) => {
                 if (responseData['StatusCode'] === 901) {
-                    this.setState({progressModalVisible: false}, () => {
+                    this.setState({ progressModalVisible: false }, () => {
                         this.goToNationalCodeScreen(body.phoneNumber)
                     })
                 } else if (responseData['StatusCode'] === 902) {
-                    this.setState({progressModalVisible: false}, () => {
+                    this.setState({ progressModalVisible: false }, () => {
                         alert('کد وارد شده منقضی شده است')
                     })
                 } else if (responseData['StatusCode'] === 900) {
-                    this.setState({progressModalVisible: false}, () => {
+                    this.setState({ progressModalVisible: false }, () => {
                         alert('کد وارد شده معتبر نمیباشد')
                     })
                 } else {
-                    this.setState({progressModalVisible: false}, () => {
+                    this.setState({ progressModalVisible: false }, () => {
                         alert('خطا در اتصال به سرویس')
                         // alert(JSON.stringify(responseData))
                         console.log(JSON.stringify(responseData))
@@ -223,42 +221,39 @@ export default class VerifyScreen extends Component {
     render() {
         return (
             <Container>
-                <Content scrollEnabled={false} contentContainerStyle={{flex: 1}}
-                         style={{flex: 1, width: '100%', height: '100%'}}>
-                    <StatusBar hidden translucent backgroundColor="transparent"/>
-                    <View style={{width: '100%', height: '50%'}}>
+                <Content scrollEnabled={false} contentContainerStyle={{ flex: 1 }}
+                    style={{ flex: 1, width: '100%', height: '100%' }}>
+                    <StatusBar hidden translucent backgroundColor="transparent" />
+                    <View style={{ width: '100%', height: '50%' }}>
                         <Image style={styles.container}
-                            // source={require(
-                            //     'D:\\Adrian Jobs\\Heath-Bare-Workflow-master\\Heath-Bare-Workflow-master\\assets\\images\\splash.png')
-                            // }
-                               source={require(
-                                   'D:\\E\\react native projects\\Health\\bare\\salamat\\assets\\images\\splash.png')
-                               }
+                            source={require(
+                                'D:\\Adrian Jobs\\Heath-Bare-Workflow-master\\Heath-Bare-Workflow-master\\assets\\images\\splash.png')
+                            }
                         >
                         </Image>
                     </View>
-                    <View style={[styles.main, {width: '100%', height: '50%'}]}>
+                    <View style={[styles.main, { width: '100%', height: '50%' }]}>
                         <Card style={styles.myCard}>
                             <Item style={styles.itemStyle}>
                                 <Input placeholder='کد فعال سازی را وارد کنید' placeholderTextColor={'gray'}
-                                       style={styles.inputStyle} keyboardType={'numeric'}
-                                       onChangeText={async (text) => {
-                                           this.setState({verificationCode: text}, async () => {
-                                               if (text.length === 4) {
-                                                   // alert('Sent')
-                                                   await Keyboard.dismiss()
-                                                   this.setState({progressModalVisible: true}, async () => {
-                                                       // this.goToHomeScreen()
-                                                       let body = {
-                                                           phoneNumber: this.state.phoneNumber,
-                                                           verificationCode: this.state.verificationCode,
-                                                       }
-                                                       this.verify(body)
-                                                   })
+                                    style={styles.inputStyle} keyboardType={'numeric'}
+                                    onChangeText={async (text) => {
+                                        this.setState({ verificationCode: text }, async () => {
+                                            if (text.length === 4) {
+                                                // alert('Sent')
+                                                await Keyboard.dismiss()
+                                                this.setState({ progressModalVisible: true }, async () => {
+                                                    // this.goToHomeScreen()
+                                                    let body = {
+                                                        phoneNumber: this.state.phoneNumber,
+                                                        verificationCode: this.state.verificationCode,
+                                                    }
+                                                    this.verify(body)
+                                                })
 
-                                               }
-                                           })
-                                       }}/>
+                                            }
+                                        })
+                                    }} />
                             </Item>
                             <Button light style={styles.buttonStyle}>
                                 <Text style={styles.textStyle} onPress={() => {
@@ -270,22 +265,22 @@ export default class VerifyScreen extends Component {
                                 }}>ارسال مجدد کد فعال
                                     سازی</Text>
                             </Button>
-                            <Text style={[styles.textStyle, {color: '#23b9b9', marginTop: 40}]} onPress={() => {
+                            <Text style={[styles.textStyle, { color: '#23b9b9', marginTop: 40 }]} onPress={() => {
                                 this.props.navigation.goBack()
                             }}>ویرایش شماره تماس</Text>
                         </Card>
                     </View>
 
-                    <Modal style={{opacity: 0.7}}
-                           width={300}
-                           visible={this.state.progressModalVisible}
-                           modalAnimation={new SlideAnimation({
-                               slideFrom: 'bottom'
-                           })}
+                    <Modal style={{ opacity: 0.7 }}
+                        width={300}
+                        visible={this.state.progressModalVisible}
+                        modalAnimation={new SlideAnimation({
+                            slideFrom: 'bottom'
+                        })}
                     >
 
                         <ModalContent style={styles.modalContent}>
-                            <ActivityIndicator animating={true} size="small" color={"#23b9b9"}/>
+                            <ActivityIndicator animating={true} size="small" color={"#23b9b9"} />
                         </ModalContent>
                     </Modal>
                 </Content>

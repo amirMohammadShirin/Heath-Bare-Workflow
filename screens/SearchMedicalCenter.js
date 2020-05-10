@@ -10,6 +10,7 @@ import {
   Platform,
   BackHandler,
 } from 'react-native';
+import ProgressiveText from '../component/progressiveText';
 import {Alert} from 'react-native';
 import {Dialog} from 'react-native-simple-dialogs';
 import {
@@ -37,7 +38,6 @@ import Modal, {
   ModalTitle,
   SlideAnimation,
 } from 'react-native-modals';
-
 const SEARCHMEDICALCENTERALLFIELD = '/api/SearchMedicalCenterAllField';
 const GETFAVORITEMEDICALCENTERS = '/api/GetFavoriteMedicalCenters';
 
@@ -61,6 +61,7 @@ export default class SearchMedicalCenter extends Component {
       previousLength: -1,
       favoriteMedicalCenters: [],
       imageObject: null,
+      isLoading: false,
     };
   }
 
@@ -115,7 +116,7 @@ export default class SearchMedicalCenter extends Component {
   }
 
   async search(text) {
-    await this.setState({progressModalVisible: true});
+    await this.setState({progressModalVisible: false, isLoading: true});
     await fetch(this.state.baseUrl + SEARCHMEDICALCENTERALLFIELD, {
       method: 'POST',
       headers: {
@@ -132,16 +133,19 @@ export default class SearchMedicalCenter extends Component {
         if (responseData['StatusCode'] === 200) {
           if (responseData['Data'] != null) {
             let data = responseData['Data'];
-            this.setState({progressModalVisible: false}, () => {
-              this.setState({data: data});
-            });
+            this.setState(
+              {progressModalVisible: false, isLoading: false},
+              () => {
+                this.setState({data: data});
+              },
+            );
           }
         } else if (responseData['StatusCode'] === 400) {
-          this.setState({progressModalVisible: false}, () => {
+          this.setState({progressModalVisible: false, isLoading: false}, () => {
             alert(JSON.stringify('خطا در دسترسی به سرویس'));
           });
         } else {
-          this.setState({progressModalVisible: false});
+          this.setState({progressModalVisible: false, isLoading: false});
         }
       })
       .catch(error => {
@@ -215,44 +219,38 @@ export default class SearchMedicalCenter extends Component {
                 hidden={false}
               />
             )}
-            <Item regular>
-              <Input
-                placeholder="جستجوی نام مرکز،خدمات،منطقه و ..."
-                placeholderTextColor={'#d0d0d0'}
-                style={{
-                  textAlign: 'right',
-                  fontSize: 13,
-                  fontFamily: 'IRANMarker',
-                }}
-                value={this.state.searchTerm}
-                onChangeText={searchTerm => {
-                  {
-                    if (searchTerm.length > this.state.previousLength) {
-                      this.setState(
-                        {
-                          searchTerm: searchTerm,
-                          previousLength: searchTerm.length,
-                        },
-                        async () => {
-                          if (searchTerm.length === 0) {
-                            await this.setState({data: []});
-                          } else {
-                            if (searchTerm.length >= 3) {
-                              await this.search(searchTerm);
-                            }
-                          }
-                        },
-                      );
-                    } else {
-                      this.setState({
+            <ProgressiveText
+              placeholder="جستجوی نام مرکز،خدمات،منطقه و ..."
+              placeholderTextColor={'#d0d0d0'}
+              isLoading={this.state.isLoading}
+              searchTerm={this.props.searchTerm}
+              onChangeText={searchTerm => {
+                {
+                  if (searchTerm.length > this.state.previousLength) {
+                    this.setState(
+                      {
                         searchTerm: searchTerm,
                         previousLength: searchTerm.length,
-                      });
-                    }
+                      },
+                      async () => {
+                        if (searchTerm.length === 0) {
+                          await this.setState({data: []});
+                        } else {
+                          if (searchTerm.length >= 3) {
+                            await this.search(searchTerm);
+                          }
+                        }
+                      },
+                    );
+                  } else {
+                    this.setState({
+                      searchTerm: searchTerm,
+                      previousLength: searchTerm.length,
+                    });
                   }
-                }}
-              />
-            </Item>
+                }
+              }}
+            />
             <View
               style={[styles.row, {flexDirection: this.state.flexDirection}]}>
               <Button
@@ -436,7 +434,7 @@ export default class SearchMedicalCenter extends Component {
             </List>
 
             <Dialog
-               dialogStyle={{
+              dialogStyle={{
                 backgroundColor: 'transparent',
                 borderWidth: 0,
                 borderColor: 'transparent',
@@ -548,6 +546,7 @@ SearchMedicalCenter.navigationOptions = {
     color: '#fff',
   },
   headerLeft: null,
+  keyboardHandlingEnabled:true
 };
 
 const styles = StyleSheet.create({
@@ -641,10 +640,6 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     backgroundColor: 'rgba(47,246,246,0.06)',
   },
-
-
-
-
 
   modalSuccessButtonText: {
     flex: 1,

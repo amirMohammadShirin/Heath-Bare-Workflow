@@ -43,12 +43,14 @@ import MyModal, {
 } from 'react-native-modals';
 import MapView from 'react-native-maps';
 import {Marker} from 'react-native-maps';
-
 const GETALLLOCATIONS = '/api/GetMedicalCentersLocation';
 
 class MyMarker extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      location: {},
+    };
   }
 
   render() {
@@ -88,12 +90,11 @@ export default class HomeScreen extends Component {
   handleBackButtonClick() {
     // alert('pressed')
 
-
     if (this.props.navigation.state.isDrawerOpen == true) {
       this.props.navigation.closeDrawer();
-    } else if (this.state.visible == true){
-      this.setState({visible:false})
-    }else {
+    } else if (this.state.visible == true) {
+      this.setState({visible: false});
+    } else {
       Alert.alert(
         'خروج',
         ' مایل به خروج از برنامه هستید؟ ',
@@ -226,8 +227,7 @@ export default class HomeScreen extends Component {
       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       {
         title: 'Salamat App Camera Permission',
-        message:
-          'Salamat App needs access to your Location ',
+        message: 'Salamat App needs access to your Location ',
         buttonNeutral: 'Ask Me Later',
         buttonNegative: 'Cancel',
         buttonPositive: 'OK',
@@ -333,7 +333,12 @@ export default class HomeScreen extends Component {
             {this.state.selectedMedicalCenter != null && (
               <Dialog
                 contentStyle={{backgroundColor: 'transparent'}}
-                dialogStyle={{backgroundColor: 'transparent',borderColor:'transparent',borderWidth:0,elevation:0}}
+                dialogStyle={{
+                  backgroundColor: 'transparent',
+                  borderColor: 'transparent',
+                  borderWidth: 0,
+                  elevation: 0,
+                }}
                 animationType={'fade'}
                 visible={this.state.visible}
                 onTouchOutside={() => this.setState({visible: false})}>
@@ -527,7 +532,12 @@ export default class HomeScreen extends Component {
             {this.state.selectedMedicalCenter != null && (
               <Dialog
                 contentStyle={{backgroundColor: 'transparent'}}
-                dialogStyle={{backgroundColor: 'transparent',borderColor:'transparent',borderWidth:0,elevation:0}}
+                dialogStyle={{
+                  backgroundColor: 'transparent',
+                  borderColor: 'transparent',
+                  borderWidth: 0,
+                  elevation: 0,
+                }}
                 animationType={'fade'}
                 visible={this.state.visible}
                 onTouchOutside={() => this.setState({visible: false})}>
@@ -730,7 +740,7 @@ const styles = StyleSheet.create({
     flex: 1,
     color: '#23b9b9',
     fontSize: 10,
-    // justifyContent: 'center',
+    justifyContent: 'center',
     fontFamily: 'IRANMarker',
     textAlign: 'center',
     justifyContent: 'center',

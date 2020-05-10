@@ -138,12 +138,11 @@ export default class NationalCodeScreen extends Component {
                     <StatusBar hidden translucent backgroundColor="transparent" />
                     <View style={{ width: '100%', height: '50%' }}>
                         <Image style={styles.container}
-                               source={require(
-                                   'D:\\E\\react native projects\\Health\\bare\\salamat\\assets\\images\\splash.png')}
-                        // source={require(
-                        //            'D:\\Adrian Jobs\\Heath-Bare-Workflow-master\\Heath-Bare-Workflow-master\\assets\\images\\splash.png')
-                        //        }
-                        >
+                               // source={require(
+                               //     'D:\\E\\react native projects\\Health\\bare\\salamat\\assets\\images\\splash.png')
+                        source={require(
+                                   'D:\\Adrian Jobs\\Heath-Bare-Workflow-master\\Heath-Bare-Workflow-master\\assets\\images\\splash.png')
+                               }>
                         </Image>
                     </View>
                     <View style={[styles.main, { width: '100%', height: '50%' }]}>

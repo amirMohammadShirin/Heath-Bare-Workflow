@@ -14,7 +14,6 @@ import {
 } from 'native-base';
 import MedicalFilesScreen from "./MedicalFilesScreen";
 import ShowReservesScreen from "./ShowReservesScreen";
-import InboxScreen from "./InboxScreen";
 import HomeScreen from "./HomeScreen";
 
 
@@ -86,11 +85,11 @@ export default class HistoryScreen extends Component {
                         ها</Text></TabHeading>}>
                         <ShowReservesScreen/>
                     </Tab>
-                    {false && <Tab heading={<TabHeading style={styles.tabHeading}><Icon
+                    {/* {false && <Tab heading={<TabHeading style={styles.tabHeading}><Icon
                         type={'FontAwesome5'} style={styles.tabIcon} name="inbox"/><Text style={styles.tabText}>پیام
                         ها</Text></TabHeading>}>
                         <InboxScreen myNavigator={this.props.navigation}/>
-                    </Tab>}
+                    </Tab>} */}
                 </Tabs>
                 {/*<Content padder style={styles.content}>*/}
                 {/*    <View style={{width: '100%', height: '100%'}}>*/}

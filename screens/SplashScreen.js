@@ -197,11 +197,10 @@ export default class SplashScreen extends Component {
     return (
       <ImageBackground
         style={styles.container}
-
-        source={require(
-            'D:\\E\\react native projects\\Health\\bare\\salamat\\assets\\images\\splash.png')
-        }
-        // source={require('D:\\Adrian Jobs\\Heath-Bare-Workflow-master\\Heath-Bare-Workflow-master\\assets\\images\\splash.png')}
+        // source={require(
+        //     'D:\\E\\react native projects\\Health\\bare\\salamat\\assets\\images\\splash.png')
+        // }
+        source={require('D:\\Adrian Jobs\\Heath-Bare-Workflow-master\\Heath-Bare-Workflow-master\\assets\\images\\splash.png')}
 
         // onPress={() => {
         //     // this.props.navigation.user.username = 'adrian';

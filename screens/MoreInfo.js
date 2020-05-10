@@ -120,6 +120,7 @@ const styles = StyleSheet.create({
 
     },
     questionName: {
+        color:'#575757',
         fontFamily:'IRANMarker',
         alignSelf: 'flex-start',
         justifyContent: 'center',

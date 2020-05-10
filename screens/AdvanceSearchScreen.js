@@ -29,14 +29,14 @@ import {
   CardItem,
   CheckBox,
   Footer,
+  Toast,
 } from 'native-base';
 import Modal, {ModalContent, SlideAnimation} from 'react-native-modals';
+import Geolocation from '@react-native-community/geolocation';
 
 const GETSERVICES = '/api/GetServices';
 const GETFACILITIES = '/api/GetFacilities';
-
 const GETSERVICEDETAILS = '/api/GetServiceDetails';
-
 const GETGENDERS = '/api/GetGenders';
 const GETSKILLS = '/api/GetSkills';
 const GETCERTIFICATES = '/api/GetCertificates';
@@ -114,6 +114,7 @@ export default class AdvanceSearchScreen extends Component {
       ],
       serviceDetails: null,
       medicalCenterResult: null,
+      location: null,
     };
   }
 
@@ -123,7 +124,8 @@ export default class AdvanceSearchScreen extends Component {
         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       );
       if (permission === PermissionsAndroid.RESULTS.GRANTED) {
-        return true;
+        this.getCurrentLocation();
+        return;
       } else {
         const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
@@ -136,16 +138,52 @@ export default class AdvanceSearchScreen extends Component {
           },
         );
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          return true;
+          this.getCurrentLocation();
+          return;
         } else {
-          return false;
+          return;
         }
       }
     } catch (e) {
       console.log(e);
-      return false;
+      return;
     }
   };
+
+  showToast() {
+    Toast.show({
+      text: 'برنامه به موقعیت جغرافیایی دسترسی ندارد',
+      textStyle: {
+        fontFamily: 'IRANMarker',
+        fontSize: 10,
+      },
+      duration: 4000,
+      type: 'danger',
+      position: 'bottom',
+    });
+  }
+
+  getCurrentLocation() {
+    try {
+      Geolocation.getCurrentPosition(
+        position => {
+          let lat = position.coords.latitude;
+          let long = position.coords.longitude;
+          let location = {
+            latitude: lat,
+            longitude: long,
+          };
+          this.setState({location: location, checkAddress: true});
+        },
+        e => {
+          // console.log(JSON.stringify);
+          this.showToast();
+        },
+      );
+    } catch (e) {
+      console.log(e);
+    }
+  }
 
   handleBackButtonClick() {
     // alert('pressed')
@@ -283,7 +321,7 @@ export default class AdvanceSearchScreen extends Component {
             }
           })
           .catch(error => {
-            console.error(error);
+            console.log(error);
             // alert(error)
           });
       } else {
@@ -341,7 +379,7 @@ export default class AdvanceSearchScreen extends Component {
             }
           })
           .catch(error => {
-            console.error(error);
+            console.log(error);
             // alert(error)
           });
       }
@@ -375,7 +413,7 @@ export default class AdvanceSearchScreen extends Component {
         }
       })
       .catch(error => {
-        console.error(error);
+        console.log(error);
         // alert(error)
       });
   }
@@ -406,7 +444,7 @@ export default class AdvanceSearchScreen extends Component {
         }
       })
       .catch(error => {
-        console.error(error);
+        console.log(error);
         // alert(error)
       });
   }
@@ -439,7 +477,7 @@ export default class AdvanceSearchScreen extends Component {
         }
       })
       .catch(error => {
-        console.error(error);
+        console.log(error);
         // alert(error)
       });
   }
@@ -471,7 +509,7 @@ export default class AdvanceSearchScreen extends Component {
         }
       })
       .catch(error => {
-        console.error(error);
+        console.log(error);
         // alert(error)
       });
   }
@@ -502,7 +540,7 @@ export default class AdvanceSearchScreen extends Component {
         }
       })
       .catch(error => {
-        console.error(error);
+        console.log(error);
         // alert(error)
       });
   }
@@ -513,6 +551,7 @@ export default class AdvanceSearchScreen extends Component {
     kind,
     service,
     serviceDetail,
+    location,
   ) {
     if (facility.id === -100 || kind.id === -100 || service.id === -100) {
       alert('لطفا فیلد ها را انتخاب کنید');
@@ -533,6 +572,8 @@ export default class AdvanceSearchScreen extends Component {
             serviceDetail.id === -100 ? null : serviceDetail.value,
           // State: await state.value,
           Facility: facility.value,
+          Latitude: location != null ? location.latitude : null,
+          Longitude: location != null ? location.longitude : null,
         }),
       })
         .then(response => response.json())
@@ -580,9 +621,18 @@ export default class AdvanceSearchScreen extends Component {
           }
         })
         .catch(error => {
-          console.error(error);
+          console.log(error);
           // alert(error)
         });
+    }
+  }
+
+  CheckBoxHandler() {
+    let checkAddress = this.state.checkAddress;
+    if (!checkAddress) {
+      this.getCurrentLocation();
+    } else {
+      this.setState({checkAddress: !checkAddress});
     }
   }
 
@@ -964,6 +1014,7 @@ export default class AdvanceSearchScreen extends Component {
                                   serviceDetails: this.state.services[
                                     buttonIndex
                                   ].serviceDetails,
+                                  selectedServiceDetail : {id: -100, value: ' انتخاب زیرخدمت'}
                                 });
                             },
                           );
@@ -1042,7 +1093,7 @@ export default class AdvanceSearchScreen extends Component {
                       color={'#23b9b9'}
                       checked={this.state.checkAddress}
                       onPress={() => {
-                        this.setState({checkAddress: !this.state.checkAddress});
+                        this.CheckBoxHandler();
                       }}
                     />
                   </Left>
@@ -1050,17 +1101,7 @@ export default class AdvanceSearchScreen extends Component {
                     <Text
                       style={styles.locationText}
                       onPress={() => {
-                        if (true) {
-                          //   if(this.checkLocationPermission()){
-                          // Geolocation.getCurrentPosition(info => console.log(info));
-                          this.setState({
-                            checkAddress: !this.state.checkAddress,
-                          });
-                        } else {
-                          alert(
-                            'لطفا دسترسی اپلیکیشن به موقعیت جغرافیایی را فعال کنید',
-                          );
-                        }
+                        this.CheckBoxHandler();
                       }}>
                       نزدیک به من
                     </Text>
@@ -1103,6 +1144,7 @@ export default class AdvanceSearchScreen extends Component {
                     this.state.selectedKind,
                     this.state.selectedService,
                     this.state.selectedServiceDetail,
+                    this.state.location,
                   );
                 }}>
                 <Text
