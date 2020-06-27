@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {Rating, AirbnbRating} from 'react-native-ratings';
 import {
   ActivityIndicator,
   AsyncStorage,
@@ -59,7 +60,9 @@ export default class DetailsForMedicalCenterScreen extends Component {
       selectedMedicalCenter: null,
       imageObject: null,
       location: '',
-      facilities: null
+      facilities: null,
+      score: 1,
+      count: '1',
     };
   }
 
@@ -154,8 +157,8 @@ export default class DetailsForMedicalCenterScreen extends Component {
       },
       body: body,
     })
-      .then((response) => response.json())
-      .then(async (responseData) => {
+      .then(response => response.json())
+      .then(async responseData => {
         if (responseData['StatusCode'] === 200) {
           if (responseData['Data'] != null) {
             let data = responseData['Data'];
@@ -175,6 +178,7 @@ export default class DetailsForMedicalCenterScreen extends Component {
                 nightEnd: data['NightEnd'],
                 image: data['Image'],
                 location: data['Location'],
+                score: 1,
                 facilities:
                   data['Facilities'] != null &&
                   typeof data['Facilities'] != 'undefined'
@@ -190,7 +194,7 @@ export default class DetailsForMedicalCenterScreen extends Component {
           });
         }
       })
-      .catch((error) => {
+      .catch(error => {
         console.error(error);
         // alert(error)
       });
@@ -235,40 +239,92 @@ export default class DetailsForMedicalCenterScreen extends Component {
               {!this.state.progressModalVisible && (
                 <CardItem style={{marginTop: 5}}>
                   <Left>
-                    {this.state.image !== null &&
-                    typeof this.state.image !== 'undefined' ? (
-                      <Thumbnail
-                        circular
-                        large
+                    <View>
+                      {this.state.image !== null &&
+                      typeof this.state.image !== 'undefined' ? (
+                        <Thumbnail
+                          circular
+                          large
+                          style={{
+                            //   borderWidth: 1,
+                            //   borderColor: '#e0e0e0',
+                            //   overflow: 'hidden',
+                            height: 100,
+                            width: 100,
+                            resizeMode: 'cover',
+                          }}
+                          source={{
+                            uri: 'data:image/png;base64, ' + this.state.image,
+                          }}
+                        />
+                      ) : (
+                        <Thumbnail
+                          circular
+                          large
+                          style={{
+                            //   borderWidth: 1,
+                            //   borderColor: '#e0e0e0',
+                            //   overflow: 'hidden',
+                            height: 100,
+                            width: 100,
+                            resizeMode: 'cover',
+                          }}
+                          source={{uri: this.state.imageObject.cross}}
+                        />
+                      )}
+                      <AirbnbRating
+                        showRating={false}
+                        isDisabled={true}
                         style={{
-                        
-                          //   borderWidth: 1,
-                          //   borderColor: '#e0e0e0',
-                          //   overflow: 'hidden',
-                          height: 100,
-                          width: 100,
-                          resizeMode:'cover'
+                          marginRight: 1,
+                          marginLeft: 1,
+                          marginTop: 10,
+                          marginBottom: 10,
                         }}
-                        source={{
-                          uri: 'data:image/png;base64, ' + this.state.image,
+                        starContainerStyle={{
+                          marginTop: 10,
+                          backgroundColor: '#fff',
+                          // paddingLeft: 10,
+                          paddingRight: 10,
+                          borderRadius: 20,
+                          borderColor: '#d9d9d9',
+                          borderWidth: 1,
+                          elevation: 8,
+                          shadowColor: '#000',
                         }}
-                      
+                        count={5}
+                        defaultRating={this.state.score}
+                        size={12}
+                        selectedColor={
+                          this.state.score < 2
+                            ? '#d11d1d'
+                            : this.state.score >= 3
+                            ? '#26c754'
+                            : '#209b9b'
+                        }
                       />
-                    ) : (
-                      <Thumbnail
-                        circular
-                        large
+                      <Text
                         style={{
-                          //   borderWidth: 1,
-                          //   borderColor: '#e0e0e0',
-                          //   overflow: 'hidden',
-                          height: 100,
-                          width: 100,
-                          resizeMode:'cover'
-                        }}
-                        source={{uri: this.state.imageObject.cross}}
-                      />
-                    )}
+                          marginTop: 1,
+                          fontFamily: 'IRANMarker',
+                          fontSize: 6,
+                          color: '#8a8a8a',
+                          textAlign: 'center',
+                        }}>
+                        مجموع نظرات کاربران
+                      </Text>
+                      <Text
+                        style={{
+                          marginTop: 1,
+                          fontFamily: 'IRANMarker',
+                          fontSize: 8,
+                          color: '#8a8a8a',
+                          textAlign: 'center',
+                        }}>
+                        {this.state.count}
+                      </Text>
+                    </View>
+
                     <Body
                       style={{
                         justifyContent: 'center',
@@ -310,6 +366,7 @@ export default class DetailsForMedicalCenterScreen extends Component {
                         </Text>
                       </Button>
                     </Body>
+                    {/* <View style={{flexDirection:}}></View> */}
                   </Left>
                 </CardItem>
               )}

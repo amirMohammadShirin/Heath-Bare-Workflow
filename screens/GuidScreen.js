@@ -143,7 +143,7 @@ export default class GuidScreen extends Component {
                   style={[
                     styles.titleStyle,
                     {
-                      fontSize: 17,
+                      fontSize: 12,
                       fontWeight: 'bold',
                       color: '#23b9b9',
                       fontFamily: 'IRANMarker',

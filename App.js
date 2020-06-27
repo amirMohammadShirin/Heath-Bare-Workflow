@@ -30,6 +30,7 @@ import DoctorsResult from './screens/DoctorsResult';
 import ServicePlanResult from './screens/ServicePlanResult';
 import MapScreen from './screens/MapScreen';
 import NationalCodeScreen from './screens/NationalCodeScreen';
+import RatingScreen from './screens/RatingScreen';
 import {I18nManager} from 'react-native';
 import MyChatScreen from './screens/MyChatScreen';
 
@@ -51,7 +52,7 @@ const SearchDoctorNavigator = createStackNavigator(
     AdvanceSearchScreen: {screen: AdvanceSearchScreen},
     DetailsScreen: {screen: DetailsScreen},
     DoctorsResultScreen: {screen: DoctorsResult},
-    ReserveScreenFromDoctorScreen: {screen:ReserveScreen},
+    ReserveScreenFromDoctorScreen: {screen: ReserveScreen},
     // ReserveStack: ReserveStackNavigator,
     HomeScreen: {screen: HomeScreen},
   },
@@ -71,8 +72,9 @@ const SearchMedicalCenterNavigator = createStackNavigator(
     DetailsForMedicalCenterScreen: {screen: DetailsForMedicalCenterScreen},
     MedicalCenterResultScreen: {screen: MedicalCentersResult},
     // SearchDoctorScreen: {screen:SearchDoctorNavigator},
-    SearchDoctorScreen: {screen:SearchDoctorScreen},
-    ReserveScreenFromMedicalCenterScreen: {screen:ReserveScreen},
+    SearchDoctorScreen: {screen: SearchDoctorScreen},
+    ReserveScreenFromMedicalCenterScreen: {screen: ReserveScreen},
+    DetailsScreenForMedicalCenterAndDoctor: {screen: DetailsScreen},
     // ReserveNavigator: ReserveStackNavigator,
     // ReserveScreen: ReserveStackNavigator,
     MapScreen: {screen: MapScreen},
@@ -139,6 +141,7 @@ const GuidStackNavigator = createStackNavigator(
     },
   },
 );
+
 const HistoryStackNavigator = createStackNavigator(
   {
     HistoryScreen: {screen: HistoryScreen},
@@ -148,6 +151,7 @@ const HistoryStackNavigator = createStackNavigator(
     MedicalFilesScreen: {screen: MedicalFilesScreen},
     ShowReservesScreen: {screen: ShowReservesScreen},
     OldReservesScreen: {screen: OldReservesScreen},
+    Rating: RatingScreen,
   },
   {
     initialRouteName: 'HistoryScreen',
@@ -159,9 +163,10 @@ const HistoryStackNavigator = createStackNavigator(
     },
   },
 );
+
 const SplashStackNavigator = createStackNavigator(
   {
-    test:{screen:MyChatScreen},
+    // test:{screen:MyChatScreen},
     SplashScreen: {screen: SplashScreen},
     GetVerificationCodeScreen: {screen: GetVerificationCodeScreen},
     VerifyScreen: {screen: VerifyScreen},
@@ -169,7 +174,6 @@ const SplashStackNavigator = createStackNavigator(
     NationalCodeScreen: {screen: NationalCodeScreen},
   },
   {
-   
     // initialRouteName: 'test',
     initialRouteName: 'SplashScreen',
     defaultNavigationOptions: {
@@ -199,11 +203,12 @@ const NavigateBetweenMapAndHome = createStackNavigator(
 const AppDrawerNavigator = createDrawerNavigator(
   {
     RegisterScreen: {screen: RegisterScreen},
+
     // HomeScreen: {screen: HomeScreen},
     HomeScreen: NavigateBetweenMapAndHome,
     ReserveNavigator: ReserveStackNavigator,
     // ReserveScreen: ReserveStackNavigator,
-    HistoryScreen: HistoryStackNavigator,
+    HistoryNavigator: HistoryStackNavigator,
     ProfileScreen: {screen: ProfileScreen},
     GuideScreen: GuidStackNavigator,
     InfoScreen: {screen: NoticeScreen},
@@ -212,6 +217,7 @@ const AppDrawerNavigator = createDrawerNavigator(
     // SearchDoctorScreen: SearchDoctorNavigator,
     GetVerificationCodeScreen: {screen: GetVerificationCodeScreen},
     VerifyScreen: VerificationStackNavigator,
+    RatingScreen: RatingScreen,
   },
   {
     // drawerWidth:'100%',

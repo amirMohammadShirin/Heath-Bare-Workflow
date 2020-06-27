@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignContent: 'center',
         textAlign: 'right',
-        fontSize: 10
+        fontSize: 9
     },
     offer: {
         fontFamily:'IRANMarker',
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignContent: 'center',
         textAlign: 'center',
-        fontSize: 10,
+        fontSize: 7,
         color: 'gray'
     },
     card: {

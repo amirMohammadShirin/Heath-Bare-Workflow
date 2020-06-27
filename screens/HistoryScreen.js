@@ -76,14 +76,14 @@ export default class HistoryScreen extends Component {
                     </Right>
                 </Header>
                 <Tabs tabBarPosition={'top'} tabContainerStyle={[styles.tabHeading]} locked
-                      tabBarUnderlineStyle={{height: 5, backgroundColor: "#1e8080"}} tabBarActiveTextColor={'#1e8080'}>
+                      tabBarUnderlineStyle={{height: 2, backgroundColor: "#fff"}} tabBarActiveTextColor={'#1e8080'}>
                     {false && <Tab heading={<TabHeading style={styles.tabHeading}><Icon
                         type={'FontAwesome5'} style={styles.tabIcon} name="notes-medical"/><Text style={styles.tabText}>نسخه
                         ها</Text></TabHeading>}> </Tab>}
                     <Tab heading={<TabHeading style={styles.tabHeading}><Icon
                         type={'FontAwesome5'} style={styles.tabIcon} name="calendar-alt"/><Text style={styles.tabText}>نوبت
                         ها</Text></TabHeading>}>
-                        <ShowReservesScreen/>
+                        <ShowReservesScreen navigation={this.props.navigation} fullName={this.props.navigation.getParam('fullName')}/>
                     </Tab>
                     {/* {false && <Tab heading={<TabHeading style={styles.tabHeading}><Icon
                         type={'FontAwesome5'} style={styles.tabIcon} name="inbox"/><Text style={styles.tabText}>پیام

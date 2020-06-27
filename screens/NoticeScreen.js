@@ -117,7 +117,7 @@ export default class NoticeScreen extends Component {
           <Card style={[styles.post]}>
             <CardItem header style={{backgroundColor: '#23b9b9'}}>
               <Body style={{flexDirection: 'row-reverse'}}>
-                <Text style={[styles.postText, {color: '#fff', fontSize: 11}]}>
+                <Text style={[styles.postText, {color: '#fff', fontSize: 12}]}>
                   {postContentText}
                 </Text>
               </Body>
@@ -144,7 +144,7 @@ export default class NoticeScreen extends Component {
             ) : null}
             <CardItem footer>
               <Body style={{flexDirection: 'row-reverse'}}>
-                <Text style={[styles.postText, {color: '#9d9d9d'}]}>
+                <Text style={[styles.postText, {color: '#9d9d9d',fontSize:9}]}>
                   {description}
                 </Text>
               </Body>

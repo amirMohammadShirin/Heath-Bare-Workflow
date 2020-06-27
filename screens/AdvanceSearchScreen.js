@@ -556,7 +556,18 @@ export default class AdvanceSearchScreen extends Component {
     if (facility.id === -100 || kind.id === -100 || service.id === -100) {
       alert('لطفا فیلد ها را انتخاب کنید');
     } else {
-      // console.log(body)
+      console.log(
+        JSON.stringify({
+          IsContract: kind.id === 0 ? null : kind.id === 1 ? false : true,
+          Service: service.value,
+          ServiceDetails:
+            serviceDetail.id === -100 ? null : serviceDetail.value,
+          // State: await state.value,
+          Facility: facility.value,
+          Latitude: location != null ? location.latitude : null,
+          Longitude: location != null ? location.longitude : null,
+        }),
+      );
       await this.setState({progressModalVisible: true});
       await fetch(this.state.baseUrl + MEDICALCENTERADVANCESEARCH, {
         method: 'POST',
@@ -1014,7 +1025,10 @@ export default class AdvanceSearchScreen extends Component {
                                   serviceDetails: this.state.services[
                                     buttonIndex
                                   ].serviceDetails,
-                                  selectedServiceDetail : {id: -100, value: ' انتخاب زیرخدمت'}
+                                  selectedServiceDetail: {
+                                    id: -100,
+                                    value: ' انتخاب زیرخدمت',
+                                  },
                                 });
                             },
                           );

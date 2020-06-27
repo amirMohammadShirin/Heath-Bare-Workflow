@@ -66,11 +66,23 @@ export default class SearchMedicalCenter extends Component {
   }
 
   goToDetailsScreen(value) {
-    this.props.navigation.navigate('DetailsScreen', {
-      doctor: value,
-      medicalCenter: null,
-      imageObject: this.state.imageObject,
-    });
+    let selectedMedicalCenter = this.state.selectedMedicalCenter;
+    if (
+      selectedMedicalCenter != null &&
+      typeof selectedMedicalCenter !== 'undefined'
+    ) {
+      this.props.navigation.navigate('DetailsScreenForMedicalCenterAndDoctor', {
+        doctor: value,
+        medicalCenter: selectedMedicalCenter,
+        imageObject: this.state.imageObject,
+      });
+    } else {
+      this.props.navigation.navigate('DetailsScreen', {
+        doctor: value,
+        medicalCenter: selectedMedicalCenter,
+        imageObject: null,
+      });
+    }
   }
 
   handleBackButtonClick() {
@@ -412,7 +424,7 @@ export default class SearchMedicalCenter extends Component {
                 }
               }}
             />
-            
+
             <View style={styles.row}>
               <Button
                 transparent

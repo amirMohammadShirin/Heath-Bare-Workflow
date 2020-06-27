@@ -1,5 +1,9 @@
 import React, {Component} from 'react';
-import {AccordionList} from 'accordion-collapse-react-native';
+import {
+  AccordionList,
+  CollapseHeader,
+  Collapse,
+} from 'accordion-collapse-react-native';
 import {
   StyleSheet,
   View,
@@ -11,9 +15,11 @@ import {
   Alert,
   Platform,
   RefreshControl,
+  TouchableOpacity,
 } from 'react-native';
 import ProgressiveText from '../component/progressiveText';
 import {
+  Accordion,
   Container,
   Header,
   Title,
@@ -34,7 +40,14 @@ import {
   Separator,
   Item,
   Input,
+  Badge,
 } from 'native-base';
+import {
+  Collapse2,
+  CollapseHeader2,
+  CollapseBody,
+  AccordionList2,
+} from 'accordion-collapse-react-native';
 import Modal, {
   ModalButton,
   ModalContent,
@@ -42,8 +55,6 @@ import Modal, {
   ModalTitle,
   SlideAnimation,
 } from 'react-native-modals';
-import Operators from '../component/operators/DisableReservations';
-import PersianCalendarPicker from 'react-native-persian-calendar-picker';
 
 const GETRESREVATIONREPORTS = '/api/GetReservationReports';
 const DISABLERESERVATION = '/api/DisableReservation';
@@ -57,7 +68,14 @@ export default class ShowReservesScreen extends Component {
       progressModalVisible: true,
       refreshing: false,
       reserveList: [{}],
+      acceptedList: [{}],
+      disabledList: [{}],
+      waitingList: [{}],
       searchWord: null,
+      redActive: true,
+      grayActive: true,
+      greenActive: true,
+      navigation: null,
     };
   }
 
@@ -179,13 +197,17 @@ export default class ShowReservesScreen extends Component {
         if (responseData['StatusCode'] === 200) {
           if (responseData['Data'] != null) {
             let data = responseData['Data'];
-            this.setState({array: data, reserveList: data}, () => {
-              this.setState({
-                progressModalVisible: false,
-                refreshing: false,
-                searchWord: null,
-              });
-              console.log(JSON.stringify(this.state.array));
+            data.sort((a, b) => (a.id < b.id ? 1 : -1));
+            console.log(data);
+            this.setState({
+              array: data,
+              reserveList: data,
+              redActive: true,
+              greenActive: true,
+              grayActive: true,
+              searchWord: null,
+              progressModalVisible: false,
+              refreshing: false,
             });
           }
         } else {
@@ -411,65 +433,49 @@ export default class ShowReservesScreen extends Component {
       );
     }
   }
+  goToRatingScreen(
+    medicalCenter,
+    doctor,
+    reservationId,
+    doctorId,
+    medicalCenterId,
+  ) {
+    // alert(this.state.greenActive)
+    let fullName = this.props.fullName;
+    this.props.navigation.navigate('Rating', {
+      medicalCenter: medicalCenter,
+      doctor: doctor,
+      fullName: fullName,
+      reservationId: reservationId,
+      medicalCenterId: medicalCenterId,
+      doctorId: doctorId,
+    });
+  }
 
   onRefresh = () => {
-    this.setState({refreshing: true,searchWord:null});
+    this.setState({
+      refreshing: true,
+      searchWord: null,
+    });
     console.log('refresh started');
     this.getReservationReports(true);
   };
 
-  renderAccordion() {
+  renderData() {
     return (
-      <AccordionList
-        list={this.state.reserveList}
-        // list={this.state.array}
-        header={item => {
-          return (
-            <CardItem style={styles.headerCard}>
-              <Body style={styles.headerBody}>
-                {item.statusValue === 57 ? (
-                  <Icon
-                    type="FontAwesome"
-                    name="check-circle"
-                    style={styles.successIcon}
-                  />
-                ) : item.statusValue === 56 ? (
-                  <Icon
-                    type="FontAwesome5"
-                    name="circle"
-                    style={[styles.grayIcon]}
-                  />
-                ) : (
-                  <Icon
-                    type="FontAwesome"
-                    name="times-circle"
-                    style={styles.redIcon}
-                  />
-                )}
-
-                <Text style={styles.title}>
-                  {item.actor} {item.medicalCenter}
-                </Text>
-              </Body>
-              <Left style={styles.headerLeftStyle}>
-                <Icon
-                  style={styles.expandIcon}
-                  type="FontAwesome5"
-                  name="chevron-down"
-                />
-                { item.statusValue === 56 ? (
-                  <Icon
-                    onPress={() => this.disableReservationConfirmation(item)}
-                    style={styles.disableIcon}
-                    type="FontAwesome5"
-                    name="calendar-times"
-                  />
-                ) : null}
-              </Left>
-            </CardItem>
-          );
+      <Accordion
+        ref={a => (this._Accordion = a)}
+        style={{
+          margin: 5,
+          flexDirection: 'column',
+          flex: 1,
         }}
-        body={item => {
+        dataArray={this.state.reserveList}
+        headerStyle={{
+          backgroundColor: '#fff',
+          flexDirection: 'row-reverse',
+        }}
+        renderContent={item => {
           return (
             <Card style={[styles.post]}>
               <CardItem style={styles.detailCard}>
@@ -523,6 +529,194 @@ export default class ShowReservesScreen extends Component {
             </Card>
           );
         }}
+        renderHeader={item => {
+          if (item.statusValue === 57 && this.state.greenActive) {
+            return (
+              <CardItem style={styles.headerCard}>
+                <Left style={styles.headerLeftStyle}>
+                  <TouchableOpacity
+                    disabled
+                    style={[
+                      styles.buttonActive,
+                      {
+                        width: 20,
+                        height: 20,
+                        borderRadius: 10,
+                        backgroundColor: 'green',
+                        borderColor: 'green',
+                      },
+                    ]}>
+                    <Icon
+                      type="FontAwesome5"
+                      name="check"
+                      style={[styles.activeIconStyle]}
+                    />
+                  </TouchableOpacity>
+                </Left>
+                <Body style={[styles.headerBody]}>
+                  <Text style={[styles.title]}>
+                    {item.actor} {item.medicalCenter}
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => {
+                      this.goToRatingScreen(
+                        item.medicalCenter,
+                        item.actor,
+                        item.id,
+                        item.actorId,
+                        item.medicalCenterId,
+                      );
+                    }}
+                    style={{
+                      flex: 1,
+                      justifyContent: 'center',
+                      alignContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    {/* <Badge style={styles.badgeStyle}>
+                      <Text numberOfLines={1} style={styles.badgeText}>
+                        {' '}
+                        ارسال نظر
+                      </Text>
+                    </Badge> */}
+                    {/* <Icon type="FontAwesome5" name="clipboard-check"  style={styles.badgeText}/> */}
+                    <Text
+                      style={{
+                        marginRight:1,
+                        marginLeft:1,
+                        marginTop:5,
+                        color: '#209b9b',
+                        fontSize: 10,
+                        backgroundColor: '#fff',
+                        borderColor: '#209b9b',
+                        borderWidth: 1,
+                        alignItems: 'center',
+                        textAlign: 'center',
+                        padding: 2,
+                        borderRadius: 2,
+                      }}>
+                      ارسال نظر
+                    </Text>
+                  </TouchableOpacity>
+                </Body>
+                {/* //<Right style={[styles.headerRightStyle]}> */}
+                {/* <Icon
+                    style={styles.expandIcon}
+                    type="FontAwesome5"
+                    name="chevron-down"
+                  /> */}
+
+                {/* <Icon
+                    style={[styles.disableIcon, {color: 'transparent'}]}
+                    type="FontAwesome5"
+                    name="calendar-times"
+                  /> */}
+                {/* //  </Right> */}
+              </CardItem>
+            );
+          } else if (item.statusValue === 56 && this.state.grayActive) {
+            return (
+              <CardItem style={styles.headerCard}>
+                <Left style={styles.headerLeftStyle}>
+                  <TouchableOpacity
+                    disabled
+                    style={[
+                      styles.buttonActive,
+                      {
+                        width: 20,
+                        height: 20,
+                        borderRadius: 10,
+                        backgroundColor: 'gray',
+                        borderColor: 'gray',
+                      },
+                    ]}>
+                    <Icon
+                      type="FontAwesome5"
+                      name="clock"
+                      style={styles.activeIconStyle}
+                    />
+                  </TouchableOpacity>
+                </Left>
+                <Body style={styles.headerBody}>
+                  <Text style={styles.title}>
+                    {item.actor} {item.medicalCenter}
+                  </Text>
+                </Body>
+                <Right style={styles.headerRightStyle}>
+                  {/* <Icon
+                    style={styles.expandIcon}
+                    type="FontAwesome5"
+                    name="chevron-down"
+                  /> */}
+                  <Icon
+                    onPress={() => this.disableReservationConfirmation(item)}
+                    style={styles.disableIcon}
+                    type="FontAwesome5"
+                    name="calendar-times"
+                  />
+                </Right>
+              </CardItem>
+            );
+          } else if (
+            item.statusValue !== 56 &&
+            item.statusValue !== 57 &&
+            this.state.redActive
+          ) {
+            return (
+              <CardItem style={styles.headerCard}>
+                <Left style={styles.headerLeftStyle}>
+                  <TouchableOpacity
+                    disabled
+                    style={[
+                      styles.buttonActive,
+                      {
+                        width: 20,
+                        height: 20,
+                        borderRadius: 10,
+                        backgroundColor: 'red',
+                        borderColor: 'red',
+                      },
+                    ]}>
+                    <Icon
+                      type="FontAwesome5"
+                      name="times"
+                      style={styles.activeIconStyle}
+                    />
+                  </TouchableOpacity>
+                </Left>
+
+                <Body style={styles.headerBody}>
+                  <Text style={styles.title}>
+                    {item.actor} {item.medicalCenter}
+                  </Text>
+                </Body>
+                <Right style={styles.headerRightStyle}>
+                  {/* <Icon
+                    style={styles.expandIcon}
+                    type="FontAwesome5"
+                    name="chevron-down"
+                  /> */}
+                  {/* <Icon
+                    style={[styles.disableIcon, {color: 'transparent'}]}
+                    type="FontAwesome5"
+                    name="times"
+                  /> */}
+                </Right>
+              </CardItem>
+            );
+          } else {
+            return null;
+          }
+        }}
+        contentStyle={{
+          backgroundColor: 'rgba(49,255,255,0)',
+          flexDirection: 'row-reverse',
+          backfaceVisibility: 'hidden',
+          borderColor: '#gray',
+          borderWidth: 1,
+        }}
+        iconStyle={{color: 'gray'}}
+        expandedIconStyle={{color: 'gray'}}
       />
     );
   }
@@ -620,7 +814,7 @@ export default class ShowReservesScreen extends Component {
       );
     } else {
       return (
-        <Container style={{backgroundColor: 'rgba(34,166,166,0.72)'}}>
+        <Container style={{backgroundColor: '#fff'}}>
           <Content
             style={{flex: 1}}
             scrollEnabled={true}
@@ -641,50 +835,214 @@ export default class ShowReservesScreen extends Component {
                 hidden={false}
               />
             )}
-            {this.state.reserveList.length > 0 ? (
-              <Card style={styles.mainCard}>
-                <Item>
-                  <Icon
-                    style={styles.searchIcon}
-                    type="FontAwesome5"
-                    name="search"
-                  />
-                  <Input
-                    placeholder="جستجوی نام پزشک ، نام مرکز و ..."
-                    placeholderTextColor={'#c9c9c9'}
-                    style={styles.inputStyle}
-                    value={this.state.searchWord}
-                    onChangeText={text => this.onChangeText(text)}
-                  />
-                </Item>
-                {this.state.array != null && this.state.reserveList.length > 0
-                  ? this.renderAccordion()
-                  : null}
-              </Card>
-            ) : this.state.reserveList.length === 0 ? (
-              <Card style={styles.mainCard}>
-                <Item>
-                  <Icon
-                    style={styles.searchIcon}
-                    type="FontAwesome5"
-                    name="search"
-                  />
-                  <Input
-                    placeholder="جستجوی نام پزشک ، نام مرکز و ..."
-                    placeholderTextColor={'#c9c9c9'}
-                    style={styles.inputStyle}
-                    value={this.state.searchWord}
-                    onChangeText={text => this.onChangeText(text)}
-                  />
-                </Item>
-                <CardItem>
-                  <Body style={styles.noResultBody}>
-                    <Text style={styles.title}>موردی یافت نشد</Text>
-                  </Body>
-                </CardItem>
-              </Card>
-            ) : null}
+            {!this.state.progressModalVisible && (
+              <View
+                style={{
+                  marginTop: 5,
+                  marginBottom: 2,
+                  backgroundColor: '#209b9b',
+                  flex: 1,
+                  borderTopLeftRadius: 10,
+                  borderTopRightRadius: 10,
+                  borderColor: '#209b9b',
+                  marginRight: 2,
+                  marginLeft: 2,
+                }}>
+                <View
+                  style={{
+                    marginTop: 2,
+                    flexDirection: 'row-reverse',
+                    backgroundColor: '#209b9b,flex:1',
+                  }}>
+                  <Item
+                    style={{
+                      marginTop: 5,
+                      backgroundColor: 'transparent',
+                      flexDirection: 'row',
+                      flex: 6,
+                      marginRight: 2,
+                      marginLeft: 2,
+                      borderWidth: 0,
+                    }}>
+                    <Icon
+                      style={styles.searchIcon}
+                      type="FontAwesome5"
+                      name="search"
+                    />
+                    <Input
+                      underlineColorAndroid="#209b9b"
+                      placeholder="جستجوی نام پزشک ، نام مرکز و ..."
+                      placeholderTextColor={'#fff'}
+                      style={styles.inputStyle}
+                      value={this.state.searchWord}
+                      onChangeText={text => this.onChangeText(text)}
+                    />
+                  </Item>
+                  <View
+                    style={{
+                      justifyContent: 'center',
+                      alignContent: 'center',
+                      flexDirection: 'column',
+                      marginTop: 5,
+                      flex: 1,
+                      paddingLeft: 5,
+                      paddingRight: 1,
+                      paddingTop: 1,
+                      paddingBottom: 1,
+                      marginRight: 2,
+                      marginLeft: 2,
+                    }}>
+                    <TouchableOpacity
+                      style={
+                        this.state.greenActive
+                          ? [
+                              styles.buttonActive,
+                              {backgroundColor: 'green', borderColor: 'green'},
+                            ]
+                          : styles.buttonDeActive
+                      }
+                      onPress={() =>
+                        this.setState({
+                          greenActive: !this.state.greenActive,
+                        })
+                      }>
+                      <Icon
+                        type="FontAwesome"
+                        name="check"
+                        style={
+                          this.state.greenActive
+                            ? styles.activeIconStyle
+                            : styles.deActiveIconStyle
+                        }
+                      />
+                    </TouchableOpacity>
 
+                    <TouchableOpacity
+                      style={
+                        this.state.redActive
+                          ? [
+                              styles.buttonActive,
+                              {backgroundColor: 'red', borderColor: 'red'},
+                            ]
+                          : styles.buttonDeActive
+                      }
+                      onPress={() =>
+                        this.setState({
+                          redActive: !this.state.redActive,
+                        })
+                      }>
+                      <Icon
+                        type="FontAwesome"
+                        name="times"
+                        style={
+                          this.state.redActive
+                            ? styles.activeIconStyle
+                            : styles.deActiveIconStyle
+                        }
+                      />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={
+                        this.state.grayActive
+                          ? [
+                              styles.buttonActive,
+                              {backgroundColor: 'gray', borderColor: 'gray'},
+                            ]
+                          : styles.buttonDeActive
+                      }
+                      onPress={() => {
+                        this.setState({
+                          grayActive: !this.state.grayActive,
+                        });
+                      }}>
+                      <Icon
+                        type="FontAwesome5"
+                        name="clock"
+                        style={
+                          this.state.grayActive
+                            ? styles.activeIconStyle
+                            : styles.deActiveIconStyle
+                        }
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+                {this.state.reserveList.length > 0 ? (
+                  <Card style={styles.mainCard}>
+                    {this.state.array != null &&
+                    this.state.reserveList.length > 0 ? (
+                      <View>{this.renderData()}</View>
+                    ) : null}
+                  </Card>
+                ) : this.state.reserveList.length === 0 ? (
+                  <Card style={styles.mainCard}>
+                    <View
+                      style={{
+                        flexDirection: 'row-reverse',
+                        justifyContent: 'flex-end',
+                        alignContent: 'flex-end',
+                        marginTop: 2,
+                        paddingLeft: 5,
+                        paddingTop: 1,
+                        paddingBottom: 1,
+                        marginLeft: 2,
+                        marginBottom: 10,
+                      }}>
+                      <TouchableOpacity
+                        onPress={() => {
+                          this.this.setState({
+                            greenActive: !this.state.greenActive,
+                          });
+                        }}>
+                        <View
+                          style={
+                            this.state.greenActive
+                              ? styles.greenActive
+                              : styles.greenDeActive
+                          }
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => {
+                          this.setState({
+                            redActive: !this.state.redActive,
+                          });
+                        }}>
+                        <View
+                          style={
+                            this.state.redActive
+                              ? styles.disabledActive
+                              : styles.disabledActive
+                          }
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => {
+                          this.setState({
+                            grayActive: !this.state.grayActive,
+                          });
+                        }}>
+                        <View
+                          style={
+                            this.state.grayActive
+                              ? styles.waitingActive
+                              : styles.waitingDeActive
+                          }
+                        />
+                      </TouchableOpacity>
+                    </View>
+
+                    <CardItem>
+                      <Body style={styles.noResultBody}>
+                        <Text style={styles.title}>موردی یافت نشد</Text>
+                      </Body>
+                    </CardItem>
+                  </Card>
+                ) : !this.greenActive &&
+                  !this.state.redActive &&
+                  !this.state.grayActive ? null : null}
+              </View>
+            )}
             <Modal
               style={{opacity: 0.7}}
               width={300}
@@ -722,31 +1080,42 @@ ShowReservesScreen.navigationOptions = {
 };
 
 const styles = StyleSheet.create({
-  redIcon:{
-    alignSelf: 'flex-start',
-    fontSize: 18,
-    color: '#e82e2e',
-    marginRight: 2,
-    marginLeft: 5,
+  buttonActive: {
+    justifyContent: 'center',
+    height: 18,
+    width: 18,
+    borderRadius: 9,
+    borderWidth: 1,
+    borderColor: '#3ae0e0',
+    backgroundColor: '#3ae0e0',
+    margin: 3,
   },
-  grayIcon:{
-    alignSelf: 'flex-start',
-    fontSize: 18,
-    color: '#c7c7c7',
-    marginRight: 2,
-    marginLeft: 5,
+  buttonDeActive: {
+    justifyContent: 'center',
+    height: 18,
+    width: 18,
+    borderRadius: 9,
+    borderWidth: 1,
+    borderColor: '#3ae0e0',
+    backgroundColor: '#fff',
+    margin: 3,
   },
-  expandIcon: {fontSize: 15, color: 'gray'},
+  expandIcon: {fontSize: 15, color: 'gray', alignSelf: 'flex-end'},
   searchIcon: {
-    fontSize: 15,
-    color: 'gray',
+    fontSize: 13,
+    color: '#fff',
     marginRight: 2,
     marginLeft: 10,
+    alignSelf: 'center',
+    flex: 1,
   },
   inputStyle: {
+    color: '#fff',
+    alignSelf: 'center',
+    flex: 4,
     marginRight: 5,
     textAlign: 'right',
-    fontSize: 13,
+    fontSize: 9,
     fontFamily: 'IRANMarker',
     borderWidth: 0,
   },
@@ -756,33 +1125,24 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignContent: 'center',
   },
-  disableIcon: {
-    fontSize: 15,
-    color: 'rgba(215,1,0,0.75)',
-    marginLeft: 15,
-  },
   headerLeftStyle: {
     flex: 1,
-    alignSelf: 'flex-end',
-    margin: 1,
-    alignContent: 'flex-start',
+    justifyContent: 'flex-end',
   },
-  successIcon: {
-    alignSelf: 'flex-start',
-    fontSize: 20,
-    color: '#57de74',
-    marginRight: 2,
-    marginLeft: 5,
+  headerRightStyle: {
+    flexDirection: 'row',
+    flex: 1,
+    justifyContent: 'flex-end',
   },
   headerBody: {
     flexDirection: 'row-reverse',
-    flex: 5,
+    flex: 7,
     margin: 1,
   },
   headerCard: {
     flexDirection: 'row-reverse',
-    borderBottomColor: '#c9c9c9',
-    borderBottomWidth: 1,
+    // borderBottomColor: '#c9c9c9',
+    // borderBottomWidth: 1,
   },
   detailCard: {
     flexDirection: 'row-reverse',
@@ -861,23 +1221,55 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(47,246,246,0.02)',
   },
   title: {
+    flex: 5,
+    alignContent: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: 5,
     color: 'gray',
     textAlign: 'right',
     fontFamily: 'IRANMarker',
-    fontSize: 10,
+    fontSize: 9,
   },
   value: {
     color: 'gray',
     textAlign: 'right',
     fontFamily: 'IRANMarker',
-    fontSize: 11,
+    fontSize: 9,
   },
   mainCard: {
-    flex: 1,
     padding: 2,
-    marginRight: 5,
-    marginLeft: 5,
     marginTop: 2,
     marginBottom: 2,
+  },
+  activeIconStyle: {
+    color: '#fff',
+    fontSize: 10,
+    alignSelf: 'center',
+  },
+  deActiveIconStyle: {
+    color: '#3ae0e0',
+    fontSize: 10,
+    alignSelf: 'center',
+  },
+  disableIcon: {
+    color: 'red',
+    fontSize: 15,
+    fontWeight: 'bold',
+    alignSelf: 'flex-start',
+    marginRight: 2,
+    marginLeft: 5,
+  },
+  badgeStyle: {
+    borderColor: '#209b9b',
+    borderWidth: 1,
+    backgroundColor: '#fff',
+    elevation: 3,
+    padding: 1,
+    margin: 1,
+  },
+  badgeText: {
+    color: '#209b9b',
+    fontSize: 20,
   },
 });

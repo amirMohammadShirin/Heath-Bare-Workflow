@@ -93,7 +93,7 @@ export default class GetVerificationCodeScreen extends Component {
           });
         } else {
           this.setState({progressModalVisible: false}, () => {
-            // alert('خطا در اتصال به سرویس')
+             alert('خطا در اتصال به سرویس')
             console.log(JSON.stringify(responseData));
           });
         }
@@ -263,7 +263,7 @@ export default class GetVerificationCodeScreen extends Component {
               style={styles.container}
               // source={require(
               //     'D:\\E\\react native projects\\Health\\bare\\salamat\\assets\\images\\splash.png')}
-              source={require('D:\\Adrian Jobs\\Heath-Bare-Workflow-master\\Heath-Bare-Workflow-master\\assets\\images\\splash.png')}></Image>
+              source={require('D:\\E\\react native projects\\Health\\bare\\salamat\\assets\\images\\splash.png')}></Image>
           </View>
           <View style={[styles.main, {width: '100%', height: '50%'}]}>
             <Card style={styles.myCard}>

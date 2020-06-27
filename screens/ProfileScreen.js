@@ -104,10 +104,10 @@ export default class ProfileScreen extends Component {
   renderContent(item) {
     return (
       <Text style={styles.AccordionTextStyle}>
-        {' بیمه ' + item.insuranceType} 
-        { item.serial != null ? (' با شماره ' + item.serial) : ' '}
-        {(item.code != null && item.serial!=null) ? (' و کد ' + item.code) : ''}
-        {(item.code != null && item.serial === null) ? (' با کد ' + item.code) : ''}
+        {' بیمه ' + item.insuranceType}
+        {item.serial != null ? ' با شماره ' + item.serial : ' '}
+        {item.code != null && item.serial != null ? ' و کد ' + item.code : ''}
+        {item.code != null && item.serial === null ? ' با کد ' + item.code : ''}
       </Text>
     );
   }
@@ -168,7 +168,20 @@ export default class ProfileScreen extends Component {
             {this.state.user['gender'] !== 'زن' ? (
               <Thumbnail
                 circular
-                style={styles.avatar}
+                style={
+                  this.state.user['Image'] != null &&
+                  typeof this.state.user['Image'] !== 'undefined'
+                    ? styles.avatar
+                    : [
+                        styles.avatar,
+                        {
+                          backgroundColor: 'transparent',
+                          tintColor: '#fff',
+                          borderColor: 'transparent',
+                          marginTop: 50,
+                        },
+                      ]
+                }
                 source={{
                   uri:
                     this.state.user['Image'] != null &&
@@ -180,14 +193,20 @@ export default class ProfileScreen extends Component {
             ) : (
               <Thumbnail
                 circular
-                style={styles.avatar}
-                source={{
-                  uri:
-                    this.state.user['Image'] != null &&
-                    typeof this.state.user['Image'] !== 'undefined'
-                      ? 'data:image/png;base64, ' + this.state.user['Image']
-                      : this.state.imageObject.account,
-                }}
+                style={
+                  this.state.user['Image'] != null &&
+                  typeof this.state.user['Image'] !== 'undefined'
+                    ? styles.avatar
+                    : [
+                        styles.avatar,
+                        {
+                          backgroundColor: 'transparent',
+                          tintColor: '#fff',
+                          borderColor: 'transparent',
+                          marginTop: 50,
+                        },
+                      ]
+                }
               />
             )}
             <ActivityIndicator
@@ -408,7 +427,7 @@ const styles = StyleSheet.create({
     fontFamily: 'IRANMarker',
     textAlign: 'right',
     color: '#000',
-    fontSize: 15,
+    fontSize: 12,
     alignSelf: 'flex-start',
     margin: 2,
     flex: 1,
@@ -427,7 +446,7 @@ const styles = StyleSheet.create({
     color: '#717171',
     fontFamily: 'IRANMarker',
     textAlign: 'right',
-    fontSize: 12,
+    fontSize: 10,
     padding: 3,
     alignSelf: 'flex-end',
     margin: 2,

@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import Autocomplete from 'react-native-autocomplete-input';
 import {
   StyleSheet,
   View,
@@ -10,6 +11,7 @@ import {
   Keyboard,
   Platform,
   BackHandler,
+  TouchableOpacity,
 } from 'react-native';
 import Modal, {
   ModalButton,
@@ -43,6 +45,8 @@ const CANCEL_TEXT = 'انصراف';
 const GETGENDERS = '/api/GetGenders';
 const GETSKILLS = '/api/GetSkills';
 const SEARCHSERVICEPLAN = '/api/SearchServicePlan';
+const GETMEDICALCENTERSNAMEFORRESERVE = '/api/GetMedicalCentersNameForReserve';
+const GETDOCTORSFULLNAMEFORRESERVE = '/api/GetDoctorsFullNameForReserve';
 export default class ReserveScreen extends Component {
   _isMounted = false;
 
@@ -101,9 +105,57 @@ export default class ReserveScreen extends Component {
       ],
       skills: [],
       genders: [],
+      //-----------------------autoComplete states------------------------
+      medicalCentersShowData: true,
+      doctorsShowData: true,
+      doctorQuery: null,
+      medicalCenterQuery: null,
+      doctorSelected: false,
+      medicalCenterSelected: false,
+      doctorData: [],
+      // doctorData: ['علی رحیمی', 'علی رضا رحیمیان', 'آرمان رضایی', 'رحیم حسینی'],
+      medicalCenterData: [],
+      // medicalCenterData: [
+      //   'درمانگاه استخر',
+      //   'درمانگاه استخر',
+      //   'درمانگاه استخر',
+      //   'درمانگاه استخر',
+      //   'درمانگاه منطقه 5 شهرداری',
+      //   'مطب دکتر',
+      //   'درمانگاه منطقه 11 شهرداری',
+      //   ' درمانگاه',
+      // ],
     };
     (this: any).onStartDateChange = this.onStartDateChange.bind(this);
     (this: any).onEndDateChange = this.onEndDateChange.bind(this);
+  }
+
+  filterDoctorData(text) {
+    if (text !== null) {
+      let mainData = this.state.doctorData;
+      let data = [];
+      for (var item of mainData) {
+        if (item.name.includes(text)) {
+          data.push(item);
+        }
+      }
+      return data;
+    }
+    return;
+  }
+
+  filterMedicalCenterData(text) {
+    if (text !== null) {
+      let mainData = this.state.medicalCenterData;
+      let data = [];
+      for (var item of mainData) {
+        if (item.name.includes(text)) {
+          data.push(item);
+        }
+      }
+      return data;
+    }
+    return;
   }
 
   handleBackButtonClick() {
@@ -148,10 +200,24 @@ export default class ReserveScreen extends Component {
           typeof MEDICALCENTER != 'undefined' && MEDICALCENTER != null
             ? MEDICALCENTER.Title
             : null,
+        medicalCenterQuery:
+          typeof MEDICALCENTER != 'undefined' && MEDICALCENTER != null
+            ? MEDICALCENTER.Title
+            : null,
         doctorSearchWord:
           typeof DOCTOR != 'undefined' && DOCTOR != null
             ? DOCTOR.FirstName + ' ' + DOCTOR.LastName
             : null,
+        doctorQuery:
+          typeof DOCTOR != 'undefined' && DOCTOR != null
+            ? DOCTOR.FirstName + ' ' + DOCTOR.LastName
+            : null,
+        doctorsShowData:
+          typeof DOCTOR != 'undefined' && DOCTOR != null ? false : true,
+        medicalCentersShowData:
+          typeof MEDICALCENTER != 'undefined' && MEDICALCENTER != null
+            ? false
+            : true,
       },
       () => {
         this.getSkills();
@@ -292,8 +358,78 @@ export default class ReserveScreen extends Component {
             let data = responseData['Data'];
             this.setState({progressModalVisible: false}, () => {
               this.setState({genders: data});
-              // this.getSkills();
+              this.getDoctorsName();
             });
+          }
+        } else {
+          this.setState({progressModalVisible: false}, () => {
+            alert('خطا در اتصال به سرویس');
+          });
+        }
+      })
+      .catch(error => {
+        console.error(error);
+        // alert(error)
+      });
+  }
+
+  async getDoctorsName() {
+    await this.setState({progressModalVisible: true});
+    await fetch(this.state.baseUrl + GETDOCTORSFULLNAMEFORRESERVE, {
+      method: 'GET',
+      headers: {
+        'content-type': 'application/json',
+        Accept: 'application/json',
+        Authorization: 'Bearer ' + new String(this.state.token),
+      },
+    })
+      .then(response => response.json())
+      .then(responseData => {
+        if (responseData['StatusCode'] === 200) {
+          if (responseData['Data'] != null) {
+            let data = responseData['Data'];
+            this.setState(
+              {progressModalVisible: false, doctorData: data},
+              () => {
+                this.getMedicalCentersName();
+              },
+            );
+          }
+        } else {
+          this.setState({progressModalVisible: false}, () => {
+            alert('خطا در اتصال به سرویس');
+          });
+        }
+      })
+      .catch(error => {
+        console.error(error);
+        // alert(error)
+      });
+  }
+
+  async getMedicalCentersName() {
+    await this.setState({progressModalVisible: true});
+    await fetch(this.state.baseUrl + GETMEDICALCENTERSNAMEFORRESERVE, {
+      method: 'GET',
+      headers: {
+        'content-type': 'application/json',
+        Accept: 'application/json',
+        Authorization: 'Bearer ' + new String(this.state.token),
+      },
+    })
+      .then(response => response.json())
+      .then(responseData => {
+        if (responseData['StatusCode'] === 200) {
+          if (responseData['Data'] != null) {
+            let data = responseData['Data'];
+            // console.log(data);
+            this.setState(
+              {progressModalVisible: false, medicalCenterData: data},
+              () => {
+                // this.setState({genders: data});
+                // this.getSkills();
+              },
+            );
           }
         } else {
           this.setState({progressModalVisible: false}, () => {
@@ -358,11 +494,11 @@ export default class ReserveScreen extends Component {
                   // alert(JSON.stringify(data))
                   this.props.navigation.push('ServicePlanResultScreen', {
                     result: data,
-                    medicalCenterSearchWord:
+                    medicalCenterQuery:
                       medicalCenterSearchWord != null
                         ? medicalCenterSearchWord
                         : null,
-                    doctorSearchWord:
+                    medicalCenterQuery:
                       doctorSearchWord != null ? doctorSearchWord : null,
                     skill: skill.id !== -100 ? skill.value : null,
                     gender: gender.id !== -100 ? gender.value : null,
@@ -450,7 +586,7 @@ export default class ReserveScreen extends Component {
       this.props.navigation.goBack(null);
     }
   }
-  persinToEnglish(input) {
+  persianToEnglish(input) {
     var array = input.split('');
     var text = '';
     for (let i of array) {
@@ -492,6 +628,10 @@ export default class ReserveScreen extends Component {
     return text;
   }
   render() {
+    const {doctorQuery} = this.state;
+    const doctorData = this.filterDoctorData(doctorQuery);
+    const {medicalCenterQuery} = this.state;
+    const medicalCenterData = this.filterMedicalCenterData(medicalCenterQuery);
     const MEDICALCENTER = this.props.navigation.getParam('medicalCenter');
     const DOCTOR = this.props.navigation.getParam('doctor');
     return (
@@ -543,7 +683,7 @@ export default class ReserveScreen extends Component {
             </Header>
           )}
 
-          <Content padder style={styles.content}>
+          <Content padder style={styles.content} scrollEnabled={false}>
             {Platform.OS === 'android' && (
               <StatusBar
                 barStyle={'dark-content'}
@@ -553,29 +693,184 @@ export default class ReserveScreen extends Component {
             )}
             <Card style={styles.card}>
               <View style={styles.row}>
-                <TextInput
+                {/* <TextInput
                   placeholder={'نام مرکز'}
+                  placeholderTextColor={'gray'}
                   onChangeText={text =>
                     this.setState({medicalCenterSearchWord: text})
                   }
                   value={this.state.medicalCenterSearchWord}
                   style={styles.Input}
+                /> */}
+                <Autocomplete
+                  renderTextInput={() => {
+                    return (
+                      <TextInput
+                        onFocus={() => this.setState({doctorsShowData: false})}
+                        onEndEditing={() =>
+                          this.setState({medicalCentersShowData: false})
+                        }
+                        placeholder={'نام مرکز'}
+                        placeholderTextColor={'#b7b7b7'}
+                        value={medicalCenterQuery}
+                        onChangeText={text => {
+                          if (text.length === 0) {
+                            this.setState({
+                              medicalCenterQuery: null,
+                              medicalCenterSelected: false,
+                              medicalCentersShowData: true,
+                            });
+                          } else {
+                            if (this.state.medicalCentersShowData) {
+                              this.setState({medicalCenterQuery: text});
+                            } else {
+                              this.setState({
+                                medicalCenterQuery: text,
+                                medicalCentersShowData: true,
+                              });
+                            }
+                          }
+                        }}
+                        style={styles.autocompleteInputStyle}
+                      />
+                    );
+                  }}
+                  hideResults={!this.state.medicalCentersShowData}
+                  containerStyle={[
+                    styles.autocompleteContainerStyle,
+                    {zIndex: 20},
+                  ]}
+                  listStyle={styles.autocompleteListStyle}
+                  listContainerStyle={
+                    !this.state.medicalCenterSelected
+                      ? styles.autocompleteListContainerStyleSelected
+                      : [
+                          styles.autocompleteListContainerStyleSelected,
+                          // {maxHeight: 0},
+                        ]
+                  }
+                  keyboardShouldPersistTaps={'always'}
+                  style={styles.autocompleteInputStyle}
+                  data={medicalCenterData}
+                  renderItem={({item, i}) => (
+                    <TouchableOpacity
+                      style={styles.autocompleteResultStyle}
+                      onPress={() =>
+                        this.setState(
+                          {
+                            medicalCenterQuery: item.name,
+                            medicalCenterSelected: true,
+                            medicalCentersShowData: false,
+                          },
+                          () => {
+                            Keyboard.dismiss();
+                          },
+                        )
+                      }>
+                      <View style={styles.autocompleteIconViewStyle}>
+                        <Icon
+                          type="FontAwesome"
+                          name="h-square"
+                          style={styles.autocompleteIconStyle}
+                        />
+                      </View>
+                      <Text style={styles.autocompleteResultTextStyle}>
+                        {item.name}
+                      </Text>
+                    </TouchableOpacity>
+                  )}
                 />
+
                 <Text style={[styles.label, {marginBottom: 8}]}>
                   {' '}
                   مرکز درمانی
                 </Text>
               </View>
               <View style={styles.row}>
-                <TextInput
+                {/* <TextInput
+                  placeholderTextColor={'gray'}
                   placeholder={'نام پزشک'}
                   onChangeText={text => this.setState({doctorSearchWord: text})}
                   value={this.state.doctorSearchWord}
                   style={styles.Input}
+                /> */}
+                <Autocomplete
+                  renderTextInput={() => {
+                    return (
+                      <TextInput
+                        onFocus={() =>
+                          this.setState({medicalCentersShowData: false})
+                        }
+                        onEndEditing={() =>
+                          this.setState({doctorsShowData: false})
+                        }
+                        placeholder={'نام پزشک'}
+                        placeholderTextColor={'#b7b7b7'}
+                        value={doctorQuery}
+                        onChangeText={text => {
+                          if (text.length === 0) {
+                            this.setState({
+                              doctorQuery: null,
+                              doctorSelected: false,
+                              doctorsShowData: true,
+                            });
+                          } else {
+                            if (this.state.doctorsShowData) {
+                              this.setState({doctorQuery: text});
+                            } else {
+                              this.setState({
+                                doctorQuery: text,
+                                doctorsShowData: true,
+                              });
+                            }
+                          }
+                        }}
+                        style={styles.autocompleteInputStyle}
+                      />
+                    );
+                  }}
+                  hideResults={!this.state.doctorsShowData}
+                  containerStyle={styles.autocompleteContainerStyle}
+                  listStyle={styles.autocompleteListStyle}
+                  listContainerStyle={
+                    !this.state.doctorSelected
+                      ? styles.autocompleteListContainerStyleSelected
+                      : [styles.autocompleteListContainerStyleSelected]
+                  }
+                  keyboardShouldPersistTaps={'always'}
+                  // style={styles.autocompleteInputStyle}
+                  data={doctorData}
+                  renderItem={({item, i}) => (
+                    <TouchableOpacity
+                      style={styles.autocompleteResultStyle}
+                      onPress={() =>
+                        this.setState(
+                          {
+                            doctorQuery: item.name,
+                            doctorSelected: true,
+                            doctorsShowData: false,
+                          },
+                          () => {
+                            Keyboard.dismiss();
+                          },
+                        )
+                      }>
+                      <View style={styles.autocompleteIconViewStyle}>
+                        <Icon
+                          type="FontAwesome"
+                          name="user-md"
+                          style={styles.autocompleteIconStyle}
+                        />
+                      </View>
+                      <Text style={styles.autocompleteResultTextStyle}>
+                        {item.name}
+                      </Text>
+                    </TouchableOpacity>
+                  )}
                 />
+
                 <Text style={[styles.label, {marginBottom: 8}]}> پزشک</Text>
               </View>
-
               <View style={styles.row}>
                 <Button
                   onPress={() => {
@@ -771,278 +1066,6 @@ export default class ReserveScreen extends Component {
               </ModalContent>
             </Modal>
 
-            {/*<Card>*/}
-            {/*    <CardItem bordered style={{flexDirection: 'column'}}>*/}
-            {/*        <View style={[styles.row]}>*/}
-            {/*            <SearchableDropdown style={{alignSelf: 'flex-end', width: '100%',}}*/}
-            {/*                                multi={false}*/}
-            {/*                                onItemSelect={(item) => {*/}
-
-            {/*                                }}*/}
-            {/*                                containerStyle={{padding: 5}}*/}
-            {/*                                onRemoveItem={(item, index) => {*/}
-
-            {/*                                }}*/}
-            {/*                                itemStyle={{*/}
-            {/*                                    padding: 10,*/}
-            {/*                                    marginTop: 2,*/}
-            {/*                                    backgroundColor: '#fff',*/}
-            {/*                                    borderBottomColor: 'rgba(35,185,185,0.49)',*/}
-            {/*                                    borderTopColor: '#fff',*/}
-            {/*                                    borderRightColor: '#fff',*/}
-            {/*                                    borderLeftColor: '#fff',*/}
-            {/*                                    borderWidth: 1,*/}
-            {/*                                    borderRadius: 2,*/}
-            {/*                                }}*/}
-            {/*                                itemTextStyle={{*/}
-            {/*                                    color: 'rgba(34,34,34,0.72)',*/}
-            {/*                                    textAlign: 'right'*/}
-            {/*                                }}*/}
-            {/*                                itemsContainerStyle={{maxHeight: 200}}*/}
-            {/*                                items={medicalItems}*/}
-            {/*                                chip={false}*/}
-            {/*                                resetValue={false}*/}
-            {/*                                textInputProps={*/}
-            {/*                                    {*/}
-            {/*                                        placeholder: "جستجوی مرکز دزمانی",*/}
-            {/*                                        underlineColorAndroid: "transparent",*/}
-            {/*                                        placeholderTextColor: '#23b9b9',*/}
-            {/*                                        style: {*/}
-            {/*                                            padding: 12,*/}
-            {/*                                            borderWidth: 1,*/}
-            {/*                                            borderColor: '#ccc',*/}
-            {/*                                            borderRadius: 5,*/}
-            {/*                                            width: '100%',*/}
-            {/*                                            flex: 1*/}
-            {/*                                        },*/}
-            {/*                                        onTextChange: text => (this.search(text))*/}
-            {/*                                    }*/}
-            {/*                                }*/}
-            {/*                                listProps={*/}
-            {/*                                    {*/}
-            {/*                                        nestedScrollEnabled: true,*/}
-            {/*                                    }*/}
-            {/*                                }*/}
-            {/*            />*/}
-            {/*            <SearchableDropdown*/}
-            {/*                multi={false}*/}
-            {/*                onItemSelect={(item) => {*/}
-
-            {/*                }}*/}
-            {/*                containerStyle={{padding: 5}}*/}
-            {/*                onRemoveItem={(item, index) => {*/}
-
-            {/*                }}*/}
-            {/*                itemStyle={{*/}
-            {/*                    padding: 10,*/}
-            {/*                    marginTop: 2,*/}
-            {/*                    backgroundColor: '#fff',*/}
-            {/*                    borderBottomColor: 'rgba(35,185,185,0.49)',*/}
-            {/*                    borderTopColor: '#fff',*/}
-            {/*                    borderRightColor: '#fff',*/}
-            {/*                    borderLeftColor: '#fff',*/}
-            {/*                    borderWidth: 1,*/}
-            {/*                    borderRadius: 2,*/}
-            {/*                }}*/}
-            {/*                itemTextStyle={{*/}
-            {/*                    color: 'rgba(34,34,34,0.72)',*/}
-            {/*                    textAlign: 'right'*/}
-            {/*                }}*/}
-            {/*                itemsContainerStyle={{maxHeight: 200}}*/}
-            {/*                items={medicalItems}*/}
-            {/*                chip={false}*/}
-            {/*                resetValue={false}*/}
-            {/*                textInputProps={*/}
-            {/*                    {*/}
-            {/*                        placeholder: "منطقه",*/}
-            {/*                        underlineColorAndroid: "transparent",*/}
-            {/*                        placeholderTextColor: '#23b9b9',*/}
-            {/*                        style: {*/}
-            {/*                            padding: 12,*/}
-            {/*                            borderWidth: 1,*/}
-            {/*                            borderColor: '#ccc',*/}
-            {/*                            borderRadius: 5,*/}
-            {/*                            width: '100%',*/}
-            {/*                            flex: 1*/}
-            {/*                        },*/}
-            {/*                        onTextChange: text => (this.search(text))*/}
-            {/*                    }*/}
-            {/*                }*/}
-            {/*                listProps={*/}
-            {/*                    {*/}
-            {/*                        nestedScrollEnabled: true,*/}
-            {/*                    }*/}
-            {/*                }*/}
-            {/*            />*/}
-            {/*            <SearchableDropdown*/}
-            {/*                multi={false}*/}
-            {/*                onItemSelect={(item) => {*/}
-
-            {/*                }}*/}
-            {/*                containerStyle={{padding: 5}}*/}
-            {/*                onRemoveItem={(item, index) => {*/}
-
-            {/*                }}*/}
-            {/*                itemStyle={{*/}
-            {/*                    padding: 10,*/}
-            {/*                    marginTop: 2,*/}
-            {/*                    backgroundColor: '#fff',*/}
-            {/*                    borderBottomColor: 'rgba(35,185,185,0.49)',*/}
-            {/*                    borderTopColor: '#fff',*/}
-            {/*                    borderRightColor: '#fff',*/}
-            {/*                    borderLeftColor: '#fff',*/}
-            {/*                    borderWidth: 1,*/}
-            {/*                    borderRadius: 2,*/}
-            {/*                }}*/}
-            {/*                itemTextStyle={{*/}
-            {/*                    color: 'rgba(34,34,34,0.72)',*/}
-            {/*                    textAlign: 'right'*/}
-            {/*                }}*/}
-            {/*                itemsContainerStyle={{maxHeight: 200}}*/}
-            {/*                items={medicalItems}*/}
-            {/*                chip={false}*/}
-            {/*                resetValue={false}*/}
-            {/*                textInputProps={*/}
-            {/*                    {*/}
-            {/*                        placeholder: "خدمات",*/}
-            {/*                        underlineColorAndroid: "transparent",*/}
-            {/*                        placeholderTextColor: '#23b9b9',*/}
-            {/*                        style: {*/}
-            {/*                            padding: 12,*/}
-            {/*                            borderWidth: 1,*/}
-            {/*                            borderColor: '#ccc',*/}
-            {/*                            borderRadius: 5,*/}
-            {/*                            width: '100%',*/}
-            {/*                            flex: 1*/}
-            {/*                        },*/}
-            {/*                        onTextChange: text => (this.search(text))*/}
-            {/*                    }*/}
-            {/*                }*/}
-            {/*                listProps={*/}
-            {/*                    {*/}
-            {/*                        nestedScrollEnabled: true,*/}
-            {/*                    }*/}
-            {/*                }*/}
-            {/*            />*/}
-            {/*            <SearchableDropdown*/}
-            {/*                multi={false}*/}
-            {/*                onItemSelect={(item) => {*/}
-
-            {/*                }}*/}
-            {/*                containerStyle={{padding: 5}}*/}
-            {/*                onRemoveItem={(item, index) => {*/}
-
-            {/*                }}*/}
-            {/*                itemStyle={{*/}
-            {/*                    padding: 10,*/}
-            {/*                    marginTop: 2,*/}
-            {/*                    backgroundColor: '#fff',*/}
-            {/*                    borderBottomColor: 'rgba(35,185,185,0.49)',*/}
-            {/*                    borderTopColor: '#fff',*/}
-            {/*                    borderRightColor: '#fff',*/}
-            {/*                    borderLeftColor: '#fff',*/}
-            {/*                    borderWidth: 1,*/}
-            {/*                    borderRadius: 2,*/}
-            {/*                }}*/}
-            {/*                itemTextStyle={{*/}
-            {/*                    color: 'rgba(34,34,34,0.72)',*/}
-            {/*                    textAlign: 'right'*/}
-            {/*                }}*/}
-            {/*                itemsContainerStyle={{maxHeight: 200}}*/}
-            {/*                items={medicalItems}*/}
-            {/*                chip={false}*/}
-            {/*                resetValue={false}*/}
-            {/*                textInputProps={*/}
-            {/*                    {*/}
-            {/*                        placeholder: "سرویس",*/}
-            {/*                        underlineColorAndroid: "transparent",*/}
-            {/*                        placeholderTextColor: '#23b9b9',*/}
-            {/*                        style: {*/}
-            {/*                            padding: 12,*/}
-            {/*                            borderWidth: 1,*/}
-            {/*                            borderColor: '#ccc',*/}
-            {/*                            borderRadius: 5,*/}
-            {/*                            width: '100%',*/}
-            {/*                            flex: 1*/}
-            {/*                        },*/}
-            {/*                        onTextChange: text => (this.search(text))*/}
-            {/*                    }*/}
-            {/*                }*/}
-            {/*                listProps={*/}
-            {/*                    {*/}
-            {/*                        nestedScrollEnabled: true,*/}
-            {/*                    }*/}
-            {/*                }*/}
-            {/*            />*/}
-
-            {/*        </View>*/}
-            {/*    </CardItem>*/}
-
-            {/*    <CardItem bordered style={{flexDirection: 'column'}}>*/}
-            {/*        <View style={styles.viewStyle}>*/}
-            {/*            <View style={[styles.row]}>*/}
-            {/*                <SearchableDropdown style={{flex: 1, width: '100%',}}*/}
-            {/*                                    multi={false}*/}
-            {/*                                    onItemSelect={(item) => {*/}
-
-            {/*                                    }}*/}
-            {/*                                    containerStyle={{padding: 5}}*/}
-            {/*                                    onRemoveItem={(item, index) => {*/}
-
-            {/*                                    }}*/}
-            {/*                                    itemStyle={{*/}
-            {/*                                        padding: 10,*/}
-            {/*                                        marginTop: 2,*/}
-            {/*                                        backgroundColor: '#fff',*/}
-            {/*                                        borderBottomColor: 'rgba(35,185,185,0.49)',*/}
-            {/*                                        borderTopColor: '#fff',*/}
-            {/*                                        borderRightColor: '#fff',*/}
-            {/*                                        borderLeftColor: '#fff',*/}
-            {/*                                        borderWidth: 1,*/}
-            {/*                                        borderRadius: 2,*/}
-            {/*                                    }}*/}
-            {/*                                    itemTextStyle={{*/}
-            {/*                                        color: 'rgba(34,34,34,0.72)',*/}
-            {/*                                        textAlign: 'right'*/}
-            {/*                                    }}*/}
-            {/*                                    itemsContainerStyle={{maxHeight: 200}}*/}
-            {/*                                    items={medicalItems}*/}
-            {/*                                    chip={false}*/}
-            {/*                                    resetValue={false}*/}
-            {/*                                    textInputProps={*/}
-            {/*                                        {*/}
-            {/*                                            placeholder: " جستجوی پزشک",*/}
-            {/*                                            underlineColorAndroid: "transparent",*/}
-            {/*                                            placeholderTextColor: '#23b9b9',*/}
-            {/*                                            style: {*/}
-            {/*                                                padding: 12,*/}
-            {/*                                                borderWidth: 1,*/}
-            {/*                                                borderColor: '#ccc',*/}
-            {/*                                                borderRadius: 5,*/}
-            {/*                                                width: '100%'*/}
-            {/*                                            },*/}
-            {/*                                            // onTextChange: text => alert(text)*/}
-            {/*                                        }*/}
-            {/*                                    }*/}
-            {/*                                    listProps={*/}
-            {/*                                        {*/}
-            {/*                                            nestedScrollEnabled: true,*/}
-            {/*                                        }*/}
-            {/*                                    }*/}
-            {/*                />*/}
-            {/*            </View>*/}
-            {/*        </View>*/}
-            {/*    </CardItem>*/}
-
-            {/*    <CardItem footer bordered style={{flexDirection: 'column'}}>*/}
-            {/*        <Button success*/}
-            {/*                style={{alignContent: 'center', justifyContent: 'center', alignSelf: 'center'}}>*/}
-            {/*            <Text>رزرو نوبت</Text>*/}
-            {/*        </Button>*/}
-            {/*    </CardItem>*/}
-            {/*</Card>*/}
-
-            {/* ----------------------StartDate Dialog---------------------------- */}
             <Dialog
               dialogStyle={{
                 backgroundColor: 'transparent',
@@ -1195,18 +1218,18 @@ export default class ReserveScreen extends Component {
                   this.state.selectedEndDate !== null
                 ) {
                   this.searchServicePlans(
-                    this.state.medicalCenterSearchWord,
-                    this.state.doctorSearchWord,
+                    this.state.medicalCenterQuery,
+                    this.state.doctorQuery,
                     this.state.selectedSkill,
                     this.state.selectedGender,
                     // this.state.selectedStartDate,
                     // this.state.selectedEndDate
-                    this.persinToEnglish(
+                    this.persianToEnglish(
                       this.state.selectedStartDate
                         .format('YYYY-M-D')
                         .toString(),
                     ),
-                    this.persinToEnglish(
+                    this.persianToEnglish(
                       this.state.selectedEndDate.format('YYYY-M-D').toString(),
                     ),
                   );
@@ -1328,7 +1351,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginBottom: 13,
     margin: 1,
-    fontSize: 15,
+    fontSize: 13,
     fontWeight: 'bold',
     textAlign: 'right',
   },
@@ -1336,6 +1359,7 @@ const styles = StyleSheet.create({
     color: '#000',
     fontFamily: 'IRANMarker',
     margin: 1,
+    backgroundColor: '#fff',
     marginRight: 2,
     justifyContent: 'center',
     alignContent: 'center',
@@ -1345,7 +1369,7 @@ const styles = StyleSheet.create({
     flex: 3,
     alignSelf: 'flex-start',
     padding: 5,
-    fontSize: 15,
+    fontSize: 10,
     textAlign: 'right',
   },
   modalTitle: {
@@ -1355,7 +1379,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     textAlign: 'center',
     alignSelf: 'center',
-    fontSize: 16,
+    fontSize: 14,
   },
   modalFooter: {
     padding: 2,
@@ -1404,9 +1428,80 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     borderRadius: 2,
     flex: 2,
-    fontSize: 13,
+    fontSize: 11,
     color: '#23b9b9',
     borderWidth: 1,
     borderColor: '#23b9b9',
+  },
+  autocompleteContainerStyle: {
+    flex: 3,
+    left: 4,
+    position: 'absolute',
+    right: 110,
+    top: 0,
+    zIndex: 10,
+  },
+  autocompleteInputStyle: {
+    color: '#23b9b9',
+    fontFamily: 'IRANMarker',
+    padding: 1,
+    marginRight: 2,
+    fontSize: 10,
+    textAlign: 'right',
+  },
+  autocompleteResultTextStyle: {
+    flex: 10,
+    color: 'gray',
+    fontFamily: 'IRANMarker',
+    fontSize: 11,
+    padding: 1,
+    marginRight: 3,
+    textAlign: 'right',
+  },
+  autocompleteResultStyle: {
+    flexDirection: 'row-reverse',
+    backgroundColor: '#fff',
+    borderBottomColor: '#c7c7c7',
+    borderBottomWidth: 1,
+  },
+  autocompleteListStyle: {
+    borderColor: '#c7c7c7',
+    borderWidth: 1,
+    borderRightColor: 'transparent',
+    borderLeftColor: 'transparent',
+    borderBottomEndRadius: 2,
+    borderBottomLeftRadius: 3,
+    borderBottomRightRadius: 3,
+  },
+  autocompleteListContainerStyleSelected: {
+    width: '100%',
+    borderWidth: 0,
+    borderColor: 'transparent',
+    backgroundColor: 'transparent',
+    paddingRight: 10,
+    paddingLeft: 10,
+    minHeight: 0,
+    maxHeight: 100,
+  },
+  autocompleteListContainerStyleDeSelected: {
+    borderWidth: 0,
+    borderColor: 'transparent',
+    backgroundColor: 'transparent',
+    paddingRight: 10,
+    paddingLeft: 10,
+    minHeight: 0,
+    maxHeight: 0,
+  },
+  autocompleteIconViewStyle: {
+    marginRight: 2,
+    marginLeft: 1,
+    justifyContent: 'center',
+    alignContent: 'center',
+    alignItems: 'center',
+  },
+  autocompleteIconStyle: {
+    alignSelf: 'center',
+    color: 'gray',
+    fontSize: 15,
   },
 });

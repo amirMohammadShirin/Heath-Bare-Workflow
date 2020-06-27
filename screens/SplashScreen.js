@@ -37,6 +37,8 @@ export default class SplashScreen extends Component {
     console.log(baseUrl);
     const nationalCode = await AsyncStorage.getItem('nationalCode');
     console.log(nationalCode);
+   // const userId = await AsyncStorage.getItem('nationalCode');
+  //  console.log(userId);
 
     if (
       token != null &&
@@ -72,7 +74,9 @@ export default class SplashScreen extends Component {
                 // username: '09191111111',
                 nationalCode: nationalCode,
               };
+              
               console.log(JSON.stringify(body));
+
               console.log('no.2 fetch started');
               fetch(baseUrl + AUTHENTICATE, {
                 method: 'POST',
@@ -200,7 +204,7 @@ export default class SplashScreen extends Component {
         // source={require(
         //     'D:\\E\\react native projects\\Health\\bare\\salamat\\assets\\images\\splash.png')
         // }
-        source={require('D:\\Adrian Jobs\\Heath-Bare-Workflow-master\\Heath-Bare-Workflow-master\\assets\\images\\splash.png')}
+        source={require('D:\\E\\react native projects\\Health\\bare\\salamat\\assets\\images\\splash.png')}
 
         // onPress={() => {
         //     // this.props.navigation.user.username = 'adrian';

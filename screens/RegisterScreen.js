@@ -1,5 +1,8 @@
 import React, {Component} from 'react';
-import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from 'react-native-responsive-screen';
 import {
   StyleSheet,
   View,
@@ -60,8 +63,8 @@ const options = {
     skipBackup: true,
     path: 'images',
   },
-  maxWidth:160,
-  maxHeight:160,
+  maxWidth: 160,
+  maxHeight: 160,
 };
 
 const REGISTER = '/api/Register';
@@ -602,6 +605,8 @@ export default class ReserveScreen extends Component {
                   </CardItem>
                   <CardItem style={styles.row}>
                     <Textarea
+                      value={this.state.address}
+                      onChangeText={text => this.setState({address: text})}
                       style={styles.textArea}
                       rowSpan={3}
                       bordered
@@ -617,6 +622,8 @@ export default class ReserveScreen extends Component {
                   </CardItem>
                   <CardItem style={styles.row}>
                     <Textarea
+                      value={this.state.description}
+                      onChangeText={text => this.setState({description: text})}
                       style={styles.textArea}
                       rowSpan={3}
                       bordered

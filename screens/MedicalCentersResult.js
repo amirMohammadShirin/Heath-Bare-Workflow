@@ -28,7 +28,7 @@ import {
   Badge,
   Thumbnail,
 } from 'native-base';
-import {Dialog} from 'react-native-simple-dialogs'
+import {Dialog} from 'react-native-simple-dialogs';
 import Modal, {
   ModalButton,
   ModalContent,
@@ -282,8 +282,7 @@ export default class MedicalCentersResult extends Component {
                               //   overflow: 'hidden',
                               height: 70,
                               width: 70,
-                              resizeMode:'cover'
-                              
+                              resizeMode: 'cover',
                             }}
                             source={{
                               uri:
@@ -302,7 +301,7 @@ export default class MedicalCentersResult extends Component {
             </ScrollView>
 
             <Dialog
-             dialogStyle={{
+              dialogStyle={{
                 backgroundColor: 'transparent',
                 borderWidth: 0,
                 borderColor: 'transparent',
@@ -337,9 +336,9 @@ export default class MedicalCentersResult extends Component {
                             textAlign: 'right',
                           },
                         ]}>
-                     {this.state.selectedMedicalCenter.Description != null
-                      ? this.state.selectedMedicalCenter.Description
-                      : ''}
+                        {this.state.selectedMedicalCenter.Description != null
+                          ? this.state.selectedMedicalCenter.Description
+                          : ''}
                       </Text>
                     </Body>
                   </CardItem>
@@ -443,7 +442,7 @@ const styles = StyleSheet.create({
     fontFamily: 'IRANMarker',
     color: '#fff',
     textAlign: 'center',
-    alignSelf:'center'
+    alignSelf: 'center',
   },
   modalFooter: {
     padding: 2,
@@ -457,7 +456,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 2,
     margin: 5,
-    justifyContent:"center"
+    justifyContent: 'center',
   },
   modalSuccessButton: {
     flex: 1,
@@ -465,7 +464,7 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     padding: 2,
     margin: 5,
-    justifyContent:"center"
+    justifyContent: 'center',
   },
   modalSuccessButtonText: {
     fontFamily: 'IRANMarker',
@@ -481,12 +480,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 
-
-
-
-
-
-  
   modalContent: {
     marginTop: 5,
     padding: 2,
@@ -504,6 +497,7 @@ const styles = StyleSheet.create({
     elevation: 3,
     padding: 1,
     margin: 1,
+    justifyContent: 'center',
   },
   badgeText: {
     color: '#fff',

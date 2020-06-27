@@ -134,7 +134,8 @@ export default class ServicePlanResult extends Component {
   }
 
   async reserve(body) {
-    this.setState({visible:false})
+    
+    this.setState({visible: false});
     this.setState({
       progressModalVisible: true /*, selectedMedicalCenter: null, selectedDay: null*/,
     });
@@ -633,7 +634,7 @@ export default class ServicePlanResult extends Component {
             </ScrollView>
 
             <Dialog
-               dialogStyle={{
+              dialogStyle={{
                 backgroundColor: 'transparent',
                 borderWidth: 0,
                 borderColor: 'transparent',
@@ -909,7 +910,9 @@ export default class ServicePlanResult extends Component {
                                 borderWidth: 1,
                                 borderColor: '#23b9b9',
                               }}>
-                              {this.state.selectedTime.value === 'انصراف' ? "انتخاب ساعت" : this.state.selectedTime.value}
+                              {this.state.selectedTime.value === 'انصراف'
+                                ? 'انتخاب ساعت'
+                                : this.state.selectedTime.value}
                             </Text>
                           </Button>
                         )}
@@ -917,15 +920,12 @@ export default class ServicePlanResult extends Component {
                   </CardItem>
                   <CardItem footer style={{backgroundColor: '#fff'}}>
                     <Body style={{flexDirection: 'row'}}>
-                      
                       <Button
                         style={styles.modalCancelButton}
                         onPress={async () => {
                           await this.closeModal();
                         }}>
-                        <Text style={styles.modalCancelButtonText}>
-                          انصراف
-                        </Text>
+                        <Text style={styles.modalCancelButtonText}>انصراف</Text>
                       </Button>
                       <Button
                         style={styles.modalSuccessButton}
@@ -1095,8 +1095,9 @@ const styles = StyleSheet.create({
     margin: 1,
   },
   badgeText: {
+    fontFamily: 'IRANMarker',
     color: '#fff',
-    fontSize: 13,
+    fontSize: 11,
   },
   modalTitle: {
     backgroundColor: '#23b9b9',

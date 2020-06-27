@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {Rating, AirbnbRating} from 'react-native-ratings';
 import {
   ActivityIndicator,
   AsyncStorage,
@@ -44,10 +45,14 @@ export default class DetailsScreen extends Component {
       doctor: null,
       photoDetection: '',
       imageObject: null,
+      score: 0,
+      count: '0',
+      selectedMedicalCenter: null,
     };
   }
 
   onBackPressed() {
+    // alert(this.state.selectedMedicalCenter);
     this.props.navigation.goBack();
   }
 
@@ -84,6 +89,7 @@ export default class DetailsScreen extends Component {
   goToReserveScreen() {
     this.props.navigation.navigate('ReserveScreenFromDoctorScreen', {
       doctor: this.state.doctor,
+      medicalCenter: this.state.selectedMedicalCenter,
       goBack: null,
       imageObject: this.state.imageObject,
     });
@@ -91,6 +97,7 @@ export default class DetailsScreen extends Component {
 
   async componentWillMount(): void {
     let image = this.props.navigation.getParam('imageObject');
+    let selectedMedicalCenter = this.props.navigation.getParam('medicalCenter');
     if (Platform.OS === 'android') {
       BackHandler.addEventListener(
         'hardwareBackPress',
@@ -106,6 +113,10 @@ export default class DetailsScreen extends Component {
         token: token,
         selectedDoctor: doctor,
         imageObject: image,
+        selectedMedicalCenter:
+          selectedMedicalCenter != null && selectedMedicalCenter !== 'undefined'
+            ? selectedMedicalCenter
+            : null,
       },
       () => {
         this.getDoctorDetails();
@@ -201,51 +212,104 @@ export default class DetailsScreen extends Component {
               {!this.state.progressModalVisible && this.state.doctor != null && (
                 <CardItem style={{marginTop: 5}}>
                   <Left>
-                    {this.state.doctor.Gender !== null &&
-                    this.state.doctor.Gender !== 'زن' ? (
-                      <Thumbnail
-                        circular
-                        large
+                    <View>
+                      {this.state.doctor.Gender !== null &&
+                      this.state.doctor.Gender !== 'زن' ? (
+                        <Thumbnail
+                          circular
+                          large
+                          style={{
+                            //   borderWidth: 1,
+                            //   borderColor: '#e0e0e0',
+                            //   overflow: 'hidden',
+                            height: 100,
+                            width: 100,
+                            resizeMode: 'cover',
+                          }}
+                          source={{
+                            uri:
+                              (this.state.doctor.Image !== null) &
+                              (typeof this.state.doctor.Image !== 'undefined')
+                                ? 'data:image/png;base64, ' +
+                                  this.state.doctor.Image
+                                : this.state.imageObject.doctor,
+                          }}
+                        />
+                      ) : (
+                        <Thumbnail
+                          circular
+                          large
+                          style={{
+                            //   borderWidth: 1,
+                            //   borderColor: '#e0e0e0',
+                            //   overflow: 'hidden',
+                            height: 100,
+                            width: 100,
+                            resizeMode: 'cover',
+                          }}
+                          source={{
+                            uri:
+                              (this.state.doctor.Image !== null) &
+                              (typeof this.state.doctor.Image !== 'undefined')
+                                ? 'data:image/png;base64, ' +
+                                  this.state.doctor.Image
+                                : this.state.imageObject.hijab,
+                          }}
+                        />
+                      )}
+                      <AirbnbRating
+                        showRating={false}
+                        isDisabled={true}
                         style={{
-                          //   borderWidth: 1,
-                          //   borderColor: '#e0e0e0',
-                          //   overflow: 'hidden',
-                          height: 100,
-                          width: 100,
-                          resizeMode: 'cover',
+                          marginRight: 1,
+                          marginLeft: 1,
+                          marginTop: 10,
+                          marginBottom: 10,
                         }}
-                        source={{
-                          uri:
-                            (this.state.doctor.Image !== null) &
-                            (typeof this.state.doctor.Image !== 'undefined')
-                              ? 'data:image/png;base64, ' +
-                                this.state.doctor.Image
-                              : this.state.imageObject.doctor,
+                        starContainerStyle={{
+                          marginTop: 10,
+                          backgroundColor: '#fff',
+                          // paddingLeft: 10,
+                          paddingRight: 10,
+                          borderRadius: 20,
+                          borderColor: '#d9d9d9',
+                          borderWidth: 1,
+                          elevation: 8,
+                          shadowColor: '#000',
                         }}
-                      
+                        count={5}
+                        defaultRating={this.state.score}
+                        size={12}
+                        selectedColor={
+                          this.state.score < 2
+                            ? '#d11d1d'
+                            : this.state.score >= 3
+                            ? '#26c754'
+                            : '#209b9b'
+                        }
                       />
-                    ) : (
-                      <Thumbnail
-                        circular
-                        large
+                      <Text
                         style={{
-                          //   borderWidth: 1,
-                          //   borderColor: '#e0e0e0',
-                          //   overflow: 'hidden',
-                          height: 100,
-                          width: 100,
-                          resizeMode: 'cover',
-                        }}
-                        source={{
-                          uri:
-                            (this.state.doctor.Image !== null) &
-                            (typeof this.state.doctor.Image !== 'undefined')
-                              ? 'data:image/png;base64, ' +
-                                this.state.doctor.Image
-                              : this.state.imageObject.hijab,
-                        }}
-                      />
-                    )}
+                          marginTop: 1,
+                          fontFamily: 'IRANMarker',
+                          fontSize: 6,
+                          color: '#8a8a8a',
+                          textAlign: 'center',
+                        }}>
+                        مجموع نظرات کاربران
+                      </Text>
+                      <Text
+                        style={{
+                          marginTop: 1,
+                          fontFamily: 'IRANMarker',
+                          fontSize: 8,
+                          color: '#8a8a8a',
+                          textAlign: 'center',
+                        }}>
+                        {this.state.count}
+                      </Text>
+                    </View>
+
                     <Body
                       style={{
                         justifyContent: 'center',
