@@ -128,7 +128,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.salamat"
+        applicationId 'ir.tehran.ShahreSalem'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

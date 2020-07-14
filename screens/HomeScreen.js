@@ -97,7 +97,6 @@ export default class HomeScreen extends Component {
       token: null,
       medicalCenters: [],
       selectedMedicalCenter: null,
-      imageObject: null,
       showMunicipality: true,
       showClinic: false,
       showHospital: false,
@@ -270,7 +269,6 @@ export default class HomeScreen extends Component {
   };
 
   async componentWillMount(): void {
-    let image = this.props.navigation.getParam('imageObject');
 
     if (Platform.OS === 'android') {
       BackHandler.addEventListener(
@@ -294,7 +292,6 @@ export default class HomeScreen extends Component {
         user: this.props.navigation.getParam('user'),
         baseUrl: baseUrl,
         token: token,
-        imageObject: image,
       },
       async () => {
         await this.getAllLocations();
@@ -753,7 +750,6 @@ export default class HomeScreen extends Component {
                                 {
                                   medicalCenter: this.state
                                     .selectedMedicalCenter,
-                                  imageObject: this.state.imageObject,
                                 },
                               );
                             }}>
@@ -771,7 +767,6 @@ export default class HomeScreen extends Component {
                                   medicalCenter: this.state
                                     .selectedMedicalCenter,
                                   backRoute: 'HomeScreen',
-                                  imageObject: this.state.imageObject,
                                 },
                               );
                             }}>
@@ -1295,7 +1290,6 @@ export default class HomeScreen extends Component {
                                 {
                                   medicalCenter: this.state
                                     .selectedMedicalCenter,
-                                  imageObject: this.state.imageObject,
                                 },
                               );
                             }}>
@@ -1313,7 +1307,6 @@ export default class HomeScreen extends Component {
                                   medicalCenter: this.state
                                     .selectedMedicalCenter,
                                   backRoute: 'HomeScreen',
-                                  imageObject: this.state.imageObject,
                                 },
                               );
                             }}>
@@ -1493,7 +1486,6 @@ export default class HomeScreen extends Component {
                               'MapSearchDoctorScreen',
                               {
                                 medicalCenter: this.state.selectedMedicalCenter,
-                                imageObject: this.state.imageObject,
                               },
                             );
                           }}>
@@ -1510,7 +1502,6 @@ export default class HomeScreen extends Component {
                               {
                                 medicalCenter: this.state.selectedMedicalCenter,
                                 backRoute: 'HomeScreen',
-                                imageObject: this.state.imageObject,
                               },
                             );
                           }}>
@@ -1652,7 +1643,6 @@ const styles = StyleSheet.create({
     flex: 1,
     color: '#23b9b9',
     fontSize: 10,
-    justifyContent: 'center',
     fontFamily: 'IRANMarker',
     textAlign: 'center',
     justifyContent: 'center',

@@ -32,7 +32,6 @@ export default class GetVerificationCodeScreen extends Component {
       check: 'checkmark-circle',
       error: 'close-circle',
       progressModalVisible: false,
-      imageObject: null,
     };
   }
 
@@ -63,7 +62,6 @@ export default class GetVerificationCodeScreen extends Component {
           this.setState({progressModalVisible: false}, () => {
             this.props.navigation.push('VerifyScreen', {
               phoneNumber: body.phoneNumber,
-              imageObject: this.state.imageObject,
             });
           });
         } else if (responseData['StatusCode'] === 800) {
@@ -218,12 +216,7 @@ export default class GetVerificationCodeScreen extends Component {
     return true;
   }
 
-  componentWillMount() {
-    let image = this.props.navigation.getParam('imageObject');
-    this.setState({
-      imageObject: image,
-    });
-  }
+
   phoneNumberValidation(value) {
     const regex = RegExp('^(\\+98|0)?9\\d{9}$');
     let phone = new String(value);
@@ -263,7 +256,7 @@ export default class GetVerificationCodeScreen extends Component {
               style={styles.container}
               // source={require(
               //     'D:\\E\\react native projects\\Health\\bare\\salamat\\assets\\images\\splash.png')}
-              source={require('D:\\E\\react native projects\\Health\\bare\\salamat\\assets\\images\\splash.png')}></Image>
+              source={require('D:\\E\\react native projects\\Health\\bare\\clone\\salamat\\assets\\images\\splash.png')}></Image>
           </View>
           <View style={[styles.main, {width: '100%', height: '50%'}]}>
             <Card style={styles.myCard}>

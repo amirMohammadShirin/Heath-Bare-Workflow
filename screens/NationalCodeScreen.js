@@ -28,7 +28,6 @@ export default class NationalCodeScreen extends Component {
             phoneNumber: null,
             nationalCode: null,
             baseUrl: null,
-            imageObject : null
         }
     }
 
@@ -41,12 +40,7 @@ export default class NationalCodeScreen extends Component {
         }
     }
 
-    componentWillMount(){
-        let image = this.props.navigation.getParam('imageObject')
-        this.setState({
-            imageObject : image
-        })
-    }
+
     handleBackButtonClick() {
         // alert('pressed')
 
@@ -92,7 +86,7 @@ export default class NationalCodeScreen extends Component {
                                 this.setState({progressModalVisible:false})
                                 
                                 this.props.navigation.navigate('HomeScreen',
-                                { user: { userInfo }, baseUrl: baseUrl,imageObject:this.state.imageObject })
+                                { user: { userInfo }, baseUrl: baseUrl})
                             // this.setState({ progressModalVisible: false },async () => {
                             //     console.log('inserted')
                             //    this.props.navigation.navigate('HomeScreen',
@@ -109,7 +103,6 @@ export default class NationalCodeScreen extends Component {
                     this.setState({ progressModalVisible: false }, () => {
                         // alert('کاربر یافت نشد')
                         this.props.navigation.push('RegisterScreen',{
-                            imageObject:this.state.imageObject,
                             phoneNumber : this.state.phoneNumber,
                             nationalCode:this.state.nationalCode
                         });
@@ -141,7 +134,7 @@ export default class NationalCodeScreen extends Component {
                                // source={require(
                                //     'D:\\E\\react native projects\\Health\\bare\\salamat\\assets\\images\\splash.png')
                         source={require(
-                                   'D:\\E\\react native projects\\Health\\bare\\salamat\\assets\\images\\splash.png')
+                                   'D:\\E\\react native projects\\Health\\bare\\clone\\salamat\\assets\\images\\splash.png')
                                }>
                         </Image>
                     </View>

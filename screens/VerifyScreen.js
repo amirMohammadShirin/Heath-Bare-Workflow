@@ -27,7 +27,6 @@ export default class VerifyScreen extends Component {
             phoneNumber: null,
             verificationCode: null,
             baseUrl: null,
-            imageObject: null
         }
     }
 
@@ -59,9 +58,7 @@ export default class VerifyScreen extends Component {
         return true;
     }
     componentWillMount() {
-        let image = this.props.navigation.getParam('imageObject')
         this.setState({
-            imageObject: image,
             phoneNumber : this.state.phoneNumber
         })
 
@@ -69,7 +66,7 @@ export default class VerifyScreen extends Component {
 
 
     goToNationalCodeScreen(phoneNumber) {
-        this.props.navigation.navigate('NationalCodeScreen', { phoneNumber: phoneNumber, imageObject: this.state.imageObject });
+        this.props.navigation.navigate('NationalCodeScreen', { phoneNumber: phoneNumber });
     }
 
     // goToHomeScreen = async (body) => {
@@ -227,7 +224,7 @@ export default class VerifyScreen extends Component {
                     <View style={{ width: '100%', height: '50%' }}>
                         <Image style={styles.container}
                             source={require(
-                                'D:\\E\\react native projects\\Health\\bare\\salamat\\assets\\images\\splash.png')
+                                'D:\\E\\react native projects\\Health\\bare\\clone\\salamat\\assets\\images\\splash.png')
                             }
                         >
                         </Image>
