@@ -103,7 +103,6 @@ export default class SplashScreen extends Component {
                         this.props.navigation.navigate('HomeScreen', {
                           user: {userInfo},
                           baseUrl: BASE,
-                          imageObject: imageObject,
                         });
                       } catch (e) {
                         // alert(e)
@@ -122,7 +121,6 @@ export default class SplashScreen extends Component {
                             password: '1234',
                             role: 'stranger',
                           },
-                          imageObject: imageObject,
                         },
                       );
                     });
@@ -138,7 +136,6 @@ export default class SplashScreen extends Component {
                             password: '1234',
                             role: 'stranger',
                           },
-                          imageObject: imageObject,
                         },
                       );
                     });
@@ -159,7 +156,6 @@ export default class SplashScreen extends Component {
                 password: '1234',
                 role: 'stranger',
               },
-              imageObject: imageObject,
             });
           } else if(responseData['StatusCode'] === 400) {
             alert('خطا در اتصال به سرویس');
@@ -176,7 +172,6 @@ export default class SplashScreen extends Component {
           password: '1234',
           role: 'stranger',
         },
-        imageObject: imageObject,
       });
     }
     // const data = await this.performTimeConsumingTask();
@@ -204,7 +199,7 @@ export default class SplashScreen extends Component {
         // source={require(
         //     'D:\\E\\react native projects\\Health\\bare\\salamat\\assets\\images\\splash.png')
         // }
-        source={require('D:\\E\\react native projects\\Health\\bare\\salamat\\assets\\images\\splash.png')}
+        source={require('D:\\E\\react native projects\\Health\\bare\\clone\\salamat\\assets\\images\\splash.png')}
 
         // onPress={() => {
         //     // this.props.navigation.user.username = 'adrian';

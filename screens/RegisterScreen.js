@@ -77,7 +77,6 @@ export default class ReserveScreen extends Component {
       this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
     }
     this.state = {
-      imageObject: null,
       progressModalVisible: false,
       token: null,
       baseUrl: null,
@@ -142,7 +141,6 @@ export default class ReserveScreen extends Component {
                 this.props.navigation.navigate('HomeScreen', {
                   user: {userInfo},
                   baseUrl: baseUrl,
-                  imageObject: this.state.imageObject,
                 });
               });
             } catch (e) {
@@ -154,7 +152,6 @@ export default class ReserveScreen extends Component {
           this.setState({progressModalVisible: false}, () => {
             // alert('کاربر یافت نشد')
             this.props.navigation.navigate('RegisterScreen', {
-              imageObject: this.state.imageObject,
             });
           });
         } else if (responseData['StatusCode'] === 601) {
@@ -228,12 +225,10 @@ export default class ReserveScreen extends Component {
   }
 
   async componentWillMount(): void {
-    let image = this.props.navigation.getParam('imageObject');
     let nationalCode = this.props.navigation.getParam('nationalCode');
     let phoneNumber = this.props.navigation.getParam('phoneNumber');
     this.phoneNumberValidation(phoneNumber);
     this.setState({
-      imageObject: image,
       nationalCode: nationalCode,
       cellPhone: phoneNumber,
     });
