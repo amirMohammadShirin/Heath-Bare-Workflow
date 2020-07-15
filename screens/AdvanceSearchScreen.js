@@ -65,7 +65,6 @@ export default class AdvanceSearchScreen extends Component {
       selectedSkill: {id: -100, value: ' انتخاب تخصص'},
       selectedGender: {id: -100, value: ' انتخاب جنسیت'},
       selectedCertificate: {id: -100, value: ' انتخاب سطح علمی'},
-      imageObject: null,
       states: [
         {id: 0, value: '1'},
         {id: 1, value: '2'},
@@ -228,7 +227,6 @@ export default class AdvanceSearchScreen extends Component {
     if (this.props.navigation.getParam('doctor')) {
       this.props.navigation.navigate('SearchDoctorScreen', {
         medicalCenter: this.props.navigation.getParam('medicalCenter'),
-        imageObject: this.state.imageObject,
       });
     } else {
       this.props.navigation.goBack();
@@ -236,9 +234,6 @@ export default class AdvanceSearchScreen extends Component {
   }
 
   async componentWillMount(): void {
-    let image = this.props.navigation.getParam('imageObject');
-    await this.setState({imageObject: image});
-    // alert(JSON.stringify(this.state.imageObject))
     if (Platform.OS === 'android') {
       BackHandler.addEventListener(
         'hardwareBackPress',
@@ -247,7 +242,7 @@ export default class AdvanceSearchScreen extends Component {
     }
     var token = await AsyncStorage.getItem('token');
     var baseUrl = await AsyncStorage.getItem('baseUrl');
-    this.setState({baseUrl: baseUrl, token: token, imageObject: image}, () => {
+    this.setState({baseUrl: baseUrl, token: token}, () => {
       if (this.props.navigation.getParam('doctor')) {
         this.getGenders();
       } else {
@@ -304,7 +299,6 @@ export default class AdvanceSearchScreen extends Component {
                         Certificate: certificate.value,
                         Skill: skill.value,
                         MedicalCenter: this.state.medicalCenter.Title,
-                        imageObject: this.state.imageObject,
                       });
                     });
                   });
@@ -362,7 +356,6 @@ export default class AdvanceSearchScreen extends Component {
                         Gender: gender.id === -200 ? 'مرد یا زن' : gender.value,
                         Certificate: certificate.value,
                         Skill: skill.value,
-                        imageObject: this.state.imageObject,
                       });
                     });
                   });
@@ -614,7 +607,6 @@ export default class AdvanceSearchScreen extends Component {
                             : serviceDetail.value,
                         // State: await state.value,
                         Facility: facility.value,
-                        imageObject: this.state.imageObject,
                       },
                     );
                   });
