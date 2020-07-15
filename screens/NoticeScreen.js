@@ -43,16 +43,14 @@ export default class NoticeScreen extends Component {
       baseUrl: null,
       notices: null,
       picImage: null,
-      imageObject: null,
       refreshing: false,
     };
   }
 
   async componentWillMount(): void {
-    let image = this.props.navigation.getParam('imageObject');
     var token = await AsyncStorage.getItem('token');
     var baseUrl = await AsyncStorage.getItem('baseUrl');
-    this.setState({baseUrl: baseUrl, token: token, imageObject: image}, () => {
+    this.setState({baseUrl: baseUrl, token: token}, () => {
       this.getNotices(false);
     });
   }

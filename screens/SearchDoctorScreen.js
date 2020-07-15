@@ -60,7 +60,6 @@ export default class SearchMedicalCenter extends Component {
       progressModalVisible: false,
       headerFontSize: 20,
       favoriteDoctors: [],
-      imageObject: null,
       isLoading: false,
     };
   }
@@ -74,13 +73,11 @@ export default class SearchMedicalCenter extends Component {
       this.props.navigation.navigate('DetailsScreenForMedicalCenterAndDoctor', {
         doctor: value,
         medicalCenter: selectedMedicalCenter,
-        imageObject: this.state.imageObject,
       });
     } else {
       this.props.navigation.navigate('DetailsScreen', {
         doctor: value,
         medicalCenter: selectedMedicalCenter,
-        imageObject: null,
       });
     }
   }
@@ -110,13 +107,11 @@ export default class SearchMedicalCenter extends Component {
         doctor: this.state.selectedDoctor,
         medicalCenter: this.state.selectedMedicalCenter,
         goBack: null,
-        imageObject: this.state.imageObject,
       });
     } else {
       this.props.navigation.navigate('ReserveScreenFromDoctorScreen', {
         doctor: this.state.selectedDoctor,
         goBack: null,
-        imageObject: this.state.imageObject,
       });
     }
   }
@@ -141,7 +136,6 @@ export default class SearchMedicalCenter extends Component {
   }
 
   async componentWillMount(): void {
-    let image = await this.props.navigation.getParam('imageObject');
 
     if (Platform.OS === 'android') {
       BackHandler.addEventListener(
@@ -163,14 +157,12 @@ export default class SearchMedicalCenter extends Component {
           headerFontSize: length >= 20 ? 15 : 20,
           baseUrl: baseUrl,
           token: token,
-          imageObject: image,
         });
       } catch (e) {
         await this.setState(
           {
             baseUrl: baseUrl,
             token: token,
-            imageObject: image,
           },
           () => {
             this.getFavoriteDoctors();
@@ -182,7 +174,6 @@ export default class SearchMedicalCenter extends Component {
         {
           baseUrl: baseUrl,
           token: token,
-          imageObject: image,
         },
         () => {
           this.getFavoriteDoctors();
@@ -434,7 +425,6 @@ export default class SearchMedicalCenter extends Component {
                     doctor: true,
                     medicalCenter: this.state.selectedMedicalCenter,
                     headerFontSize: this.state.headerFontSize,
-                    imageObject: this.state.imageObject,
                   });
                 }}>
                 <Text style={styles.advanceSearchText}>جستجوی پیشرفته</Text>

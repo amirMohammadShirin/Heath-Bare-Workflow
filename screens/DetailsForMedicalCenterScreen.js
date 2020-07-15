@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {Rating, AirbnbRating} from 'react-native-ratings';
+import DefaultMedicalCenterImage from '../component/DefaultMedicalCenterImage';
 import {
   ActivityIndicator,
   AsyncStorage,
@@ -58,7 +59,6 @@ export default class DetailsForMedicalCenterScreen extends Component {
       token: null,
       progressModalVisible: false,
       selectedMedicalCenter: null,
-      imageObject: null,
       location: '',
       facilities: null,
       score: 1,
@@ -82,8 +82,6 @@ export default class DetailsForMedicalCenterScreen extends Component {
   }
 
   async componentWillMount(): void {
-    let image = this.props.navigation.getParam('imageObject');
-    this.setState({imageObject: image});
     if (Platform.OS === 'android') {
       BackHandler.addEventListener(
         'hardwareBackPress',
@@ -116,9 +114,9 @@ export default class DetailsForMedicalCenterScreen extends Component {
     let backRoute = this.props.navigation.getParam('backRoute');
     console.log(backRoute);
     if (backRoute === 'HomeScreen') {
-      this.props.navigation.push('HomeScreen', {
-        imageObject: this.state.imageObject,
-      });
+      // this.props.navigation.push('HomeScreen', {
+      // });
+      this.props.navigation.push('HomeScreen');
     } else {
       this.props.navigation.goBack(null);
     }
@@ -258,19 +256,10 @@ export default class DetailsForMedicalCenterScreen extends Component {
                           }}
                         />
                       ) : (
-                        <Thumbnail
-                          circular
-                          large
-                          style={{
-                            //   borderWidth: 1,
-                            //   borderColor: '#e0e0e0',
-                            //   overflow: 'hidden',
-                            height: 100,
+                          <DefaultMedicalCenterImage myStyle={{height: 100,
                             width: 100,
-                            resizeMode: 'cover',
-                          }}
-                          source={{uri: this.state.imageObject.cross}}
-                        />
+                            resizeMode: 'cover',}}/>
+
                       )}
                       <AirbnbRating
                         showRating={false}

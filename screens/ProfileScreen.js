@@ -27,6 +27,7 @@ import {
   Icon,
   Fab,
 } from 'native-base';
+import DefaultUserImage from "../component/DefaultUserImage";
 
 // import FitImage from 'react-native-fit-image'
 export default class ProfileScreen extends Component {
@@ -36,7 +37,6 @@ export default class ProfileScreen extends Component {
       user: null,
       animated: false,
       test: '22',
-      imageObject: null,
       insurances: [
         {
           insurance: 'تامین اجتماعی',
@@ -113,12 +113,10 @@ export default class ProfileScreen extends Component {
   }
 
   componentWillMount(): void {
-    let image = this.props.navigation.getParam('imageObject');
     let passedUser = this.props.navigation.getParam('user');
     this.setState({
       user: passedUser,
       insurances: passedUser['insurances'],
-      imageObject: image,
     });
     this.getContent();
   }
@@ -164,51 +162,65 @@ export default class ProfileScreen extends Component {
             />
           )}
           <View style={styles.container}>
-            <View style={styles.header} />
-            {this.state.user['gender'] !== 'زن' ? (
-              <Thumbnail
-                circular
-                style={
-                  this.state.user['Image'] != null &&
-                  typeof this.state.user['Image'] !== 'undefined'
-                    ? styles.avatar
-                    : [
-                        styles.avatar,
-                        {
-                          backgroundColor: 'transparent',
-                          tintColor: '#fff',
-                          borderColor: 'transparent',
-                          marginTop: 50,
-                        },
-                      ]
+            <View style={styles.header} >
+              <View>
+                {this.state.user['gender'] !== 'زن' && this.state.user['gender'] !== null ? (
+                        <View>
+                          {(this.state.user.Image !== null) &&
+                          (typeof this.state.user.Image !== 'undefined') ?
+                              <View>
+                                <Thumbnail
+                                    large
+                                    circular
+                                    style={
+                                      styles.avatar
+                                    }
+                                    source={{
+                                      uri:
+                                          'data:image/png;base64,' +
+                                          this.state.user['Image']
+                                    }}
+
+                                />
+                              </View> :
+                              <View>
+                                <DefaultUserImage gender={'Man'} profile={true}/>
+                              </View>
+
+                          }
+                        </View>
+                    )
+                    : (this.state.user['gender'] === 'زن' && this.state.user['gender'] !== null) ?
+                        <View>
+                          {(this.state.doctor.Image !== null) &&
+                          (typeof this.state.doctor.Image !== 'undefined') ?
+                              <View>
+                                <Thumbnail
+                                    large
+                                    circular
+                                    style={
+                                      styles.avatar
+                                    }
+                                    source={{
+                                      uri:
+                                          'data:image/png;base64,' +
+                                          this.state.user['Image']
+                                    }}
+
+                                />
+                              </View> :
+                              <View>
+                                <DefaultUserImage gender={'Woman'} profile={true}/>
+                              </View>
+
+                          }
+                        </View>
+                        :
+                        <View></View>
                 }
-                source={{
-                  uri:
-                    this.state.user['Image'] != null &&
-                    typeof this.state.user['Image'] !== 'undefined'
-                      ? 'data:image/png;base64, ' + this.state.user['Image']
-                      : this.state.imageObject.account,
-                }}
-              />
-            ) : (
-              <Thumbnail
-                circular
-                style={
-                  this.state.user['Image'] != null &&
-                  typeof this.state.user['Image'] !== 'undefined'
-                    ? styles.avatar
-                    : [
-                        styles.avatar,
-                        {
-                          backgroundColor: 'transparent',
-                          tintColor: '#fff',
-                          borderColor: 'transparent',
-                          marginTop: 50,
-                        },
-                      ]
-                }
-              />
-            )}
+              </View>
+            </View>
+
             <ActivityIndicator
               size={'small'}
               color={'gray'}
