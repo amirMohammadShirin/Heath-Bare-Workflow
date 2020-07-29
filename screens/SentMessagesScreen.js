@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import DefaultDoctorImage from '../component/DefaultDoctorImage';
+import {Dialog} from 'react-native-simple-dialogs';
 import ImageView from 'react-native-image-view';
 import {
     StyleSheet,
@@ -9,9 +10,10 @@ import {
     TouchableOpacity,
     RefreshControl,
     StatusBar,
-    Platform, AsyncStorage, Keyboard, ActivityIndicator,
+    Platform,
+    ActivityIndicator,
+    Keyboard, AsyncStorage
 } from 'react-native';
-import {Dialog} from 'react-native-simple-dialogs';
 import Swipeable from 'react-native-swipeable-row';
 import {
     Container,
@@ -33,14 +35,14 @@ import {
     Item,
     ListItem,
     Thumbnail,
-    Textarea,
     SwipeRow,
+    Textarea,
 } from 'native-base';
 import {TextInput} from 'react-native-gesture-handler';
 import Modal, {ModalContent, SlideAnimation} from "react-native-modals";
 
-const InboxTest = '/api/GetInboxMessages'
-const GETINBOXMESSAGES = '/GetInboxMessages';
+const SentMessagesTest = '/api/GetSentMessages'
+const GETSENTMESSAGES = '/GetSentMessages';
 
 var images = [
     {
@@ -52,10 +54,11 @@ var images = [
         height: 720,
     },
 ];
-export default class InboxScreen extends Component {
+export default class SentMessagesScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            imageViewVisible: false,
             visible: false,
             chatList: [],
             searchWord: null,
@@ -71,6 +74,14 @@ export default class InboxScreen extends Component {
         };
     }
 
+    //   goToDetailScreen(item) {
+    //     navigator = this.props.navigation;
+    //     navigator.navigate('MessageDetailScreen', {
+    //       item: item,
+    //       navigator: navigator,
+    //     });
+    //   }
+
     async componentDidMount(): void {
         const baseUrl = await AsyncStorage.getItem("baseUrl")
         const hub = await AsyncStorage.getItem("hub")
@@ -80,10 +91,17 @@ export default class InboxScreen extends Component {
             hub: hub,
             userId: userId
         })
-        this.getInboxMessages(true);
+        this.getSentMessages(true);
     }
 
-    async getInboxMessages(isRefresh) {
+
+    showMessage(item) {
+        this.setState({selectedMessage: item, visible: true});
+        images[0].title = item.FileName;
+        images[0].source.uri ="data:image/png;base64," +  item.File;
+    }
+
+    async getSentMessages(isRefresh) {
 
         const baseUrl = this.state.baseUrl;
         const hub = this.state.hub;
@@ -92,13 +110,13 @@ export default class InboxScreen extends Component {
         let body = {UserId: userId}
         let Body = {
             Method: 'POST',
-            Url: GETINBOXMESSAGES,
+            Url: GETSENTMESSAGES,
             Username: '',
             NationalCode: '',
             Body: body
         }
         this.setState({progressModalVisible: !isRefresh, refreshing: isRefresh})
-        fetch(baseUrl + InboxTest, {
+        fetch(baseUrl + SentMessagesTest, {
             method: 'POST',
             headers: {'content-type': 'application/json'},
             body: JSON.stringify(body),
@@ -134,17 +152,11 @@ export default class InboxScreen extends Component {
             searchWord: null,
         });
         console.log('refresh started');
-        this.getInboxMessages(true)
+        this.getSentMessages(true)
         // this.setState({
         //     refreshing: false,
         // });
     };
-
-    showMessage(item) {
-        this.setState({selectedMessage: item, visible: true});
-        images[0].title = item.FileName;
-        images[0].source.uri = "data:image/png;base64,"+item.File;
-    }
 
     renderData(item) {
         return (
@@ -219,7 +231,7 @@ export default class InboxScreen extends Component {
 
     onChangeText(text) {
         let mainData = this.state.chatDetails;
-        if (text.length >= 2) {
+        if (text.length > 2) {
             this.filterList(text);
         } else if (text.length === 0) {
             this.setState({chatList: mainData});
@@ -286,7 +298,6 @@ export default class InboxScreen extends Component {
                                     name="search"
                                 />
                                 <Textarea
-                                    onSubmitEditing={Keyboard.dismiss()}
                                     numberOfLines={1}
                                     underlineColorAndroid="#209b9b"
                                     placeholder="جستجوی نام پزشک"
@@ -344,10 +355,28 @@ export default class InboxScreen extends Component {
                                     </Body>
                                 </CardItem>
                             </Card>
-                        ) : !this.greenActive &&
-                        !this.state.redActive &&
-                        !this.state.grayActive ? null : null}
+                        ) : null}
                     </View>
+
+
+                    <Modal
+                        style={{opacity: 0.7}}
+                        width={300}
+                        visible={this.state.progressModalVisible}
+                        modalAnimation={
+                            new SlideAnimation({
+                                slideFrom: 'bottom',
+                            })
+                        }>
+                        <ModalContent style={styles.modalContent}>
+                            <ActivityIndicator
+                                animating={true}
+                                size="small"
+                                color={'#23b9b9'}
+                            />
+                        </ModalContent>
+                    </Modal>
+
                     {this.state.selectedMessage != null && (
                         <Dialog
                             contentStyle={{backgroundColor: 'transparent'}}
@@ -403,64 +432,43 @@ export default class InboxScreen extends Component {
                                             </Textarea>
                                         </Body>
                                     </CardItem>
-                                    {this.state.selectedMessage.File != null && (
-                                        <CardItem footer>
-                                            <Body style={{flex: 1, flexDirection: 'column-reverse'}}>
-                                                <Button
-                                                    small
+                                    {this.state.selectedMessage.File != null && <CardItem footer>
+                                        <Body style={{flex: 1, flexDirection: 'column-reverse'}}>
+                                            <Button
+                                                small
+                                                style={{
+                                                    backgroundColor: 'transparent',
+                                                    alignSelf: 'flex-start',
+                                                    width: '100%',
+                                                    borderWidth: 1,
+                                                    borderColor: '#c9c9c9',
+                                                    borderRadius: 5,
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center'
+                                                }}
+                                                onPress={() => this.setState({imageViewVisible: true})}>
+                                                <Text
                                                     style={{
-                                                        backgroundColor: 'transparent',
-                                                        alignSelf: 'flex-start',
-                                                        width: '100%',
-                                                        borderWidth: 1,
-                                                        borderColor: '#c9c9c9',
-                                                        borderRadius: 5,
-                                                        justifyContent: 'center',
-                                                        alignItems: 'center',
-                                                    }}
-                                                    onPress={() => this.setState({imageVisible: true})}>
-                                                    <Text
-                                                        style={{
-                                                            fontSize: 10,
-                                                            alignSelf: 'center',
-                                                            fontFamily: 'IRANMarker',
-                                                            textAlign: 'center',
-                                                            color: '#c9c9c9',
-                                                        }}>
-                                                        مشاهده عکس
-                                                    </Text>
-                                                </Button>
-                                            </Body>
-                                        </CardItem>
-                                    )}
+                                                        fontSize: 10,
+                                                        alignSelf: 'center',
+                                                        fontFamily: 'IRANMarker',
+                                                        textAlign: 'center',
+                                                        color: '#c9c9c9',
+                                                    }}>
+                                                    مشاهده عکس
+                                                </Text>
+                                            </Button>
+                                        </Body>
+                                    </CardItem>}
                                 </Card>
-
-                                <Modal
-                                    style={{opacity: 0.7}}
-                                    width={300}
-                                    visible={this.state.progressModalVisible}
-                                    modalAnimation={
-                                        new SlideAnimation({
-                                            slideFrom: 'bottom',
-                                        })
-                                    }>
-                                    <ModalContent style={styles.modalContent}>
-                                        <ActivityIndicator
-                                            animating={true}
-                                            size="small"
-                                            color={'#23b9b9'}
-                                        />
-                                    </ModalContent>
-                                </Modal>
-
 
                                 <ImageView
                                     animationType={'fade'}
                                     isSwipeCloseEnabled={true}
-                                    onClose={() => this.setState({imageVisible: false})}
+                                    onClose={() => this.setState({imageViewVisible: false})}
                                     images={images}
                                     imageIndex={0}
-                                    isVisible={this.state.imageVisible}
+                                    isVisible={this.state.imageViewVisible}
                                 />
                             </View>
                         </Dialog>
@@ -471,7 +479,7 @@ export default class InboxScreen extends Component {
     }
 }
 
-InboxScreen.navigationOptions = {
+SentMessagesScreen.navigationOptions = {
     header: null,
     title: 'پیام ها',
     headerStyle: {

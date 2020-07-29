@@ -15,7 +15,7 @@ import {BackHandler} from 'react-native';
 import {Button, Input, Item, Container, Content, Card, Icon} from 'native-base';
 import Modal, {ModalContent, SlideAnimation} from 'react-native-modals';
 
-const GETVERIFICATIONCODE = '/api/GetVerificationCode';
+const GETVERIFICATIONCODE = '/GetVerificationCode';
 export default class GetVerificationCodeScreen extends Component {
   constructor(props) {
     super(props);
@@ -144,15 +144,23 @@ export default class GetVerificationCodeScreen extends Component {
 
   async getVerificationCode(body) {
     const baseUrl = await AsyncStorage.getItem('baseUrl');
-    console.log(JSON.stringify(body));
+    const hub = await AsyncStorage.getItem('hub');
+    let BODY = {
+      Method:'POST',
+      UserName: this.state.phone,
+      NationalCode: '',
+      Url: GETVERIFICATIONCODE,
+      body: body
+    }
+    console.log(JSON.stringify(BODY));
     this.setState({progressModalVisible: true}, async () => {
-      await fetch(baseUrl + GETVERIFICATIONCODE, {
+      await fetch(baseUrl + hub, {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
           Accept: 'application/json',
         },
-        body: JSON.stringify({phoneNumber: this.state.phone}),
+        body: JSON.stringify(BODY),
       })
         .then(response => response.json())
         .then(async responseData => {
@@ -188,7 +196,7 @@ export default class GetVerificationCodeScreen extends Component {
           } else {
             this.setState({progressModalVisible: false}, () => {
               alert('خطا در اتصال به سرویس');
-              // console.log(JSON.stringify(responseData))
+              console.log(JSON.stringify(responseData))
             });
           }
         })
@@ -290,8 +298,8 @@ export default class GetVerificationCodeScreen extends Component {
                       phoneNumber: this.state.phone,
                     };
                     Keyboard.dismiss();
-                    // this.getVerificationCode(body)
-                    this.demo(body);
+                    this.getVerificationCode(body)
+                    // this.demo(body);
                   } else {
                     if (this.state.length === 0) {
                       alert('لطفا شماره تلفن خود را وارد کنید');

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "220426323121",
+    "firebase_url": "https://shahresalem-16897.firebaseio.com",
+    "project_id": "shahresalem-16897",
+    "storage_bucket": "shahresalem-16897.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:220426323121:android:73672fa55fc2494a3d8e90",
+        "android_client_info": {
+          "package_name": "ir.tehran.ShahreSalem"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "220426323121-t50t52bpcdinlrn7u7dvqna4ki7pikd2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCX7Cf-jVOpNZyz7e4BkY7j8mLJgJ4za3U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "220426323121-t50t52bpcdinlrn7u7dvqna4ki7pikd2.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "220426323121-ptnnjsue1vhh4pjjeul6bm6bta85gvra.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "ir.tehran.ShahreSalem"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

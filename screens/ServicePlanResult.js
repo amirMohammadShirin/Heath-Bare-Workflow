@@ -41,9 +41,9 @@ import {NavigationActions} from 'react-navigation';
 import {Dialog} from 'react-native-simple-dialogs';
 import DefaultDoctorImage from "../component/DefaultDoctorImage";
 
-const GETSERVICEPLANDETAIL = '/api/SearchServicePlanDetail';
+const GETSERVICEPLANDETAIL = '/SearchServicePlanDetail';
 const CANCEL_TEXT = 'انصراف';
-const RESERVE = '/api/Reserve';
+const RESERVE = '/Reserve';
 let myTimes = [];
 
 export default class ServicePlanResult extends Component {
@@ -77,6 +77,8 @@ export default class ServicePlanResult extends Component {
             activeColor: '#23b9b9',
             inactiveColor: '#aaaaaa',
             reservationButtonColor: '#aaaaaa',
+            hub: null,
+            userId: null
         };
     }
 
@@ -105,9 +107,11 @@ export default class ServicePlanResult extends Component {
                 this.handleBackButtonClick,
             );
         }
-        var token = await AsyncStorage.getItem('token');
+        var hub = await AsyncStorage.getItem('hub');
         var baseUrl = await AsyncStorage.getItem('baseUrl');
+        var userId = await AsyncStorage.getItem('userId');
         var result = await this.props.navigation.getParam('result');
+
         console.log(JSON.stringify(result));
         var medicalCenterSearchWord = await this.props.navigation.getParam(
             'medicalCenterSearchWord',
@@ -121,8 +125,9 @@ export default class ServicePlanResult extends Component {
         var endDate = await this.props.navigation.getParam('endDate');
         this.setState({
             baseUrl: baseUrl,
-            token: token,
+            hub: hub,
             result: result,
+            userId: userId,
             medicalCenterSearchWord: medicalCenterSearchWord,
             doctorSearchWord: doctorSearchWord,
             skill: skill,
@@ -134,19 +139,28 @@ export default class ServicePlanResult extends Component {
 
     async reserve(body) {
 
+        const baseUrl = this.state.baseUrl;
+        const hub = this.state.hub;
+        let Body = {
+            method: 'POST',
+            Url: RESERVE,
+            Username: '',
+            NationalCode: '',
+            Body: body
+        }
+        console.log("Reserve Body \n ", Body)
         this.setState({visible: false});
         this.setState({
             progressModalVisible: true /*, selectedMedicalCenter: null, selectedDay: null*/,
         });
-        console.log(JSON.stringify(body));
-        await fetch(this.state.baseUrl + RESERVE, {
+
+        await fetch(baseUrl + hub, {
             method: 'POST',
             headers: {
                 'content-type': 'application/json',
                 Accept: 'application/json',
-                Authorization: 'Bearer ' + new String(this.state.token),
             },
-            body: JSON.stringify(body),
+            body: JSON.stringify(Body),
         })
             .then(response => response.json())
             .then(async responseData => {
@@ -296,21 +310,30 @@ export default class ServicePlanResult extends Component {
 
     async getServicePlanDetail(doctorId, medicalCenterId, startDate, endDate) {
         let body = {
-            DoctorId: doctorId,
-            MedicalCenterId: medicalCenterId,
+            DoctorId: doctorId.toString(),
+            MedicalCenterId: medicalCenterId.toString(),
             StartDate: startDate,
             EndDate: endDate,
         };
-        console.log('detaaaiiiiiil' + JSON.stringify(body));
+        const baseUrl = this.state.baseUrl;
+        const hub = this.state.hub;
+
+        let Body = {
+            method: 'POST',
+            Url: GETSERVICEPLANDETAIL,
+            Username: '',
+            NationalCode: '',
+            Body: body
+        }
+        console.log('detaaaiiiiiil' + JSON.stringify(Body));
         this.setState({progressModalVisible: true});
-        await fetch(this.state.baseUrl + GETSERVICEPLANDETAIL, {
+        await fetch(baseUrl + hub, {
             method: 'POST',
             headers: {
                 'content-type': 'application/json',
                 Accept: 'application/json',
-                Authorization: 'Bearer ' + new String(this.state.token),
             },
-            body: JSON.stringify(body),
+            body: JSON.stringify(Body),
         })
             .then(response => response.json())
             .then(async responseData => {
@@ -369,8 +392,7 @@ export default class ServicePlanResult extends Component {
         //     action: NavigationActions.navigate({routeName: 'ReserveScreen'}),
         // });
         // this.props.navigation.dispatch(navigateAction);
-        this.props.navigation.push('ReserveScreen', {
-        });
+        this.props.navigation.push('ReserveScreen', {});
     }
 
     findDay(input) {
@@ -995,6 +1017,7 @@ export default class ServicePlanResult extends Component {
                                                                 9,
                                                             ),
                                                         StartTime: this.state.selectedTime.value.toString(),
+                                                        userId: this.state.userId
                                                     };
                                                     this.reserve(body);
                                                     console.log(JSON.stringify(body));

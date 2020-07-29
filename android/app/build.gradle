@@ -1,5 +1,5 @@
 apply plugin: "com.android.application"
-
+apply plugin: 'com.google.gms.google-services'
 import com.android.build.OutputFile
 
 /**
@@ -180,6 +180,8 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-push-notification')
+    implementation project(':@react-native-community_async-storage')
     //include ':react-native-gesture-handler'
  //   project(':react-native-gesture-handler').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-gesture-handler/android')
     implementation project(':react-native-image-picker')
@@ -190,6 +192,7 @@ dependencies {
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha02'
     implementation 'com.android.support:appcompat-v7:23.1.1'
     implementation 'com.android.support:design:23.0.1'
+    implementation 'com.google.firebase:firebase-analytics:17.3.0'
 
 
     if (enableHermes) {

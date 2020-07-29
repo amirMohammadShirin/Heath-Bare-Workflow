@@ -14,9 +14,10 @@ import {
 } from 'react-native';
 import {Card, Container, Content, Input, Item} from 'native-base'
 import Modal, {ModalContent, SlideAnimation} from "react-native-modals";
-
-const AUTHENTICATE = "/Api/Authenticate";
-
+// TODO : remove this text
+const SUCCESSTEXT = 'شماره موبایل با کد ملی مطابقت دارد';
+const AUTHENTICATE = "/Authenticate";
+const SHAHKAR = '/ShahkarVerification';
 export default class NationalCodeScreen extends Component {
     constructor(props) {
         super(props);
@@ -28,18 +29,75 @@ export default class NationalCodeScreen extends Component {
             phoneNumber: null,
             nationalCode: null,
             baseUrl: null,
+            hub: null
         }
     }
 
     async componentDidMount(): void {
         const phoneNumber = this.props.navigation.getParam('phoneNumber');
         const baseUrl = await AsyncStorage.getItem("baseUrl");
-        this.setState({ phoneNumber: phoneNumber, baseUrl: baseUrl });
+        const hub = await AsyncStorage.getItem("hub");
+
+        this.setState({phoneNumber: phoneNumber, baseUrl: baseUrl, hub: hub});
         if (Platform.OS === 'android') {
             BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
         }
     }
 
+    async ShahkarVerification(body) {
+        this.setState({progressModalVisible: true});
+        const baseUrl = this.state.baseUrl;
+        const hub = this.state.hub;
+        const Body = {
+            UserName: body.username,
+            NationalCode: body.nationalCode,
+            Method: "POST",
+            Url: SHAHKAR,
+            Body: {
+                phonuNumber: body.username,
+                nationalCode: body.nationalCode
+            }
+        }
+        console.log('Shahkar Code Body : ' + JSON.stringify(Body))
+        await fetch(baseUrl + hub, {
+            method: 'POST',
+            headers: {'content-type': 'application/json'},
+            body: JSON.stringify(Body)
+        }).then(async (response) => response.json())
+            .then(async (responseData) => {
+                console.log(JSON.stringify(responseData))
+                this.setState({progressModalVisible: false}, () => {
+                    if (responseData['StatusCode'] === 200) {
+                        let data = responseData['Data'];
+                        if (data != null) {
+                            if (data === SUCCESSTEXT) {
+                                this.goToHomeScreen(body);
+                            } else {
+                                alert(data)
+                            }
+                        }
+                    } else {
+                        this.setState({progressModalVisible: false}, () => {
+                            alert('خطا در استعلام شماره ملی و شماره موبایل')
+
+                            console.log(responseData)
+
+
+
+                        })
+                    }
+                })
+            })
+            .catch((error) => {
+                // console.log(error)
+                // this.setState({progressModalVisible: false}, () => {
+                //     alert('خطا در استعلام شماره ملی و شماره موبایل')
+                //     //Todo : remove line :|
+                //
+                // })
+                this.goToHomeScreen(body);
+            })
+    }
 
     handleBackButtonClick() {
         // alert('pressed')
@@ -52,135 +110,141 @@ export default class NationalCodeScreen extends Component {
                     text: 'خیر',
                     style: 'cancel',
                 },
-                { text: 'بله', onPress: () => BackHandler.exitApp() },
+                {text: 'بله', onPress: () => BackHandler.exitApp()},
             ],
-            { cancelable: false },
+            {cancelable: false},
         );
         return true;
     }
 
     goToHomeScreen = async (body) => {
-        this.setState({progressModalVisible:true});
-        console.log('National Code Body : ' + JSON.stringify(body))
+        this.setState({progressModalVisible: true});
+
         const baseUrl = this.state.baseUrl;
-        await fetch(baseUrl + AUTHENTICATE, {
+
+        // const baseUrl = "https://srv165-apigateway.tehran.ir/ApiContainer.HealthSystem.RCL1/api/v1/Health";
+        const hub = this.state.hub;
+        console.log(baseUrl + hub)
+        const Body = {
+            UserName: body.username,
+            NationalCode: body.nationalCode,
+            Method: "POST",
+            Url: AUTHENTICATE,
+            Body: body
+        }
+        console.log('National Code Body : ' + JSON.stringify(Body))
+        await fetch(baseUrl + hub, {
             method: 'POST',
-            headers: { 'content-type': 'application/json' },
-            body: JSON.stringify(body)
+            headers: {'content-type': 'application/json'},
+            body: JSON.stringify(Body)
         }).then(async (response) => response.json())
             .then(async (responseData) => {
-                console.log(JSON.stringify(responseData))
+                console.log('response \n', JSON.stringify(responseData))
                 if (responseData['StatusCode'] === 200) {
                     if (responseData['Data'] != null) {
                         try {
                             let data = responseData['Data'];
-                            let token = data['token'];
                             let userInfo = data['userinfo'];
-                            await AsyncStorage.setItem('token', token);
-                            await AsyncStorage.setItem('nationalCode', body.nationalCode);
-                            await AsyncStorage.setItem('username', body.username);
-                            console.log(
-                                'token : ' + token + '\n' + 'username : ' + body.username + '\n' +
-                                'nationalCode : ' +
-                                body.nationalCode)
-                                this.setState({progressModalVisible:false})
-                                
-                                this.props.navigation.navigate('HomeScreen',
-                                { user: { userInfo }, baseUrl: baseUrl})
-                            // this.setState({ progressModalVisible: false },async () => {
-                            //     console.log('inserted')
-                            //    this.props.navigation.navigate('HomeScreen',
-                            //         { user: { userInfo }, baseUrl: baseUrl,imageObject:this.state.imageObject })
-                            // })
+                            let userId = userInfo['user_id'];
+                            let nationalCode = userInfo['nationalCode'];
+                            let userName = userInfo['user_name'];
 
+                            // // await AsyncStorage.setItem('token', token);
+                            await AsyncStorage.setItem('nationalCode', nationalCode);
+                            await AsyncStorage.setItem('username', userName);
+                            await AsyncStorage.setItem('userId', userId);
 
+                            this.setState({progressModalVisible: false})
+                            this.props.navigation.navigate('HomeScreen',
+                                {user: {userInfo}, baseUrl: baseUrl})
                         } catch (e) {
-                            // alert(e)
+
                             console.error(e)
                         }
                     }
                 } else if (responseData['StatusCode'] === 600) {
-                    this.setState({ progressModalVisible: false }, () => {
-                        // alert('کاربر یافت نشد')
-                        this.props.navigation.push('RegisterScreen',{
-                            phoneNumber : this.state.phoneNumber,
-                            nationalCode:this.state.nationalCode
+                    this.setState({progressModalVisible: false}, () => {
+
+                        this.props.navigation.push('RegisterScreen', {
+                            phoneNumber: this.state.phoneNumber,
+                            nationalCode: this.state.nationalCode
                         });
                     })
                 } else if (responseData['StatusCode'] === 601) {
-                    this.setState({ progressModalVisible: false }, () => {
+                    this.setState({progressModalVisible: false}, () => {
                         alert('کد ملی وارد شده معتبر نمی باشد')
                     })
                 } else {
-                    this.setState({ progressModalVisible: false }, () => {
+                    this.setState({progressModalVisible: false}, () => {
                         alert('خطا در اتصال به سرویس')
-                        // alert(JSON.stringify(responseData))
+                        console.log(responseData)
                     })
                 }
             })
             .catch((error) => {
-                console.error(error)
+                console.log(error)
             })
     };
 
     render() {
         return (
             <Container>
-                <Content scrollEnabled={false} contentContainerStyle={{ flex: 1 }}
-                    style={{ flex: 1, width: '100%', height: '100%' }}>
-                    <StatusBar hidden translucent backgroundColor="transparent" />
-                    <View style={{ width: '100%', height: '50%' }}>
+                <Content scrollEnabled={false} contentContainerStyle={{flex: 1}}
+                         style={{flex: 1, width: '100%', height: '100%'}}>
+                    <StatusBar hidden translucent backgroundColor="transparent"/>
+                    <View style={{width: '100%', height: '50%'}}>
                         <Image style={styles.container}
-                               // source={require(
-                               //     'D:\\E\\react native projects\\Health\\bare\\salamat\\assets\\images\\splash.png')
-                        source={require(
+                            // source={require(
+                            //     'D:\\E\\react native projects\\Health\\bare\\salamat\\assets\\images\\splash.png')
+                               source={require(
                                    '../assets/images/splash.png')
                                }>
                         </Image>
                     </View>
-                    <View style={[styles.main, { width: '100%', height: '50%' }]}>
+                    <View style={[styles.main, {width: '100%', height: '50%'}]}>
                         <Card style={styles.myCard}>
                             <Item style={styles.itemStyle}>
                                 <Input placeholder='کد ملی خود را وارد کنید' placeholderTextColor={'gray'}
                                        style={styles.inputStyle} keyboardType={'numeric'}
                                        onChangeText={(text) => {
-                                        this.setState({ nationalCode: text }, () => {
-                                            if (text.length == 10) {
-                                                Keyboard.dismiss();
+                                           this.setState({nationalCode: text}, () => {
+                                               if (text.length == 10) {
+                                                   Keyboard.dismiss();
 
-                                                let body = {
-                                                    username: this.state.phoneNumber,
-                                                    nationalCode: this.state.nationalCode
-                                                }
+                                                   let body = {
+                                                       username: this.state.phoneNumber,
+                                                       nationalCode: this.state.nationalCode
+                                                   }
 
-                                                this.goToHomeScreen(body)
+                                                   this.ShahkarVerification(body)
 
 
-                                            }
-                                        })
+                                               }
+                                           })
 
-                                    }}
+                                       }}
                                 />
                             </Item>
-                            <Text style={[styles.textStyle, { color: '#23b9b9', marginTop: 40 }]} onPress={() => {
+                            <Text style={[styles.textStyle, {color: '#23b9b9', marginTop: 40}]} onPress={() => {
                                 let body = {
                                     username: this.state.phoneNumber,
                                     nationalCode: this.state.nationalCode
                                 }
-                                this.goToHomeScreen(body);
+                                this.ShahkarVerification(body);
+
                             }}>تلاش مجدد</Text>
                         </Card>
                     </View>
 
-                    <Modal style={{ opacity: 0.7 }}
-                        width={300}
-                        visible={this.state.progressModalVisible}
-                        modalAnimation={new SlideAnimation({
-                            slideFrom: 'bottom'
-                        })}
+                    <Modal style={{opacity: 0.7}}
+                           width={300}
+                           visible={this.state.progressModalVisible}
+                           modalAnimation={new SlideAnimation({
+                               slideFrom: 'bottom'
+                           })}
                     >
-                         <ModalContent style={styles.modalContent}>
-                            <ActivityIndicator animating={true} size="small" color={"#23b9b9"} />
+                        <ModalContent style={styles.modalContent}>
+                            <ActivityIndicator animating={true} size="small" color={"#23b9b9"}/>
                         </ModalContent>
                     </Modal>
                 </Content>

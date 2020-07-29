@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.imagepicker.ImagePickerPackage;
 import com.salamat.NeshanFullScreen.NeshanFullScreenPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
@@ -33,7 +34,7 @@ public class MainApplication extends Application implements ReactApplication {
            //packages.add(new MyReactNativePackage());
            //packages.add(new ReanimatedPackage());
             packages.add(new NeshanFullScreenPackage());
-
+//            packages.add(new ReactNativePushNotificationPackage ());
           return packages;
         }
 

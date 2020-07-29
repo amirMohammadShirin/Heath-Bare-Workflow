@@ -30,9 +30,9 @@ import {
     ListItem,
 } from 'native-base';
 import Modal, {ModalContent, SlideAnimation} from 'react-native-modals';
-import {from} from "jalali-moment";
 
-const GETDOCOTRBYID = '/api/GetDoctorById';
+const GETDOCOTRBYID = '/GetDoctorById';
+const GETDOCTORRATE = '/GetDoctorRate';
 export default class DetailsScreen extends Component {
     constructor(props) {
         super(props);
@@ -49,6 +49,7 @@ export default class DetailsScreen extends Component {
             score: 0,
             count: '0',
             selectedMedicalCenter: null,
+            hub: null
         };
     }
 
@@ -103,13 +104,13 @@ export default class DetailsScreen extends Component {
                 this.handleBackButtonClick,
             );
         }
-        var token = await AsyncStorage.getItem('token');
+        var hub = await AsyncStorage.getItem('hub');
         var baseUrl = await AsyncStorage.getItem('baseUrl');
         const doctor = this.props.navigation.getParam('doctor');
         await this.setState(
             {
                 baseUrl: baseUrl,
-                token: token,
+                hub: hub,
                 selectedDoctor: doctor,
                 selectedMedicalCenter:
                     selectedMedicalCenter != null && selectedMedicalCenter !== 'undefined'
@@ -123,26 +124,35 @@ export default class DetailsScreen extends Component {
     }
 
     async getDoctorDetails() {
+        const baseUrl = this.state.baseUrl;
+        const hub = this.state.hub;
         this.setState({progressModalVisible: true});
         const value = this.state.selectedDoctor;
         let body =
-            '{ title: ' +
-            JSON.stringify(value.LastName) +
-            ',id: ' +
-            JSON.stringify(value.Id.toString()) +
-            '}';
-        console.log(body);
-        await fetch(this.state.baseUrl + GETDOCOTRBYID, {
+            {
+                title: value.LastName,
+                id: value.Id
+            };
+
+        let Body = {
+            Method: "POST",
+            Url: GETDOCOTRBYID,
+            username: '',
+            nationalCode: '',
+            body: body
+        }
+        console.log('getDoctorById Body : \n ', Body);
+        await fetch(baseUrl + hub, {
             method: 'POST',
             headers: {
                 'content-type': 'application/json',
                 Accept: 'application/json',
-                Authorization: 'Bearer ' + new String(this.state.token),
             },
-            body: body,
+            body: JSON.stringify(Body),
         })
             .then(response => response.json())
             .then(async responseData => {
+                console.log('getDoctorById Response : \n ', responseData);
                 if (responseData['StatusCode'] === 200) {
                     if (responseData['Data'] != null) {
                         let data = responseData['Data'];
@@ -153,6 +163,7 @@ export default class DetailsScreen extends Component {
                                     doctor: data[0],
                                 },
                                 async () => {
+                                    // this.getDoctorRate()
                                     // alert(JSON.stringify(this.state.doctor))
                                 },
                             );
@@ -160,8 +171,8 @@ export default class DetailsScreen extends Component {
                     }
                 } else {
                     this.setState({progressModalVisible: false}, () => {
-                        // alert(JSON.stringify('خطا در دسترسی به سرویس'))
-                        alert(JSON.stringify(responseData));
+                        alert(JSON.stringify('خطا در دسترسی به سرویس'))
+                        // alert(JSON.stringify(responseData));
                     });
                 }
             })
@@ -170,6 +181,68 @@ export default class DetailsScreen extends Component {
                 // alert(error)
             });
     }
+
+    // async getDoctorRate() {
+    //     const baseUrl = this.state.baseUrl;
+    //     const hub = this.state.hub
+    //     this.setState({progressModalVisible: true});
+    //     const value = this.state.selectedDoctor;
+    //     let body =
+    //         {
+    //             title: value.LastName,
+    //             id: value.Id
+    //         };
+    //
+    //     let Body = {
+    //         Method: "POST",
+    //         Url: GETDOCTORRATE,
+    //         username: '',
+    //         nationalCode: '',
+    //         body: body
+    //     }
+    //     console.log('getDoctorRate Body : \n ', Body);
+    //     await fetch(baseUrl + hub, {
+    //         method: 'POST',
+    //         headers: {
+    //             'content-type': 'application/json',
+    //             Accept: 'application/json',
+    //         },
+    //         body: JSON.stringify(Body),
+    //     })
+    //         .then(response => response.json())
+    //         .then(async responseData => {
+    //             console.log('getDoctorRate Response : \n ', responseData);
+    //             if (responseData['StatusCode'] === 200) {
+    //                 if (responseData['Data'] != null) {
+    //                     let data = responseData['Data'];
+    //                     let score = data['Score']
+    //                     let count = data['Count']
+    //                     await this.setState({progressModalVisible: false}, () => {
+    //                         console.log(JSON.stringify(data));
+    //                         this.setState(
+    //                             {
+    //                                 score: score,
+    //                                 count: count.toString()
+    //                             },
+    //                             async () => {
+    //                                 // alert(JSON.stringify(this.state.doctor))
+    //                             },
+    //                         );
+    //                     });
+    //                 }
+    //             } else {
+    //                 this.setState({progressModalVisible: false}, () => {
+    //                     alert(JSON.stringify('خطا در دسترسی به سرویس'))
+    //                     // alert(JSON.stringify(responseData));
+    //                 });
+    //             }
+    //         })
+    //         .catch(error => {
+    //             console.error(error);
+    //             // alert(error)
+    //         });
+    // }
+    //
 
     render() {
         return (

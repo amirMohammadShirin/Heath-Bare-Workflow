@@ -309,6 +309,27 @@ export default class SideMenu extends Component {
                                 </Body>
                             </ListItem>
                         )}
+
+                        {this.getAccess('personalInfo', 'admin') && (
+                            <ListItem
+                                icon
+                                style={styles.listItem}
+                                onPress={() => {
+                                    this.props.navigation.navigate('MessengerScreen');
+                                }}>
+                                <Right>
+                                    <Icon
+                                        type="FontAwesome"
+                                        name="envelope"
+                                        style={styles.icons}
+                                    />
+                                </Right>
+                                <Body>
+                                    <Text style={styles.text}>پیام رسان</Text>
+                                </Body>
+                            </ListItem>
+                        )}
+
                         {this.getAccess('reserve', 'admin') && (
                             <ListItem
                                 icon

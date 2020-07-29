@@ -40,6 +40,11 @@ target 'salamat' do
 
   pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
 
+  pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
+
+  pod 'react-native-fetch-blob', :path => '../node_modules/react-native-fetch-blob'
+
+
   target 'salamatTests' do
     inherit! :search_paths
     # Pods for testing

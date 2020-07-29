@@ -42,11 +42,11 @@ import {
 //date.format('jYYYY-jM-jD [is] YYYY-M-D')
 
 const CANCEL_TEXT = 'انصراف';
-const GETGENDERS = '/api/GetGenders';
-const GETSKILLS = '/api/GetSkills';
-const SEARCHSERVICEPLAN = '/api/SearchServicePlan';
-const GETMEDICALCENTERSNAMEFORRESERVE = '/api/GetMedicalCentersNameForReserve';
-const GETDOCTORSFULLNAMEFORRESERVE = '/api/GetDoctorsFullNameForReserve';
+const GETGENDERS = '/GetGenders';
+const GETSKILLS = '/GetSkills';
+const SEARCHSERVICEPLAN = '/SearchServicePlan';
+const GETMEDICALCENTERSNAMEFORRESERVE = '/GetMedicalCentersNameForReserve';
+const GETDOCTORSFULLNAMEFORRESERVE = '/GetDoctorsFullNameForReserve';
 export default class ReserveScreen extends Component {
     _isMounted = false;
 
@@ -55,8 +55,10 @@ export default class ReserveScreen extends Component {
         if (Platform.OS === 'android') {
             this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
         }
-
         this.state = {
+
+            hub: null,
+            userId: null,
             medicalCenterSearchWord: null,
             doctorSearchWord: null,
             //-----------------------Progress Modal States--------------------
@@ -185,14 +187,16 @@ export default class ReserveScreen extends Component {
         }
         // alert("Medical : " + JSON.stringify(this.props.navigation.getParam('medicalCenter')))
         // alert("doctor : " + JSON.stringify(this.props.navigation.getParam('doctor')))
-        const token = await AsyncStorage.getItem('token');
+        const hub = await AsyncStorage.getItem('hub');
         const baseUrl = await AsyncStorage.getItem('baseUrl');
         const MEDICALCENTER = this.props.navigation.getParam('medicalCenter');
         const DOCTOR = this.props.navigation.getParam('doctor');
+        const userId = this.props.navigation.getParam('userId');
         this.setState(
             {
-                token: token,
+                hub: hub,
                 baseUrl: baseUrl,
+                userId: userId,
                 medicalCenterSearchWord:
                     typeof MEDICALCENTER != 'undefined' && MEDICALCENTER != null
                         ? MEDICALCENTER.Title
@@ -307,17 +311,27 @@ export default class ReserveScreen extends Component {
     }
 
     async getSkills() {
-        await this.setState({progressModalVisible: true});
-        await fetch(this.state.baseUrl + GETSKILLS, {
+        const baseUrl = this.state.baseUrl;
+        const hub = this.state.hub;
+        let Body = {
             method: 'GET',
+            Url: GETSKILLS,
+            UserName: '',
+            NationalCode: '',
+            Body: null
+        }
+        await this.setState({progressModalVisible: true});
+        await fetch(baseUrl + hub, {
+            method: 'POST',
             headers: {
                 'content-type': 'application/json',
                 Accept: 'application/json',
-                Authorization: 'Bearer ' + new String(this.state.token),
             },
+            body: JSON.stringify(Body)
         })
             .then(response => response.json())
             .then(responseData => {
+                console.log("Skills : \n ", responseData)
                 if (responseData['StatusCode'] === 200) {
                     if (responseData['Data'] != null) {
                         let data = responseData['Data'];
@@ -339,17 +353,27 @@ export default class ReserveScreen extends Component {
     }
 
     async getGenders() {
-        await this.setState({progressModalVisible: true});
-        await fetch(this.state.baseUrl + GETGENDERS, {
+        const baseUrl = this.state.baseUrl;
+        const hub = this.state.hub;
+        let Body = {
             method: 'GET',
+            Url: GETGENDERS,
+            UserName: '',
+            NationalCode: '',
+            Body: null
+        }
+        await this.setState({progressModalVisible: true});
+        await fetch(baseUrl + hub, {
+            method: 'POST',
             headers: {
                 'content-type': 'application/json',
                 Accept: 'application/json',
-                Authorization: 'Bearer ' + new String(this.state.token),
             },
+            body: JSON.stringify(Body)
         })
             .then(response => response.json())
             .then(responseData => {
+                console.log("Genders : \n ", responseData)
                 if (responseData['StatusCode'] === 200) {
                     if (responseData['Data'] != null) {
                         let data = responseData['Data'];
@@ -371,17 +395,28 @@ export default class ReserveScreen extends Component {
     }
 
     async getDoctorsName() {
-        await this.setState({progressModalVisible: true});
-        await fetch(this.state.baseUrl + GETDOCTORSFULLNAMEFORRESERVE, {
+        const baseUrl = this.state.baseUrl;
+        const hub = this.state.hub;
+        let Body = {
             method: 'GET',
+            Url: GETDOCTORSFULLNAMEFORRESERVE,
+            UserName: '',
+            NationalCode: '',
+            Body: null
+        }
+        console.log('GETDOCTORSFULLNAMEFORRESERVE : \n ', Body)
+        await this.setState({progressModalVisible: true});
+        await fetch(baseUrl + hub, {
+            method: 'POST',
             headers: {
                 'content-type': 'application/json',
                 Accept: 'application/json',
-                Authorization: 'Bearer ' + new String(this.state.token),
             },
+            body: JSON.stringify(Body)
         })
             .then(response => response.json())
             .then(responseData => {
+                console.log("DoctorsName", responseData)
                 if (responseData['StatusCode'] === 200) {
                     if (responseData['Data'] != null) {
                         let data = responseData['Data'];
@@ -405,17 +440,28 @@ export default class ReserveScreen extends Component {
     }
 
     async getMedicalCentersName() {
-        await this.setState({progressModalVisible: true});
-        await fetch(this.state.baseUrl + GETMEDICALCENTERSNAMEFORRESERVE, {
+        const baseUrl = this.state.baseUrl;
+        const hub = this.state.hub;
+        let Body = {
             method: 'GET',
+            Url: GETMEDICALCENTERSNAMEFORRESERVE,
+            UserName: '',
+            NationalCode: '',
+            Body: null
+        }
+        await this.setState({progressModalVisible: true});
+        await fetch(baseUrl + hub, {
+            method: 'POST',
             headers: {
                 'content-type': 'application/json',
                 Accept: 'application/json',
-                Authorization: 'Bearer ' + new String(this.state.token),
+
             },
+            body: JSON.stringify(Body)
         })
             .then(response => response.json())
             .then(responseData => {
+                console.log("MedicalCenters", responseData)
                 if (responseData['StatusCode'] === 200) {
                     if (responseData['Data'] != null) {
                         let data = responseData['Data'];
@@ -448,6 +494,8 @@ export default class ReserveScreen extends Component {
         startDate,
         endDate,
     ) {
+        const baseUrl = this.state.baseUrl;
+        const hub = this.state.hub;
         let filters = {
             startDate: this.state.startDateForShow,
             endDate: this.state.endDateForShow,
@@ -461,7 +509,14 @@ export default class ReserveScreen extends Component {
             startDate: startDate != null ? startDate : null,
             endDate: endDate != null ? endDate : null,
         };
-        console.log(JSON.stringify(body));
+        let Body = {
+            method: 'POST',
+            Url: SEARCHSERVICEPLAN,
+            UserName: '',
+            NationalCode: '',
+            Body: body
+        }
+        console.log("SEARCHSERVICEPLAN :\n ", Body);
         console.log('start : ' + typeof body.startDate);
         console.log('end :' + typeof body.endDate);
         // alert(JSON.stringify(body))
@@ -470,17 +525,17 @@ export default class ReserveScreen extends Component {
         } else {
             this.setState({progressModalVisible: true});
             console.log(JSON.stringify(body));
-            fetch(this.state.baseUrl + SEARCHSERVICEPLAN, {
+            fetch(baseUrl + hub, {
                 method: 'POST',
                 headers: {
                     'content-type': 'application/json',
                     Accept: 'application/json',
-                    Authorization: 'Bearer ' + new String(this.state.token),
                 },
-                body: JSON.stringify(body),
+                body: JSON.stringify(Body),
             })
                 .then(response => response.json())
                 .then(responseData => {
+                    console.log("SEARCHSERVICEPLAN Resp", responseData)
                     if (responseData['StatusCode'] === 200) {
                         if (responseData['Data'] != null) {
                             let data = responseData['Data'];
@@ -576,8 +631,7 @@ export default class ReserveScreen extends Component {
         console.log(this.props.navigation.state);
         const back = this.props.navigation.getParam('goBack');
         if (back != null && back === 'home') {
-            this.props.navigation.push('HomeScreen', {
-            });
+            this.props.navigation.push('HomeScreen', {});
         } else {
             this.props.navigation.goBack(null);
         }
@@ -689,6 +743,9 @@ export default class ReserveScreen extends Component {
                                 hidden={false}
                             />
                         )}
+
+
+                        {Platform.OS === 'android' &&
                         <Card style={styles.card}>
                             <View style={styles.row}>
                                 {/* <TextInput
@@ -1046,6 +1103,382 @@ export default class ReserveScreen extends Component {
                                 <Text style={styles.label}>تا تاریخ</Text>
                             </View>
                         </Card>
+                        }
+
+                        {Platform.OS === 'ios' && <Card style={[styles.card, {height: 250}]}>
+                            <View style={[styles.row, {position: 'absolute', top: 10, zIndex: 5}]}>
+                                <Autocomplete
+                                    renderTextInput={() => {
+                                        return (
+                                            <TextInput
+                                                onFocus={() =>
+                                                    this.setState({doctorsShowData: false})
+                                                }
+                                                onEndEditing={() =>
+                                                    this.setState({medicalCentersShowData: false})
+                                                }
+                                                placeholder={'نام مرکز'}
+                                                placeholderTextColor={'#b7b7b7'}
+                                                value={medicalCenterQuery}
+                                                onChangeText={text => {
+                                                    if (text.length === 0) {
+                                                        this.setState({
+                                                            medicalCenterQuery: null,
+                                                            medicalCenterSelected: false,
+                                                            medicalCentersShowData: true,
+                                                        });
+                                                    } else {
+                                                        if (this.state.medicalCentersShowData) {
+                                                            this.setState({medicalCenterQuery: text});
+                                                        } else {
+                                                            this.setState({
+                                                                medicalCenterQuery: text,
+                                                                medicalCentersShowData: true,
+                                                            });
+                                                        }
+                                                    }
+                                                }}
+                                                style={styles.autocompleteInputStyle}
+                                            />
+                                        );
+                                    }}
+                                    hideResults={!this.state.medicalCentersShowData}
+                                    containerStyle={[
+                                        styles.autocompleteContainerStyle,
+                                        {zIndex: 5},
+                                    ]}
+                                    listStyle={styles.autocompleteListStyle}
+                                    listContainerStyle={
+                                        !this.state.medicalCenterSelected
+                                            ? styles.autocompleteListContainerStyleSelected
+                                            : [
+                                                styles.autocompleteListContainerStyleSelected,
+                                                // {maxHeight: 0},
+                                            ]
+                                    }
+                                    keyboardShouldPersistTaps={'always'}
+                                    style={styles.autocompleteInputStyle}
+                                    data={medicalCenterData}
+                                    renderItem={({item, i}) => (
+                                        <TouchableOpacity
+                                            style={styles.autocompleteResultStyle}
+                                            onPress={() =>
+                                                this.setState(
+                                                    {
+                                                        medicalCenterQuery: item.name,
+                                                        medicalCenterSelected: true,
+                                                        medicalCentersShowData: false,
+                                                    },
+                                                    () => {
+                                                        Keyboard.dismiss();
+                                                    },
+                                                )
+                                            }>
+                                            <View style={styles.autocompleteIconViewStyle}>
+                                                <Icon
+                                                    type="FontAwesome"
+                                                    name="h-square"
+                                                    style={styles.autocompleteIconStyle}
+                                                />
+                                            </View>
+                                            <Text style={styles.autocompleteResultTextStyle}>
+                                                {item.name}
+                                            </Text>
+                                        </TouchableOpacity>
+                                    )}
+                                />
+
+                                <Text style={[styles.label, {marginBottom: 8}]}>
+                                    {' '}
+                                    مرکز درمانی
+                                </Text>
+                            </View>
+                            <View style={[styles.row, {position: 'absolute', top: 40, zIndex: 4}]}>
+                                {/* <TextInput
+                  placeholderTextColor={'gray'}
+                  placeholder={'نام پزشک'}
+                  onChangeText={text => this.setState({doctorSearchWord: text})}
+                  value={this.state.doctorSearchWord}
+                  style={styles.Input}
+                /> */}
+                                <Autocomplete
+                                    renderTextInput={() => {
+                                        return (
+                                            <TextInput
+                                                onFocus={() =>
+                                                    this.setState({medicalCentersShowData: false})
+                                                }
+                                                onEndEditing={() =>
+                                                    this.setState({doctorsShowData: false})
+                                                }
+                                                placeholder={'نام پزشک'}
+                                                placeholderTextColor={'#b7b7b7'}
+                                                value={doctorQuery}
+                                                onChangeText={text => {
+                                                    if (text.length === 0) {
+                                                        this.setState({
+                                                            doctorQuery: null,
+                                                            doctorSelected: false,
+                                                            doctorsShowData: true,
+                                                        });
+                                                    } else {
+                                                        if (this.state.doctorsShowData) {
+                                                            this.setState({doctorQuery: text});
+                                                        } else {
+                                                            this.setState({
+                                                                doctorQuery: text,
+                                                                doctorsShowData: true,
+                                                            });
+                                                        }
+                                                    }
+                                                }}
+                                                style={styles.autocompleteInputStyle}
+                                            />
+                                        );
+                                    }}
+                                    hideResults={!this.state.doctorsShowData}
+                                    containerStyle={styles.autocompleteContainerStyle}
+                                    listStyle={styles.autocompleteListStyle}
+                                    listContainerStyle={
+                                        !this.state.doctorSelected
+                                            ? styles.autocompleteListContainerStyleSelected
+                                            : [styles.autocompleteListContainerStyleSelected]
+                                    }
+                                    keyboardShouldPersistTaps={'always'}
+                                    // style={styles.autocompleteInputStyle}
+                                    data={doctorData}
+                                    renderItem={({item, i}) => (
+                                        <TouchableOpacity
+                                            style={styles.autocompleteResultStyle}
+                                            onPress={() =>
+                                                this.setState(
+                                                    {
+                                                        doctorQuery: item.name,
+                                                        doctorSelected: true,
+                                                        doctorsShowData: false,
+                                                    },
+                                                    () => {
+                                                        Keyboard.dismiss();
+                                                    },
+                                                )
+                                            }>
+                                            <View style={styles.autocompleteIconViewStyle}>
+                                                <Icon
+                                                    type="FontAwesome"
+                                                    name="user-md"
+                                                    style={styles.autocompleteIconStyle}
+                                                />
+                                            </View>
+                                            <Text style={styles.autocompleteResultTextStyle}>
+                                                {item.name}
+                                            </Text>
+                                        </TouchableOpacity>
+                                    )}
+                                />
+
+                                <Text style={[styles.label, {marginBottom: 8}]}> پزشک</Text>
+                            </View>
+                            <View
+                                style={[
+                                    styles.row,
+                                    {position: 'absolute', top: 80, zIndex: 2},
+                                ]}>
+                                <Button
+                                    onPress={() => {
+                                        Keyboard.dismiss();
+                                        ActionSheet.show(
+                                            {
+                                                options: this.getOptions(this.state.skills),
+                                                cancelButtonIndex: this.getCancelButtonIndex(
+                                                    this.getOptions(this.state.skills),
+                                                ),
+                                                title: 'انتخاب تخصص',
+                                            },
+                                            buttonIndex => {
+                                                if (buttonIndex <= this.state.skills.length - 1) {
+                                                    this.setState({
+                                                        selectedSkill: this.state.skills[buttonIndex],
+                                                    });
+                                                } else {
+                                                    this.setState({
+                                                        selectedSkill: {id: -100, value: ' انتخاب تخصص'},
+                                                    });
+                                                }
+                                            },
+                                        );
+                                    }}
+                                    bordered
+                                    style={{
+                                        textAlign: 'center',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        borderRadius: 2,
+                                        margin: 1,
+                                        flex: 3,
+                                        borderWidth: 1,
+                                        borderColor: '#fff',
+                                    }}>
+                                    <Text style={styles.buttonsTexts}>
+                                        {this.state.selectedSkill.value}
+                                    </Text>
+                                </Button>
+                                <Text style={styles.label}>تخصص</Text>
+                            </View>
+                            <View
+                                style={[
+                                    styles.row,
+                                    {position: 'absolute', top: 110, zIndex: 2},
+                                ]}>
+                                <Button
+                                    onPress={() => {
+                                        Keyboard.dismiss();
+                                        ActionSheet.show(
+                                            {
+                                                options: this.getOptions(this.state.genders),
+                                                cancelButtonIndex: this.getCancelButtonIndex(
+                                                    this.getOptions(this.state.genders),
+                                                ),
+                                                title: 'انتخاب جنسیت',
+                                            },
+                                            buttonIndex => {
+                                                if (buttonIndex <= this.state.genders.length - 1) {
+                                                    this.setState({
+                                                        selectedGender: this.state.genders[buttonIndex],
+                                                    });
+                                                } else {
+                                                    this.setState({
+                                                        selectedGender: {
+                                                            id: -100,
+                                                            value: ' انتخاب جنسیت',
+                                                        },
+                                                    });
+                                                }
+                                            },
+                                        );
+                                    }}
+                                    bordered
+                                    style={{
+                                        textAlign: 'center',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        borderRadius: 2,
+                                        margin: 1,
+                                        flex: 3,
+                                        borderWidth: 1,
+                                        borderColor: '#fff',
+                                    }}>
+                                    <Text style={styles.buttonsTexts}>
+                                        {this.state.selectedGender.value}
+                                    </Text>
+                                </Button>
+                                <Text style={styles.label}>جنسیت</Text>
+                            </View>
+                            {false && (
+                                <View
+                                    style={[
+                                        styles.row,
+                                        {position: 'absolute', top: 130, zIndex: 2},
+                                    ]}>
+                                    <Button
+                                        onPress={() => {
+                                            Keyboard.dismiss();
+                                            ActionSheet.show(
+                                                {
+                                                    options: this.getOptions(this.state.states),
+                                                    cancelButtonIndex: this.getCancelButtonIndex(
+                                                        this.getOptions(this.state.states),
+                                                    ),
+                                                    title: 'انتخاب منطقه',
+                                                },
+                                                buttonIndex => {
+                                                    if (buttonIndex <= this.state.states.length - 1)
+                                                        this.setState({
+                                                            selectedState: this.state.states[buttonIndex],
+                                                        });
+                                                },
+                                            );
+                                        }}
+                                        bordered
+                                        style={{
+                                            textAlign: 'center',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            borderRadius: 2,
+                                            margin: 1,
+                                            flex: 3,
+                                            borderWidth: 1,
+                                            borderColor: '#fff',
+                                        }}>
+                                        <Text style={styles.buttonsTexts}>
+                                            {this.state.selectedState.value}
+                                        </Text>
+                                    </Button>
+                                    <Text style={styles.label}>منطقه</Text>
+                                </View>
+                            )}
+                            <View
+                                style={[
+                                    styles.row,
+                                    {position: 'absolute', top: 150, zIndex: 2},
+                                ]}>
+                                <Button
+                                    onPress={() => {
+                                        Keyboard.dismiss();
+                                        this.setState({startDateModalVisible: true}, () => {
+                                        });
+                                    }}
+                                    bordered
+                                    style={{
+                                        textAlign: 'center',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        borderRadius: 2,
+                                        margin: 1,
+                                        flex: 3,
+                                        borderWidth: 1,
+                                        borderColor: '#fff',
+                                    }}>
+                                    <Text style={styles.buttonsTexts}>
+                                        {this.state.startDateForShow == null
+                                            ? 'انتخاب تاریخ'
+                                            : this.state.startDateForShow.format('jYYYY-jM-jD')}
+                                    </Text>
+                                </Button>
+                                <Text style={styles.label}>از تاریخ</Text>
+                            </View>
+                            <View
+                                style={[
+                                    styles.row,
+                                    {position: 'absolute', top: 180, zIndex: 2},
+                                ]}>
+                                <Button
+                                    onPress={() => {
+                                        Keyboard.dismiss();
+                                        this.setState({endDateModalVisible: true}, () => {
+                                            Keyboard.dismiss();
+                                        });
+                                    }}
+                                    bordered
+                                    style={{
+                                        textAlign: 'center',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        borderRadius: 2,
+                                        margin: 1,
+                                        flex: 3,
+                                        borderWidth: 1,
+                                        borderColor: '#fff',
+                                    }}>
+                                    <Text style={styles.buttonsTexts}>
+                                        {this.state.endDateForShow == null
+                                            ? 'انتخاب تاریخ'
+                                            : this.state.endDateForShow.format('jYYYY-jM-jD')}
+                                    </Text>
+                                </Button>
+                                <Text style={styles.label}>تا تاریخ</Text>
+                            </View>
+                        </Card>}
+
 
                         <Modal
                             style={{opacity: 0.7}}
@@ -1248,6 +1681,7 @@ export default class ReserveScreen extends Component {
             </Root>
         );
     }
+
 }
 
 ReserveScreen.navigationOptions = {
