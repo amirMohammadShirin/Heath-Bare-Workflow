@@ -11,7 +11,6 @@ import {
     BackHandler,
 } from 'react-native';
 import ProgressiveText from '../component/progressiveText';
-import {Alert} from 'react-native';
 import {Dialog} from 'react-native-simple-dialogs';
 import {
     List,
@@ -19,23 +18,17 @@ import {
     Body,
     Container,
     Content,
-    Item,
     Header,
     Icon,
     Left,
     Right,
     Root,
-    Input,
     Card,
     CardItem,
     ListItem,
-    Thumbnail,
 } from 'native-base';
 import Modal, {
-    ModalButton,
     ModalContent,
-    ModalFooter,
-    ModalTitle,
     SlideAnimation,
 } from 'react-native-modals';
 
@@ -78,10 +71,6 @@ export default class SearchMedicalCenter extends Component {
     }
 
     handleBackButtonClick() {
-        // alert('pressed')
-
-        console.log(JSON.stringify(this.props.navigation.state));
-
         if (this.props.navigation.state.isDrawerOpen) {
             this.props.navigation.closeDrawer();
         } else {
@@ -161,8 +150,7 @@ export default class SearchMedicalCenter extends Component {
                 }
             })
             .catch(error => {
-                console.error(error);
-                // alert(error)
+                console.log(error);
             });
     }
 
@@ -203,7 +191,7 @@ export default class SearchMedicalCenter extends Component {
                 }
             })
             .catch(error => {
-                console.error(error);
+                console.log(error);
             });
     }
 
@@ -285,7 +273,6 @@ export default class SearchMedicalCenter extends Component {
                                         medicalCenter: true,
                                         doctor: false,
                                         imageObject: this.state.imageObject,
-                                        // headerFontSize : 20
                                     });
                                 }}>
                                 <Text

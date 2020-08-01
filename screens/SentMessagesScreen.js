@@ -5,8 +5,6 @@ import ImageView from 'react-native-image-view';
 import {
     StyleSheet,
     View,
-    Image,
-    ScrollView,
     TouchableOpacity,
     RefreshControl,
     StatusBar,
@@ -14,31 +12,19 @@ import {
     ActivityIndicator,
     Keyboard, AsyncStorage
 } from 'react-native';
-import Swipeable from 'react-native-swipeable-row';
 import {
     Container,
-    Input,
-    Header,
-    Title,
     Content,
-    Footer,
-    FooterTab,
     CardItem,
     Button,
     Left,
     Card,
-    Right,
     Body,
     Icon,
     Text,
-    List,
     Item,
-    ListItem,
-    Thumbnail,
-    SwipeRow,
     Textarea,
 } from 'native-base';
-import {TextInput} from 'react-native-gesture-handler';
 import Modal, {ModalContent, SlideAnimation} from "react-native-modals";
 
 const SentMessagesTest = '/api/GetSentMessages'
@@ -74,13 +60,6 @@ export default class SentMessagesScreen extends Component {
         };
     }
 
-    //   goToDetailScreen(item) {
-    //     navigator = this.props.navigation;
-    //     navigator.navigate('MessageDetailScreen', {
-    //       item: item,
-    //       navigator: navigator,
-    //     });
-    //   }
 
     async componentDidMount(): void {
         const baseUrl = await AsyncStorage.getItem("baseUrl")
@@ -97,8 +76,10 @@ export default class SentMessagesScreen extends Component {
 
     showMessage(item) {
         this.setState({selectedMessage: item, visible: true});
-        images[0].title = item.FileName;
-        images[0].source.uri ="data:image/png;base64," +  item.File;
+        if (this.state.selectedMessage.File != null) {
+            images[0].title = item.FileName;
+            images[0].source.uri = "data:image/png;base64," + item.File;
+        }
     }
 
     async getSentMessages(isRefresh) {
@@ -123,7 +104,6 @@ export default class SentMessagesScreen extends Component {
         })
             .then(response => response.json())
             .then(async responseData => {
-                console.log(JSON.stringify(responseData));
                 if (responseData['StatusCode'] === 200) {
                     if (responseData['Data'] != null) {
                         let data = responseData['Data']
@@ -140,7 +120,7 @@ export default class SentMessagesScreen extends Component {
             })
             .catch(error => {
                 this.setState({progressModalVisible: false, refreshing: false})
-                console.error(error);
+                console.log(error);
             });
     }
 
@@ -153,9 +133,7 @@ export default class SentMessagesScreen extends Component {
         });
         console.log('refresh started');
         this.getSentMessages(true)
-        // this.setState({
-        //     refreshing: false,
-        // });
+
     };
 
     renderData(item) {

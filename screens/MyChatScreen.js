@@ -2,47 +2,21 @@ import React, {Component} from 'react';
 
 import Autocomplete from 'react-native-autocomplete-input';
 import ImagePicker from 'react-native-image-picker';
-import Modal, {
-    ModalButton,
-    ModalContent,
-    ModalFooter,
-    ModalTitle,
-    SlideAnimation,
-} from 'react-native-modals';
+import Modal, {ModalContent, SlideAnimation,} from 'react-native-modals';
 import {
+    ActivityIndicator,
+    Alert,
+    AsyncStorage,
+    Keyboard,
+    Platform,
+    StatusBar,
     StyleSheet,
-    View,
     Text,
     TextInput,
-    Keyboard,
-    StatusBar,
-    Platform,
-    RefreshControl,
-    ActivityIndicator,
     TouchableOpacity,
-    Alert, AsyncStorage,
+    View,
 } from 'react-native';
-import {
-    Container,
-    Header,
-    Title,
-    Content,
-    Footer,
-    Card,
-    CardItem,
-    Button,
-    Left,
-    Item,
-    Input,
-    Right,
-    Body,
-    Icon,
-    Textarea,
-    Form,
-    Thumbnail,
-    Fab,
-} from 'native-base';
-import {getYears} from "@mohamadkh75/react-native-jalali-datepicker/src/utils";
+import {Body, Button, Card, CardItem, Container, Content, Footer, Form, Icon, Right, Textarea,} from 'native-base';
 
 const testUrl = "/api/GetDoctorsForSendingMessage"
 const testMessage = "/api/SendMessage"
@@ -74,26 +48,6 @@ export default class MyChatScreen extends Component {
             doctorSelected: false,
             medicalCenterSelected: false,
             progressModalVisible: false,
-            // doctorData: [
-            //     'علی رحیمی',
-            //     'علی رضا رحیمیان',
-            //     'علی رضا رحیمیان',
-            //     'علی رضا رحیمیان',
-            //     'علی رضا رحیمیان',
-            //     'علی رضا رحیمیان',
-            //
-            //     'آرمان رضایی',
-            //
-            //     'آرمان رضایی',
-            //
-            //     'آرمان رضایی',
-            //
-            //     'آرمان رضایی',
-            //
-            //     'آرمان رضایی',
-            //
-            //     'رحیم حسینی',
-            // ],
             doctorData: [],
             file: null
         };
@@ -121,7 +75,6 @@ export default class MyChatScreen extends Component {
         })
             .then(response => response.json())
             .then(async responseData => {
-                console.log(JSON.stringify(responseData));
                 if (responseData['StatusCode'] === 200) {
                     if (responseData['Data'] != null) {
                         try {
@@ -145,12 +98,10 @@ export default class MyChatScreen extends Component {
                             }
 
                             this.setState({doctorData: doctors, progressModalVisible: false})
-                            // alert(JSON.stringify(this.state.doctors))
                         } catch (e) {
-                            // alert(e)
                             this.setState({progressModalVisible: false})
                             alert('خطا در اتصال به سرویس')
-                            console.error(e);
+                            console.log(e);
                         }
 
                     }
@@ -162,7 +113,7 @@ export default class MyChatScreen extends Component {
             })
             .catch(error => {
                 this.setState({progressModalVisible: false})
-                console.error(error);
+                console.log(error);
             });
     }
 
@@ -183,7 +134,6 @@ export default class MyChatScreen extends Component {
     showImagePicker() {
         ImagePicker.showImagePicker(options, response => {
             console.log('Response = ', response);
-
             if (response.didCancel) {
                 console.log('User cancelled image picker');
             } else if (response.error) {
@@ -243,8 +193,6 @@ export default class MyChatScreen extends Component {
                 nationalCode: '',
                 Body: body
             }
-            console.log(JSON.stringify(body))
-
             fetch(baseUrl + testMessage, {
                 method: 'POST',
                 headers: {'content-type': 'application/json'},
@@ -252,7 +200,6 @@ export default class MyChatScreen extends Component {
             })
                 .then(response => response.json())
                 .then(async responseData => {
-                    console.log(JSON.stringify(responseData));
                     if (responseData['StatusCode'] === 200) {
                         this.setState({
                             progressModalVisible: false,
@@ -270,7 +217,7 @@ export default class MyChatScreen extends Component {
                 })
                 .catch(error => {
                     this.setState({progressModalVisible: false})
-                    console.error(error);
+                    console.log(error);
                 });
 
 
@@ -321,25 +268,6 @@ export default class MyChatScreen extends Component {
         const doctorData = this.filterDoctorData(doctorQuery);
         return (
             <Container>
-                {false && (
-                    <Header style={{backgroundColor: '#23b9b9'}}>
-                        <Left>
-                            <Button
-                                transparent
-                                style={styles.headerMenuIcon}
-                                onPress={() => this.onBackPressed()}>
-                                <Icon
-                                    style={styles.headerMenuIcon}
-                                    name="arrow-back"
-                                    onPress={() => this.onBackPressed()}
-                                />
-                            </Button>
-                        </Left>
-                        <Right>
-                            <Text style={styles.headerText}>پیام رسان</Text>
-                        </Right>
-                    </Header>
-                )}
                 <Content padder scrollEnabled={false}>
                     {Platform.OS === 'android' && (
                         <StatusBar
@@ -348,129 +276,6 @@ export default class MyChatScreen extends Component {
                             hidden={false}
                         />
                     )}
-
-                    {false && (
-                        <Card style={[styles.mainCardStyle, {height: 300}]}>
-                            <Card transparent style={[styles.mainCardStyle]}>
-                                <CardItem style={styles.headerCardItemStyle}>
-                                    <Right style={{flex: 5, padding: 2}}>
-                                        <Text style={[styles.doctorTextStyle, {fontSize: 10}]}>
-                                            {this.state.fullName} عزیز شما می توانید به پزشک خود پیام
-                                            ارسال کنید
-                                        </Text>
-                                    </Right>
-                                    <Body style={{flex: 2}}>
-                                        <View style={styles.iconViewStyle}>
-                                            <Icon
-                                                type="FontAwesome"
-                                                name="envelope"
-                                                style={styles.iconStyle}
-                                            />
-                                        </View>
-                                    </Body>
-                                </CardItem>
-
-                                <CardItem>
-                                    <View style={[styles.row, {position: 'absolute', top: 40}]}>
-                                        <Autocomplete
-                                            renderTextInput={() => {
-                                                return (
-                                                    <TextInput
-                                                        onEndEditing={() =>
-                                                            this.setState({doctorsShowData: false})
-                                                        }
-                                                        placeholder={'نام پزشک'}
-                                                        placeholderTextColor={'#b7b7b7'}
-                                                        value={doctorQuery}
-                                                        onChangeText={text => {
-                                                            if (text.length === 0) {
-                                                                this.setState({
-                                                                    doctorQuery: null,
-                                                                    doctorSelected: false,
-                                                                    doctorsShowData: true,
-                                                                });
-                                                            } else {
-                                                                if (this.state.doctorsShowData) {
-                                                                    this.setState({doctorQuery: text});
-                                                                } else {
-                                                                    this.setState({
-                                                                        doctorQuery: text,
-                                                                        doctorsShowData: true,
-                                                                    });
-                                                                }
-                                                            }
-                                                        }}
-                                                        style={styles.autocompleteInputStyle}
-                                                    />
-                                                );
-                                            }}
-                                            hideResults={!this.state.doctorsShowData}
-                                            containerStyle={styles.autocompleteContainerStyle}
-                                            listStyle={styles.autocompleteListStyle}
-                                            listContainerStyle={
-                                                !this.state.doctorSelected
-                                                    ? styles.autocompleteListContainerStyleSelected
-                                                    : [styles.autocompleteListContainerStyleSelected]
-                                            }
-                                            keyboardShouldPersistTaps={'always'}
-                                            data={doctorData}
-                                            renderItem={({item, i}) => (
-                                                <TouchableOpacity
-                                                    style={styles.autocompleteResultStyle}
-                                                    onPress={() =>
-                                                        this.setState(
-                                                            {
-                                                                doctorQuery: item,
-                                                                doctorSelected: true,
-                                                                doctorsShowData: false,
-                                                            },
-                                                            () => {
-                                                                Keyboard.dismiss();
-                                                            },
-                                                        )
-                                                    }>
-                                                    <View style={styles.autocompleteIconViewStyle}>
-                                                        <Icon
-                                                            type="FontAwesome"
-                                                            name="user-md"
-                                                            style={styles.autocompleteIconStyle}
-                                                        />
-                                                    </View>
-                                                    <Text style={styles.autocompleteResultTextStyle}>
-                                                        {item.FullName}
-                                                    </Text>
-                                                </TouchableOpacity>
-                                            )}
-                                        />
-
-                                        <Text
-                                            style={[styles.label, {marginBottom: 8, fontSize: 9}]}>
-                                            {' '}
-                                            ارسال پیام به
-                                        </Text>
-                                    </View>
-                                </CardItem>
-                                <CardItem
-                                    style={{position: 'absolute', top: 200, zIndex: 40}}
-                                    footer>
-                                    <Form style={{flex: 1}}>
-                                        <Textarea
-                                            style={styles.textArea}
-                                            rowSpan={4}
-                                            bordered
-                                            placeholder="متن پیام"
-                                            placeholderTextColor={'#d9d9d9'}
-                                            value={this.state.textAreaValue}
-                                            onChangeText={text =>
-                                                this.setState({textAreaValue: text})
-                                            }
-                                        />
-                                    </Form>
-                                </CardItem>
-                            </Card>
-                        </Card>
-                    )}
-
                     {Platform.OS === 'ios' && <Card style={[styles.card, {height: 430}]}>
                         <CardItem style={styles.headerCardItemStyle}>
                             <Right style={{flex: 5, padding: 2}}>
@@ -755,9 +560,6 @@ export default class MyChatScreen extends Component {
                             style={[
                                 styles.row,
                                 {
-                                    // position: 'absolute',
-                                    // top: 150,
-                                    //  zIndex: 2,
                                     marginTop: 60,
                                     borderBottomColor: '#d3d3d3',
                                     borderBottomWidth: 1,
@@ -819,11 +621,6 @@ export default class MyChatScreen extends Component {
                                     </Text>
                                 )}
                             </Button>
-
-                            {/*<Text*/}
-                            {/*    style={[styles.label, {marginBottom: 8, fontSize: 9, flex: 1}]}>*/}
-                            {/*  عکس ضمیمه*/}
-                            {/*</Text>*/}
                         </View>
                         <View
                             style={[styles.row, {zIndex: 1}]}>
@@ -840,9 +637,7 @@ export default class MyChatScreen extends Component {
                             </Form>
                         </View>
                     </Card>
-
                     }
-
                     <Modal
                         style={{opacity: 0.7}}
                         width={300}

@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {
-    ActivityIndicator,
     AsyncStorage,
     StatusBar,
     StyleSheet,
@@ -16,7 +15,6 @@ import {
     Body,
     Container,
     Content,
-    Item,
     Header,
     Icon,
     Left,
@@ -29,17 +27,8 @@ import {
     Thumbnail,
 } from 'native-base';
 import {Dialog} from 'react-native-simple-dialogs';
-import Modal, {
-    ModalButton,
-    ModalContent,
-    ModalFooter,
-    ModalTitle,
-    SlideAnimation,
-} from 'react-native-modals';
 import DefaultMedicalCenterImage from "../component/DefaultMedicalCenterImage";
 
-const SEARCHMEDICALCENTERALLFIELD = '/api/SearchMedicalCenterAllField';
-const GETFAVORITEMEDICALCENTERS = '/api/GetFavoriteMedicalCenters';
 export default class MedicalCentersResult extends Component {
     constructor(props) {
         super(props);
@@ -92,14 +81,11 @@ export default class MedicalCentersResult extends Component {
                 IsContract: IsContract,
             },
             () => {
-                // alert(JSON.stringify(this.state.filters))
             },
         );
     }
 
     handleBackButtonClick() {
-        // alert('pressed')
-
         console.log(JSON.stringify(this.props.navigation.state));
 
         if (this.props.navigation.state.isDrawerOpen) {
@@ -166,10 +152,6 @@ export default class MedicalCentersResult extends Component {
                                     }}>
                                     <Text style={styles.filterText}>فیلتر ها</Text>
                                 </Right>
-                                {/*<CardItem style={{flexDirection: 'row-reverse'}}>*/}
-                                {/*    <Body style={{flexDirection: 'row-reverse',justifyContent:'flex-start'}}>*/}
-                                {/*    </Body>*/}
-                                {/*</CardItem>*/}
                             </CardItem>
                             <CardItem
                                 style={{
@@ -282,26 +264,6 @@ export default class MedicalCentersResult extends Component {
                                                         resizeMode: 'cover',
                                                     }}/>
                                                 )}
-                                                {/*<Thumbnail*/}
-                                                {/*  circular*/}
-                                                {/*  large*/}
-                                                {/*  style={{*/}
-                                                {/*    // borderWidth: 1,*/}
-                                                {/*    // borderColor: '#e0e0e0',*/}
-                                                {/*    //   overflow: 'hidden',*/}
-                                                {/*    height: 70,*/}
-                                                {/*    width: 70,*/}
-                                                {/*    resizeMode: 'cover',*/}
-                                                {/*  }}*/}
-                                                {/*  source={{*/}
-                                                {/*    uri:*/}
-                                                {/*      item.Image != null &&*/}
-                                                {/*      typeof item.Image !== 'undefined'*/}
-                                                {/*        ? 'data:image/png;base64, ' + item.Image*/}
-                                                {/*        : this.state.imageObject.cross,*/}
-                                                {/*  }}*/}
-                                                {/*  //    defaultSource={{uri: 'data:image/png;base64,'+cross}}*/}
-                                                {/*/>*/}
                                             </Right>
                                         </ListItem>
                                     </View>

@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
-
 import {
     StyleSheet,
     View,
@@ -25,9 +24,7 @@ import {
     Right,
     Icon,
     Text,
-    Input,
     Content,
-    Item,
     Card,
     CardItem,
     Body,
@@ -47,15 +44,8 @@ const INITIAL_REGION = {
     latitudeDelta: 0.8,
     longitudeDelta: 0.1,
 };
-// const INITIAL_REGION = {
-//   latitude: 35.715753,
-//   longitude: 51.426004,
-//   latitudeDelta: 0.4363,
-//   longitudeDelta: 0.08,
-// };
+
 import MapView from 'react-native-maps';
-import {ClusterMap} from 'react-native-cluster-map';
-import Clustering from 'react-native-map-clustering';
 import {Marker} from 'react-native-maps';
 
 const GETALLLOCATIONS = '/GetMedicalCentersLocation';
@@ -115,44 +105,7 @@ export default class HomeScreen extends Component {
 
     renderCustomClusterMarker = count => <MyCluster count={count}/>;
 
-    stopTrackingViewChanges = () => {
-        this.setState(() => ({
-            tracksViewChanges: false,
-        }));
-    };
-
-    renderMarkers(value, color) {
-        <Marker
-            title={value.Title}
-            onCalloutPress={() => {
-                if (value.IsActiveForReservation) {
-                    this.setState({selectedMedicalCenter: value}, () => {
-                        this.setState({visible: true});
-                    });
-                }
-            }}
-            coordinate={{
-                latitude: this.getLatLong(value.Location, 'latitude'),
-                longitude: this.getLatLong(value.Location, 'longitude'),
-            }}>
-            <Icon
-                type={'FontAwesome5'}
-                name={'map-marker-alt'}
-                style={
-                    value.IsActiveForReservation
-                        ? {
-                            color: color,
-                            fontSize: 45,
-                        }
-                        : {color: 'gray', fontSize: 40}
-                }
-            />
-        </Marker>;
-    }
-
     handleBackButtonClick() {
-        // alert('pressed')
-
         if (this.props.navigation.state.isDrawerOpen == true) {
             this.props.navigation.closeDrawer();
         } else if (this.state.visible == true) {
@@ -194,7 +147,6 @@ export default class HomeScreen extends Component {
             NationalCode: '',
             Body: null
         }
-        console.log('GetAllLocations : \n ', Body)
         this.setState({progressModalVisible: true});
         await fetch(baseUrl + hub, {
             method: 'POST',
@@ -239,11 +191,10 @@ export default class HomeScreen extends Component {
                     }
                 } else if (responseData['StatusCode'] === 400) {
                     alert(JSON.stringify('خطا در دسترسی به سرویس'));
-                    // alert(JSON.stringify(JSON.stringify(responseData)))
                 }
             })
             .catch(error => {
-                console.error(error);
+                console.log(error);
             });
     }
 
@@ -286,7 +237,6 @@ export default class HomeScreen extends Component {
         let hub = await AsyncStorage.getItem('hub');
         let baseUrl = await AsyncStorage.getItem('baseUrl');
 
-        // if (Platform.OS === 'android' && !Constants.isDevice) {
         if (Platform.OS === 'android') {
             this.setState({
                 errorMessage: 'try on device',
@@ -345,26 +295,6 @@ export default class HomeScreen extends Component {
                             </Text>
                         </Left>
                         <Right style={{flex: 1}}>
-                            {/* <Button
-                transparent
-                style={[
-                  {alignSelf:'center'},
-                ]}> */}
-                            {false && (
-                                <TouchableHighlight style={{alignSelf: 'center'}}>
-                                    <Icon
-                                        style={styles.headerSettingIcon}
-                                        name="map-marked-alt"
-                                        type="FontAwesome5"
-                                        onPress={() =>
-                                            this.setState({
-                                                settingVisible: true,
-                                            })
-                                        }
-                                    />
-                                </TouchableHighlight>
-                            )}
-                            {/* </Button> */}
                             <Button
                                 transparent
                                 style={styles.headerMenuIcon}
@@ -377,441 +307,7 @@ export default class HomeScreen extends Component {
                             </Button>
                         </Right>
                     </Header>
-                    {false && (
-                        <Content
-                            scrollEnabled={true}
-                            style={{flex: 1, backgroundColor: '#fff'}}>
-                            {Platform.OS === 'android' && (
-                                <StatusBar
-                                    barStyle={'dark-content'}
-                                    backgroundColor={'#209b9b'}
-                                    hidden={false}
-                                />
-                            )}
 
-                            <Dialog
-                                contentStyle={{backgroundColor: 'transparent'}}
-                                dialogStyle={{
-                                    backgroundColor: 'transparent',
-                                    borderColor: 'transparent',
-                                    borderWidth: 0,
-                                    elevation: 0,
-                                }}
-                                animationType={'fade'}
-                                visible={this.state.settingVisible}
-                                onTouchOutside={() => this.setState({settingVisible: false})}>
-                                <View>
-                                    <Card style={{borderBottomColor: 'gray', borderWidth: 1}}>
-                                        <CardItem header style={{backgroundColor: '#209b9b'}}>
-                                            <Body>
-                                                <Text style={styles.modalTitleText}>
-                                                    فیلتر های مراکز درمانی
-                                                </Text>
-                                            </Body>
-                                        </CardItem>
-                                        <CardItem style={{backgroundColor: '#fff'}}>
-                                            <Right>
-                                                <TouchableOpacity
-                                                    onPress={() =>
-                                                        this.setState({
-                                                            showHospital: !this.state.showHospital,
-                                                        })
-                                                    }>
-                                                    <View
-                                                        style={
-                                                            this.state.showHospital
-                                                                ? [
-                                                                    styles.activeIconSetting,
-                                                                    {
-                                                                        backgroundColor: HospitalColor,
-                                                                        borderColor: HospitalColor,
-                                                                    },
-                                                                ]
-                                                                : [
-                                                                    styles.deActiveIconSetting,
-                                                                    {
-                                                                        borderColor: HospitalColor,
-                                                                        backgroundColor: '#fff',
-                                                                    },
-                                                                ]
-                                                        }
-                                                    />
-                                                </TouchableOpacity>
-                                            </Right>
-                                            <Body style={styles.settingCardBodyStyle}>
-                                                <Text style={styles.settingCardBodyTextStyle}>
-                                                    {HospitalDefinitionTitle}
-                                                </Text>
-                                            </Body>
-                                        </CardItem>
-                                        <CardItem style={{backgroundColor: '#fff'}}>
-                                            <Right>
-                                                <TouchableOpacity
-                                                    onPress={() =>
-                                                        this.setState({
-                                                            showMunicipality: !this.state.showMunicipality,
-                                                        })
-                                                    }>
-                                                    <View
-                                                        style={
-                                                            this.state.showMunicipality
-                                                                ? [
-                                                                    styles.activeIconSetting,
-                                                                    {
-                                                                        backgroundColor: MunicipalityMedicalCenterColor,
-                                                                        borderColor: MunicipalityMedicalCenterColor,
-                                                                    },
-                                                                ]
-                                                                : [
-                                                                    styles.deActiveIconSetting,
-                                                                    {
-                                                                        borderColor: MunicipalityMedicalCenterColor,
-                                                                        backgroundColor: '#fff',
-                                                                    },
-                                                                ]
-                                                        }
-                                                    />
-                                                </TouchableOpacity>
-                                            </Right>
-                                            <Body style={styles.settingCardBodyStyle}>
-                                                <Text style={styles.settingCardBodyTextStyle}>
-                                                    {MunicipalityMedicalCenterDefinitionTitle}
-                                                </Text>
-                                            </Body>
-                                        </CardItem>
-                                        <CardItem style={{backgroundColor: '#fff'}}>
-                                            <Right>
-                                                <TouchableOpacity
-                                                    onPress={() =>
-                                                        this.setState({showClinic: !this.state.showClinic})
-                                                    }>
-                                                    <View
-                                                        style={
-                                                            this.state.showClinic
-                                                                ? [
-                                                                    styles.activeIconSetting,
-                                                                    {
-                                                                        backgroundColor: ClinicColor,
-                                                                        borderColor: ClinicColor,
-                                                                    },
-                                                                ]
-                                                                : [
-                                                                    styles.deActiveIconSetting,
-                                                                    {
-                                                                        borderColor: ClinicColor,
-                                                                        backgroundColor: '#fff',
-                                                                    },
-                                                                ]
-                                                        }
-                                                    />
-                                                </TouchableOpacity>
-                                            </Right>
-                                            <Body style={styles.settingCardBodyStyle}>
-                                                <Text style={styles.settingCardBodyTextStyle}>
-                                                    {ClinicDefinitionTitle}
-                                                </Text>
-                                            </Body>
-                                        </CardItem>
-                                    </Card>
-                                </View>
-                            </Dialog>
-
-                            <MapView
-                                userLocationAnnotationTitle={'موقعیت من'}
-                                showsMyLocationButton={true}
-                                loadingEnabled={true}
-                                provider="google"
-                                loadingIndicatorColor={'#23b9b9'}
-                                showsUserLocation={true}
-                                minZoomLevel={0}
-                                style={{
-                                    width: Dimensions.get('window').width,
-                                    height: Dimensions.get('window').height,
-                                    // width: '100%',
-                                    // height: '100%'
-                                }}
-                                initialRegion={{
-                                    latitude: 35.715559,
-                                    longitude: 51.425621,
-                                    latitudeDelta: 0.0922,
-                                    longitudeDelta: 0.0421,
-                                }}>
-                                {this.state.medicalCenters.map((value, index) => {
-                                    if (
-                                        value.CenterDefinitionId ===
-                                        MunicipalityMedicalCenterDefinitionId
-                                    )
-                                        return (
-                                            <Marker
-                                                title={value.Title}
-                                                onCalloutPress={() => {
-                                                    if (value.IsActiveForReservation) {
-                                                        this.setState(
-                                                            {selectedMedicalCenter: value},
-                                                            () => {
-                                                                this.setState({visible: true});
-                                                            },
-                                                        );
-                                                    }
-                                                }}
-                                                coordinate={{
-                                                    latitude: this.getLatLong(value.Location, 'latitude'),
-                                                    longitude: this.getLatLong(
-                                                        value.Location,
-                                                        'longitude',
-                                                    ),
-                                                }}>
-                                                <Icon
-                                                    type={'FontAwesome5'}
-                                                    name={'map-marker-alt'}
-                                                    style={
-                                                        value.IsActiveForReservation
-                                                            ? {
-                                                                color: MunicipalityMedicalCenterColor,
-                                                                fontSize: 40,
-                                                            }
-                                                            : {color: 'gray', fontSize: 35}
-                                                    }
-                                                />
-                                            </Marker>
-                                        );
-                                    return null;
-                                })}
-                            </MapView>
-
-                            {/* <MapView
-                userLocationAnnotationTitle={'موقعیت من'}
-                showsMyLocationButton={true}
-                loadingEnabled={true}
-                provider="google"
-                loadingIndicatorColor={'#23b9b9'}
-                showsUserLocation={true}
-                minZoomLevel={0}
-                style={{
-                  width: Dimensions.get('window').width,
-                  height: Dimensions.get('window').height,
-                  // width: '100%',
-                  // height: '100%'
-                }}
-                initialRegion={{
-                  latitude: 35.715559,
-                  longitude: 51.425621,
-                  latitudeDelta: 0.0922,
-                  longitudeDelta: 0.0421,
-                }}>
-                {this.state.medicalCenters.map((value, index) => (
-                  <View key={index}>
-                    {this.state.showMunicipality &&
-                    value.CenterDefinitionId ===
-                      MunicipalityMedicalCenterDefinitionId ? (
-                      <Marker
-                        title={value.Title}
-                        onCalloutPress={() => {
-                          if (value.IsActiveForReservation) {
-                            this.setState(
-                              {selectedMedicalCenter: value},
-                              () => {
-                                this.setState({visible: true});
-                              },
-                            );
-                          }
-                        }}
-                        coordinate={{
-                          latitude: this.getLatLong(value.Location, 'latitude'),
-                          longitude: this.getLatLong(
-                            value.Location,
-                            'longitude',
-                          ),
-                        }}>
-                        <Icon
-                          type={'FontAwesome5'}
-                          name={'map-pin'}
-                          style={
-                            value.IsActiveForReservation
-                              ? {
-                                  color: MunicipalityMedicalCenterColor,
-                                  fontSize: 25,
-                                }
-                              : {color: 'gray', fontSize: 20}
-                          }
-                        />
-                      </Marker>
-                    ) : this.state.showClinic &&
-                      value.CenterDefinitionId === ClinicDefinitionId ? (
-                      <Marker
-                        title={value.Title}
-                        onCalloutPress={() => {
-                          if (value.IsActiveForReservation) {
-                            this.setState(
-                              {selectedMedicalCenter: value},
-                              () => {
-                                this.setState({visible: true});
-                              },
-                            );
-                          }
-                        }}
-                        coordinate={{
-                          latitude: this.getLatLong(value.Location, 'latitude'),
-                          longitude: this.getLatLong(
-                            value.Location,
-                            'longitude',
-                          ),
-                        }}>
-                        <Icon
-                          type={'FontAwesome5'}
-                          name={'map-pin'}
-                          style={
-                            value.IsActiveForReservation
-                              ? {color: ClinicColor, fontSize: 25}
-                              : {color: ClinicColor, fontSize: 20}
-                          }
-                        />
-                      </Marker>
-                    ) : this.state.showHospital &&
-                      value.CenterDefinitionId === HospitalDefinitionId ? (
-                      <Marker
-                        title={value.Title}
-                        onCalloutPress={() => {
-                          if (value.IsActiveForReservation) {
-                            this.setState(
-                              {selectedMedicalCenter: value},
-                              () => {
-                                this.setState({visible: true});
-                              },
-                            );
-                          }
-                        }}
-                        coordinate={{
-                          latitude: this.getLatLong(value.Location, 'latitude'),
-                          longitude: this.getLatLong(
-                            value.Location,
-                            'longitude',
-                          ),
-                        }}>
-                        <Icon
-                          type={'FontAwesome5'}
-                          name={'map-pin'}
-                          style={
-                            value.IsActiveForReservation
-                              ? {color: HospitalColor, fontSize: 25}
-                              : {color: HospitalColor, fontSize: 20}
-                          }
-                        />
-                      </Marker>
-                    )
-                     : null}
-                  </View>
-                ))}
-              </MapView> */}
-
-                            {this.state.selectedMedicalCenter != null && (
-                                <Dialog
-                                    contentStyle={{backgroundColor: 'transparent'}}
-                                    dialogStyle={{
-                                        backgroundColor: 'transparent',
-                                        borderColor: 'transparent',
-                                        borderWidth: 0,
-                                        elevation: 0,
-                                    }}
-                                    animationType={'fade'}
-                                    visible={this.state.visible}
-                                    onTouchOutside={() => this.setState({visible: false})}>
-                                    <View>
-                                        <Card style={{borderBottomColor: 'gray', borderWidth: 1}}>
-                                            <CardItem header style={{backgroundColor: '#209b9b'}}>
-                                                <Body>
-                                                    <Text style={styles.modalTitleText}>
-                                                        {this.state.selectedMedicalCenter.Title}
-                                                    </Text>
-                                                </Body>
-                                            </CardItem>
-                                            <CardItem header style={{backgroundColor: '#fff'}}>
-                                                <Body
-                                                    style={{
-                                                        minHeight: 50,
-                                                        maxHeight: 150,
-                                                        flexDirection: 'row-reverse',
-                                                    }}>
-                                                    <Text
-                                                        numberOfLines={2}
-                                                        style={[
-                                                            styles.modalCancelButtonText,
-                                                            {
-                                                                color: '#23b9b9',
-                                                                fontSize: 10,
-                                                                textAlign: 'right',
-                                                            },
-                                                        ]}>
-                                                        {this.state.selectedMedicalCenter.Description}
-                                                    </Text>
-                                                </Body>
-                                            </CardItem>
-                                            <CardItem footer style={{backgroundColor: '#fff'}}>
-                                                <Body style={{flexDirection: 'row'}}>
-                                                    <Button
-                                                        style={styles.modalCancelButton}
-                                                        onPress={() => {
-                                                            this.setState({visible: false});
-                                                            this.props.navigation.navigate(
-                                                                'MapSearchDoctorScreen',
-                                                                {
-                                                                    medicalCenter: this.state
-                                                                        .selectedMedicalCenter,
-                                                                },
-                                                            );
-                                                        }}>
-                                                        <Text style={styles.modalCancelButtonText}>
-                                                            جستجوی پزشک
-                                                        </Text>
-                                                    </Button>
-                                                    <Button
-                                                        style={styles.modalSuccessButton}
-                                                        onPress={() => {
-                                                            this.setState({visible: false});
-                                                            this.props.navigation.push(
-                                                                'DetailsForMedicalCenterScreen',
-                                                                {
-                                                                    medicalCenter: this.state
-                                                                        .selectedMedicalCenter,
-                                                                    backRoute: 'HomeScreen',
-                                                                },
-                                                            );
-                                                        }}>
-                                                        <Text style={styles.modalSuccessButtonText}>
-                                                            اطلاعات بیشتر
-                                                        </Text>
-                                                    </Button>
-                                                </Body>
-                                            </CardItem>
-                                        </Card>
-                                    </View>
-                                </Dialog>
-                            )}
-
-                            <MyModal
-                                style={{opacity: 0.7}}
-                                width={300}
-                                visible={this.state.progressModalVisible}
-                                modalAnimation={
-                                    new SlideAnimation({
-                                        slideFrom: 'bottom',
-                                    })
-                                }>
-                                <ModalContent
-                                    style={[
-                                        styles.modalContent,
-                                        {backgroundColor: 'rgba(47,246,246,0.02)'},
-                                    ]}>
-                                    <ActivityIndicator
-                                        animating={true}
-                                        size="small"
-                                        color={'#23b9b9'}
-                                    />
-                                </ModalContent>
-                            </MyModal>
-                            {/*</View>*/}
-                        </Content>
-                    )}
 
                     {true && (
                         <Content
@@ -824,113 +320,6 @@ export default class HomeScreen extends Component {
                                     hidden={false}
                                 />
                             )}
-
-                            {/* <MapView
-              maxZoomLevel={18}
-              minZoomLevel={10}
-              // onRegionChangeComplete={region => {
-              //   this.setState({region: region});
-              // }}
-              clusterFontFamily={'IRANMarker'}
-              clusterColor="#209b9b"
-              spiderLineColor="transparent"
-              clusterTextColor="#fff"
-              cluster
-              style={{
-                flex: 1,
-                width: Dimensions.get('window').width,
-                height: Dimensions.get('window').height,
-              }}
-              initialRegion={this.state.region}>
-              {this.state.showClinic &&
-                this.state.clinics.map((value, index) => {
-                  return (
-                    <Marker
-                      title={value.Title}
-                      onCalloutPress={() => {
-                        if (value.IsActiveForReservation) {
-                          this.setState({selectedMedicalCenter: value}, () => {
-                            this.setState({visible: true});
-                          });
-                        }
-                      }}
-                      coordinate={{
-                        latitude: this.getLatLong(value.Location, 'latitude'),
-                        longitude: this.getLatLong(value.Location, 'longitude'),
-                      }}>
-                      <Icon
-                        type={'FontAwesome5'}
-                        name={'map-marker-alt'}
-                        style={
-                          value.IsActiveForReservation
-                            ? {color: ClinicColor, fontSize: 30}
-                            : {color: 'gray', fontSize: 25}
-                        }
-                      />
-                    </Marker>
-                  );
-                })}
-              {this.state.showHospital &&
-                this.state.hospitals.map((value, index) => {
-                  return (
-                    <Marker
-                      title={value.Title}
-                      onCalloutPress={() => {
-                        if (value.IsActiveForReservation) {
-                          this.setState({selectedMedicalCenter: value}, () => {
-                            this.setState({visible: true});
-                          });
-                        }
-                      }}
-                      coordinate={{
-                        latitude: this.getLatLong(value.Location, 'latitude'),
-                        longitude: this.getLatLong(value.Location, 'longitude'),
-                      }}>
-                      <Icon
-                        type={'FontAwesome5'}
-                        name={'map-marker-alt'}
-                        style={
-                          value.IsActiveForReservation
-                            ? {color: HospitalColor, fontSize: 30}
-                            : {color: 'gray', fontSize: 25}
-                        }
-                      />
-                    </Marker>
-                  );
-                })}
-              {this.state.showMunicipality &&
-                this.state.municipalityMedicalCenters.map((value, index) => {
-                  return (
-                    <Marker
-                      title={value.Title}
-                      onCalloutPress={() => {
-                        if (value.IsActiveForReservation) {
-                          this.setState({selectedMedicalCenter: value}, () => {
-                            this.setState({visible: true});
-                          });
-                        }
-                      }}
-                      coordinate={{
-                        latitude: this.getLatLong(value.Location, 'latitude'),
-                        longitude: this.getLatLong(value.Location, 'longitude'),
-                      }}>
-                      <Icon
-                        type={'FontAwesome5'}
-                        name={'map-marker-alt'}
-                        style={
-                          value.IsActiveForReservation
-                            ? {
-                                color: MunicipalityMedicalCenterColor,
-                                fontSize: 30,
-                              }
-                            : {color: 'gray', fontSize: 25}
-                        }
-                      />
-                    </Marker>
-                  );
-                })}
-            </MapView> */}
-
                             <MapView
                                 maxZoomLevel={19}
                                 minZoomLevel={9}
@@ -948,120 +337,6 @@ export default class HomeScreen extends Component {
                                 }}
                                 Clustering={false}
                                 region={this.state.region}>
-                                {/*  {this.state.municipalityMedicalCenters.map(value => (
-                <Marker
-                  title={value.Title}
-                  onCalloutPress={() => {
-                    if (value.IsActiveForReservation) {
-                      this.setState({selectedMedicalCenter: value}, () => {
-                        this.setState({visible: true});
-                      });
-                    }
-                  }}
-                  coordinate={{
-                    latitude: this.getLatLong(value.Location, 'latitude'),
-                    longitude: this.getLatLong(value.Location, 'longitude'),
-                  }}>
-                  <Icon
-                    type={'FontAwesome5'}
-                    name={'map-marker-alt'}
-                    style={
-                      value.IsActiveForReservation
-                        ? {
-                            color: MunicipalityMedicalCenterColor,
-                            fontSize: 45,
-                          }
-                        : {color: 'gray', fontSize: 40}
-                    }
-                  />
-                </Marker>
-              ))}
-             {this.state.hospitals.map(value => {
-                <Marker
-                  title={value.Title}
-                  onCalloutPress={() => {
-                    if (value.IsActiveForReservation) {
-                      this.setState({selectedMedicalCenter: value}, () => {
-                        this.setState({visible: true});
-                      });
-                    }
-                  }}
-                  coordinate={{
-                    latitude: this.getLatLong(value.Location, 'latitude'),
-                    longitude: this.getLatLong(value.Location, 'longitude'),
-                  }}>
-                  <Icon
-                    type={'FontAwesome5'}
-                    name={'map-marker-alt'}
-                    style={
-                      value.IsActiveForReservation
-                        ? {
-                            color: HospitalColor,
-                            fontSize: 45,
-                          }
-                        : {color: 'gray', fontSize: 40}
-                    }
-                  />
-                </Marker>;
-              })}
-              {this.state.clinics.map(value => {
-                <Marker
-                  title={value.Title}
-                  onCalloutPress={() => {
-                    if (value.IsActiveForReservation) {
-                      this.setState({selectedMedicalCenter: value}, () => {
-                        this.setState({visible: true});
-                      });
-                    }
-                  }}
-                  coordinate={{
-                    latitude: this.getLatLong(value.Location, 'latitude'),
-                    longitude: this.getLatLong(value.Location, 'longitude'),
-                  }}>
-                  <Icon
-                    type={'FontAwesome5'}
-                    name={'map-marker-alt'}
-                    style={
-                      value.IsActiveForReservation
-                        ? {
-                            color: ClinicColor,
-                            fontSize: 45,
-                          }
-                        : {color: 'gray', fontSize: 40}
-                    }
-                  />
-                </Marker>;
-              })} */}
-                                {/*
-              {this.state.municipalityMedicalCenters.map(marker => (
-                <Marker
-                  title={marker.Title}
-                  onCalloutPress={() => {
-                    if (marker.IsActiveForReservation) {
-                      this.setState({selectedMedicalCenter: marker}, () => {
-                        this.setState({visible: true});
-                      });
-                    }
-                  }}
-                  coordinate={{
-                    latitude: this.getLatLong(marker.Location, 'latitude'),
-                    longitude: this.getLatLong(marker.Location, 'longitude'),
-                  }}>
-                  <Icon
-                    type={'FontAwesome5'}
-                    name={'map-marker-alt'}
-                    style={
-                      marker.IsActiveForReservation
-                        ? {
-                            color: MunicipalityMedicalCenterColor,
-                            fontSize: 45,
-                          }
-                        : {color: 'gray', fontSize: 40}
-                    }
-                  />
-                </Marker>
-              ))}
-              <Marker opacity={0} coordinate={this.state.region} />*/}
                                 {this.state.showMunicipality &&
                                 this.state.municipalityMedicalCenters.map(value => (
                                     <Marker
@@ -1400,7 +675,6 @@ export default class HomeScreen extends Component {
                                 hidden={false}
                             />
                         )}
-
                         <MapView
                             userLocationAnnotationTitle={'موقعیت من'}
                             showsMyLocationButton={true}
@@ -1411,8 +685,6 @@ export default class HomeScreen extends Component {
                             style={{
                                 width: Dimensions.get('window').width,
                                 height: Dimensions.get('window').height,
-                                // width: '100%',
-                                // height: '100%'
                             }}
                             initialRegion={{
                                 latitude: 35.715559,
@@ -1425,40 +697,24 @@ export default class HomeScreen extends Component {
                                     {value.CenterDefinitionId ==
                                     MunicipalityMedicalCenterDefinitionId &&
                                     value.IsActiveForReservation ? (
-                                        <Marker
-                                            title={value.Title}
-                                            onCalloutPress={() =>
-                                                this.setState({selectedMedicalCenter: value}, () => {
-                                                    this.setState({visible: true});
-                                                })
-                                            }
-                                            coordinate={{
-                                                latitude: this.getLatLong(value.Location, 'latitude'),
-                                                longitude: this.getLatLong(value.Location, 'longitude'),
-                                            }}>
-                                            <Icon
-                                                type={'FontAwesome5'}
-                                                name={'map-marker-alt'}
-                                                style={{color: '#23b9b9', fontSize: 45}}
-                                            />
-                                        </Marker>
-                                    ) :
-                                    //     value.CenterDefinitionId ==
-                                    // MunicipalityMedicalCenterDefinitionId &&
-                                    // !value.IsActiveForReservation ? (
-                                    //     <Marker
-                                    //         title={value.Title}
-                                    //         coordinate={{
-                                    //             latitude: this.getLatLong(value.Location, 'latitude'),
-                                    //             longitude: this.getLatLong(value.Location, 'longitude'),
-                                    //         }}>
-                                    //         <Icon
-                                    //             type={'FontAwesome5'}
-                                    //             name={'map-marker-alt'}
-                                    //             style={{color: 'gray', fontSize: 40}}
-                                    //         />
-                                    //     </Marker>
-                                    // ) :
+                                            <Marker
+                                                title={value.Title}
+                                                onCalloutPress={() =>
+                                                    this.setState({selectedMedicalCenter: value}, () => {
+                                                        this.setState({visible: true});
+                                                    })
+                                                }
+                                                coordinate={{
+                                                    latitude: this.getLatLong(value.Location, 'latitude'),
+                                                    longitude: this.getLatLong(value.Location, 'longitude'),
+                                                }}>
+                                                <Icon
+                                                    type={'FontAwesome5'}
+                                                    name={'map-marker-alt'}
+                                                    style={{color: '#23b9b9', fontSize: 45}}
+                                                />
+                                            </Marker>
+                                        ) :
                                         null}
                                 </View>
                             ))}

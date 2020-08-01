@@ -1,54 +1,24 @@
 import React, {Component} from 'react';
 import {StyleSheet, View, Modal, ScrollView, StatusBar, Platform} from 'react-native';
-import Swipeable from 'react-native-swipeable-row'
 import {
     Container,
-    Header,
-    Title,
     Content,
-    Footer,
-    FooterTab,
     CardItem,
     Button,
-    Left,
     Card,
-    Right,
     Body,
     Icon,
     Text,
-    List,
-
 } from 'native-base';
 
-const MyPost = (props) => {
-    return (
-        <Card style={[styles.post]}>
-            <CardItem header style={{backgroundColor: props.myColor}}>
-                <Body>
-                    <Text style={styles.titleText}>{props.title}</Text>
-                </Body>
-            </CardItem>
-            <CardItem style={{backgroundColor: props.myColor}}>
-                <Body>
-                    <Text style={styles.contentText}>{props.content}</Text>
-                </Body>
-            </CardItem>
-            <CardItem style={{backgroundColor: props.myColor}}>
-                <Body>
-                    <Text style={styles.contentText}>{props.doctor}</Text>
-                </Body>
-            </CardItem>
-        </Card>
-    )
-}
 export default class MedicalFilesScreen extends Component {
     constructor(props) {
         super(props)
         this.state = {
             array: [
-                {title: "چهارشنبه 1398/8/1", content: "نسخه شماره 1",doctor:'محسن زنجانی متخصص قلب'},
-                {title: "شنبه 1398/8/5", content: "نسخه شماره 2",doctor:'محمدرضا سلیمانی جراح فک و صورت'},
-                {title: "جمعه 1398/8/7", content: "نسخه شماره 3",doctor:'محمد شریفی دندانپزشک '},
+                {title: "چهارشنبه 1398/8/1", content: "نسخه شماره 1", doctor: 'محسن زنجانی متخصص قلب'},
+                {title: "شنبه 1398/8/5", content: "نسخه شماره 2", doctor: 'محمدرضا سلیمانی جراح فک و صورت'},
+                {title: "جمعه 1398/8/7", content: "نسخه شماره 3", doctor: 'محمد شریفی دندانپزشک '},
             ]
         }
     }
@@ -64,54 +34,15 @@ export default class MedicalFilesScreen extends Component {
         })
     }
 
-    renderList(value, index) {
-        if (index <= 3) {
-            return (
-                <View key={index} >
-                    <Swipeable rightButtons={[<Button onPress={() => {
-                        this.deleteMessage({value, index})
-                    }} style={{height: '100%', margin: 2}} danger>
-                        <Icon name='trash'/>
-                    </Button>]}
-                               onRightActionRelease={() => this.deleteMessage({value, index})}
-                    >
-                        <MyPost title={value.content} content={value.title} doctor={value.doctor}
-                                myColor={'rgba(34,166,166,0.72)'}/>
-                    </Swipeable>
-                </View>
-            )
-        } else {
-            return (
-                <Swipeable rightButtons={[<Button onPress={() => {
-                    this.deleteMessage({value, index})
-                }} style={{height: '100%', margin: 2}} danger>
-                    <Icon name='trash'/>
-                </Button>]}
-                           onRightActionRelease={() => this.deleteMessage({value, index})}
-                >
-                    <MyPost title={value.content} content={value.title}
-                            myColor={'rgba(34,166,166,0.72)'}/>
-                </Swipeable>
-            )
-        }
-
-    }
 
     render() {
 
         return (
             <Container style={{backgroundColor: 'rgba(34,166,166,0.72)',}}>
-                <StatusBar   showHideTransition={"slide"}  barStyle={"light-content"} backgroundColor={'transparent'} hidden={true} />
+                <StatusBar showHideTransition={"slide"} barStyle={"light-content"} backgroundColor={'transparent'}
+                           hidden={true}/>
                 <Content>
-                    {Platform.OS === 'android' &&
-                    <StatusBar barStyle={"dark-content"} backgroundColor={'#209b9b'}
-                               hidden={false}/>
-                    }
-                    <ScrollView>
-                        {this.state.array.map((value, index) =>
-                            this.renderList(value, index)
-                        )}
-                    </ScrollView>
+
                 </Content>
             </Container>
 
@@ -197,7 +128,7 @@ const styles = StyleSheet.create({
         textAlign: 'left',
         alignSelf: 'flex-end',
         fontWeight: 'bold',
-        fontFamily:'IRANMarker'
+        fontFamily: 'IRANMarker'
     },
     contentText: {
         color: '#fff',
@@ -205,6 +136,6 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-end',
         marginTop: 5,
         fontSize: 15,
-        fontFamily:'IRANMarker'
+        fontFamily: 'IRANMarker'
     }
 });

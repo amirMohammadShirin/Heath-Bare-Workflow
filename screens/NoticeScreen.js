@@ -13,10 +13,7 @@ import {
 import {
     Container,
     Header,
-    Spinner,
     Content,
-    Footer,
-    FooterTab,
     CardItem,
     Button,
     Left,
@@ -25,12 +22,8 @@ import {
     Body,
     Icon,
     Text,
-    Thumbnail,
 } from 'native-base';
-import Drawer from 'react-native-drawer';
-import SideMenu from '../Menu/SideMenu';
 import Modal, {ModalContent, SlideAnimation} from 'react-native-modals';
-import {cos} from "react-native-reanimated";
 
 const GETNOTICES = '/GetNotices';
 
@@ -78,7 +71,6 @@ export default class NoticeScreen extends Component {
         })
             .then(response => response.json())
             .then(responseData => {
-                console.log(responseData)
                 if (responseData['StatusCode'] === 200) {
                     if (responseData['Data'] != null) {
                         let data = responseData['Data'];
@@ -101,8 +93,7 @@ export default class NoticeScreen extends Component {
                 }
             })
             .catch(error => {
-                console.error(error);
-                // alert(error)
+                console.log(error);
             });
     }
 

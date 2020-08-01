@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {
   StyleSheet,
   StatusBar,
-  Alert,
   BackHandler,
   Platform,
 } from 'react-native';
@@ -17,9 +16,7 @@ import {
   Text,
   Left,
   Right,
-  Content,
 } from 'native-base';
-import ChatScreen from './MyChatScreen';
 import InboxScreen from './InboxScreen';
 import SentMessagesScreen from './SentMessagesScreen';
 import MyChatScreen from './MyChatScreen';
@@ -42,7 +39,6 @@ export default class HistoryScreen extends Component {
   }
 
   handleBackButtonClick() {
-    // alert('pressed')
 
     console.log(JSON.stringify(this.props.navigation.state));
 
@@ -104,7 +100,6 @@ export default class HistoryScreen extends Component {
             heading={
               <TabHeading style={styles.tabHeading}>
                 <Icon
-                //   type={'FontAwesome5'}
                   style={styles.tabIcon}
                   name="paper-plane"
                 />

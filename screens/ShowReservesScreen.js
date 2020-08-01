@@ -213,7 +213,6 @@ export default class ShowReservesScreen extends Component {
                 id: userId.toString()
             }
         }
-        console.log("GetReservation Body : \n ", Body);
         this.setState({progressModalVisible: !refreshing});
         fetch(baseUrl + hub, {
             method: 'POST',
@@ -252,8 +251,7 @@ export default class ShowReservesScreen extends Component {
                 }
             })
             .catch(error => {
-                console.error(error);
-                // alert(error)
+                console.log(error);
             });
     }
 
@@ -270,16 +268,6 @@ export default class ShowReservesScreen extends Component {
         ) {
             return (
                 <View key={index}>
-                    {/* <Swipeable> */}
-                    {/* <MyPost time={value.StartTime.substring(0, 5)} type={value.type} status={value.status}
-                        medicalCenter={value.medicalCenter} actor={value.actor}
-                        date={value.date.substring(0, 10)}
-                        myColor={'#cfcfcf'}
-                        headerColor={'rgba(215,1,0,0.75)'}
-                        disable={false}
-
-                    /> */}
-                    {/* </Swipeable> */}
                     <Card style={[styles.post]}>
                         <CardItem
                             bordered
@@ -363,21 +351,6 @@ export default class ShowReservesScreen extends Component {
         } else {
             return (
                 <View key={index}>
-                    {/* <Swipeable
-                        rightButtons={[<Button
-                            style={{ height: '100%', margin: 2 }} danger>
-                            <Icon type={'FontAwesome5'} name='calendar-times' />
-                        </Button>]}
-                    > */}
-                    {/* <MyPost
-                        myValue={value}
-                        time={value.StartTime} type={value.type} status={value.status}
-                        medicalCenter={value.medicalCenter} actor={value.actor} date={value.date}
-                        myColor={'#fff'}
-                        headerColor={'rgba(0,138,50,0.78)'}
-                        disable={true}
-                    /> */}
-                    {/* </Swipeable> */}
                     <Card style={[styles.post]}>
                         <CardItem
                             bordered
@@ -445,7 +418,6 @@ export default class ShowReservesScreen extends Component {
                             bordered
                             style={{backgroundColor: '#fff', flexDirection: 'row-reverse'}}>
                             <Right>
-                                {/*<Icon type={'FontAwesome5'} name='calendar-times' style={{color: 'rgba(215,1,0,0.75)'}}/>*/}
                                 <Text
                                     onPress={() => this.disableReservationConfirmation(value)}
                                     style={[styles.title, {color: 'rgba(215,1,0,0.75)'}]}>
@@ -474,7 +446,6 @@ export default class ShowReservesScreen extends Component {
         doctorId,
         medicalCenterId,
     ) {
-        // alert(this.state.greenActive)
         let fullName = this.props.fullName;
         this.props.navigation.navigate('Rating', {
             medicalCenter: medicalCenter,
@@ -491,7 +462,6 @@ export default class ShowReservesScreen extends Component {
             refreshing: true,
             searchWord: null,
         });
-        console.log('refresh started');
         this.getReservationReports(true);
     };
 
@@ -607,13 +577,6 @@ export default class ShowReservesScreen extends Component {
                                             alignContent: 'center',
                                             alignItems: 'center',
                                         }}>
-                                        {/* <Badge style={styles.badgeStyle}>
-                      <Text numberOfLines={1} style={styles.badgeText}>
-                        {' '}
-                        ارسال نظر
-                      </Text>
-                    </Badge> */}
-                                        {/* <Icon type="FontAwesome5" name="clipboard-check"  style={styles.badgeText}/> */}
                                         <Text
                                             style={{
                                                 marginRight: 1,
@@ -633,19 +596,6 @@ export default class ShowReservesScreen extends Component {
                                         </Text>
                                     </TouchableOpacity>
                                 </Body>
-                                {/* //<Right style={[styles.headerRightStyle]}> */}
-                                {/* <Icon
-                    style={styles.expandIcon}
-                    type="FontAwesome5"
-                    name="chevron-down"
-                  /> */}
-
-                                {/* <Icon
-                    style={[styles.disableIcon, {color: 'transparent'}]}
-                    type="FontAwesome5"
-                    name="calendar-times"
-                  /> */}
-                                {/* //  </Right> */}
                             </CardItem>
                         );
                     } else if (item.statusValue === 56 && this.state.grayActive) {
@@ -677,11 +627,6 @@ export default class ShowReservesScreen extends Component {
                                     </Text>
                                 </Body>
                                 <Right style={styles.headerRightStyle}>
-                                    {/* <Icon
-                    style={styles.expandIcon}
-                    type="FontAwesome5"
-                    name="chevron-down"
-                  /> */}
                                     <Icon
                                         onPress={() => this.disableReservationConfirmation(item)}
                                         style={styles.disableIcon}
@@ -725,16 +670,6 @@ export default class ShowReservesScreen extends Component {
                                     </Text>
                                 </Body>
                                 <Right style={styles.headerRightStyle}>
-                                    {/* <Icon
-                    style={styles.expandIcon}
-                    type="FontAwesome5"
-                    name="chevron-down"
-                  /> */}
-                                    {/* <Icon
-                    style={[styles.disableIcon, {color: 'transparent'}]}
-                    type="FontAwesome5"
-                    name="times"
-                  /> */}
                                 </Right>
                             </CardItem>
                         );
@@ -773,7 +708,6 @@ export default class ShowReservesScreen extends Component {
                 this.setState({reserveList: null});
             }
         }
-        console.log(JSON.stringify(list));
         this.setState({reserveList: list});
     }
 
@@ -787,316 +721,255 @@ export default class ShowReservesScreen extends Component {
     }
 
     render() {
-        if (false) {
-            return (
-                <Container style={{backgroundColor: 'rgba(34,166,166,0.72)'}}>
-                    <Content
-                        scrollEnabled={true}
-                        refreshControl={
-                            <RefreshControl
-                                refreshing={this.state.refreshing}
-                                onRefresh={this.onRefresh}
-                                progressBackgroundColor="#fff"
-                                tintColor="#209b9b"
-                                colors={['#209b9b', 'rgba(34,166,166,0.72)']}
-                            />
-                        }>
-                        {/* <Content onMomentumScrollEnd={() => this.getReservationReports()}> */}
-                        {Platform.OS === 'android' && (
-                            <StatusBar
-                                barStyle={'dark-content'}
-                                backgroundColor={'#209b9b'}
-                                hidden={false}
-                            />
-                        )}
-                        <View style={styles.container}>
-                            <ScrollView>
-                                {this.state.array != null &&
-                                this.state.array.map((value, index) =>
-                                    this.renderList(value, index),
-                                )}
-                            </ScrollView>
-                            <Modal
-                                style={{opacity: 0.7}}
-                                width={300}
-                                visible={this.state.progressModalVisible}
-                                modalAnimation={
-                                    new SlideAnimation({
-                                        slideFrom: 'bottom',
-                                    })
-                                }>
-                                <ModalContent style={styles.modalContent}>
-                                    <ActivityIndicator
-                                        animating={true}
-                                        size="small"
-                                        color={'#23b9b9'}
-                                    />
-                                </ModalContent>
-                            </Modal>
-                        </View>
-                    </Content>
-                    {/*<Footer style={{backgroundColor:'rgba(34,166,166,0.72)'}}>*/}
-                    {/*    <Fab*/}
-                    {/*        direction="up"*/}
-                    {/*        style={{backgroundColor: '#37a39d'}}*/}
-                    {/*        position="bottomRight"*/}
-                    {/*        onPress={() => this.getReservationReports()}>*/}
-                    {/*        <Icon name="refresh" type="FontAwesome" style={{color:'#fff'}}/>*/}
-
-                    {/*    </Fab>*/}
-                    {/*</Footer>*/}
-                </Container>
-            );
-        } else {
-            return (
-                <Container style={{backgroundColor: '#fff'}}>
-                    <Content
-                        style={{flex: 1}}
-                        scrollEnabled={true}
-                        refreshControl={
-                            <RefreshControl
-                                refreshing={this.state.refreshing}
-                                onRefresh={this.onRefresh}
-                                progressBackgroundColor="#fff"
-                                tintColor="#209b9b"
-                                colors={['#209b9b', 'rgba(34,166,166,0.72)']}
-                            />
-                        }>
-                        {Platform.OS === 'android' && (
-                            <StatusBar
-                                barStyle={'dark-content'}
-                                backgroundColor={'#209b9b'}
-                                hidden={false}
-                            />
-                        )}
-                        {!this.state.progressModalVisible && (
+        return (
+            <Container style={{backgroundColor: '#fff'}}>
+                <Content
+                    style={{flex: 1}}
+                    scrollEnabled={true}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={this.state.refreshing}
+                            onRefresh={this.onRefresh}
+                            progressBackgroundColor="#fff"
+                            tintColor="#209b9b"
+                            colors={['#209b9b', 'rgba(34,166,166,0.72)']}
+                        />
+                    }>
+                    {Platform.OS === 'android' && (
+                        <StatusBar
+                            barStyle={'dark-content'}
+                            backgroundColor={'#209b9b'}
+                            hidden={false}
+                        />
+                    )}
+                    {!this.state.progressModalVisible && (
+                        <View
+                            style={{
+                                marginTop: 5,
+                                marginBottom: 2,
+                                backgroundColor: '#209b9b',
+                                flex: 1,
+                                borderTopLeftRadius: 10,
+                                borderTopRightRadius: 10,
+                                borderColor: '#209b9b',
+                                marginRight: 2,
+                                marginLeft: 2,
+                            }}>
                             <View
                                 style={{
-                                    marginTop: 5,
-                                    marginBottom: 2,
-                                    backgroundColor: '#209b9b',
-                                    flex: 1,
-                                    borderTopLeftRadius: 10,
-                                    borderTopRightRadius: 10,
-                                    borderColor: '#209b9b',
-                                    marginRight: 2,
-                                    marginLeft: 2,
+                                    marginTop: 2,
+                                    flexDirection: 'row-reverse',
+                                    backgroundColor: '#209b9b,flex:1',
                                 }}>
+                                <Item
+                                    style={{
+                                        marginTop: 5,
+                                        backgroundColor: 'transparent',
+                                        flexDirection: 'row',
+                                        flex: 6,
+                                        marginRight: 2,
+                                        marginLeft: 2,
+                                        borderWidth: 0,
+                                    }}>
+                                    <Icon
+                                        style={styles.searchIcon}
+                                        type="FontAwesome5"
+                                        name="search"
+                                    />
+                                    <Input
+                                        underlineColorAndroid="#209b9b"
+                                        placeholder="جستجوی نام پزشک ، نام مرکز و ..."
+                                        placeholderTextColor={'#fff'}
+                                        style={styles.inputStyle}
+                                        value={this.state.searchWord}
+                                        onChangeText={text => this.onChangeText(text)}
+                                    />
+                                </Item>
                                 <View
                                     style={{
-                                        marginTop: 2,
-                                        flexDirection: 'row-reverse',
-                                        backgroundColor: '#209b9b,flex:1',
+                                        justifyContent: 'center',
+                                        alignContent: 'center',
+                                        flexDirection: 'column',
+                                        marginTop: 5,
+                                        flex: 1,
+                                        paddingLeft: 5,
+                                        paddingRight: 1,
+                                        paddingTop: 1,
+                                        paddingBottom: 1,
+                                        marginRight: 2,
+                                        marginLeft: 2,
                                     }}>
-                                    <Item
-                                        style={{
-                                            marginTop: 5,
-                                            backgroundColor: 'transparent',
-                                            flexDirection: 'row',
-                                            flex: 6,
-                                            marginRight: 2,
-                                            marginLeft: 2,
-                                            borderWidth: 0,
-                                        }}>
+                                    <TouchableOpacity
+                                        style={
+                                            this.state.greenActive
+                                                ? [
+                                                    styles.buttonActive,
+                                                    {backgroundColor: 'green', borderColor: 'green'},
+                                                ]
+                                                : styles.buttonDeActive
+                                        }
+                                        onPress={() =>
+                                            this.setState({
+                                                greenActive: !this.state.greenActive,
+                                            })
+                                        }>
                                         <Icon
-                                            style={styles.searchIcon}
-                                            type="FontAwesome5"
-                                            name="search"
-                                        />
-                                        <Input
-                                            underlineColorAndroid="#209b9b"
-                                            placeholder="جستجوی نام پزشک ، نام مرکز و ..."
-                                            placeholderTextColor={'#fff'}
-                                            style={styles.inputStyle}
-                                            value={this.state.searchWord}
-                                            onChangeText={text => this.onChangeText(text)}
-                                        />
-                                    </Item>
-                                    <View
-                                        style={{
-                                            justifyContent: 'center',
-                                            alignContent: 'center',
-                                            flexDirection: 'column',
-                                            marginTop: 5,
-                                            flex: 1,
-                                            paddingLeft: 5,
-                                            paddingRight: 1,
-                                            paddingTop: 1,
-                                            paddingBottom: 1,
-                                            marginRight: 2,
-                                            marginLeft: 2,
-                                        }}>
-                                        <TouchableOpacity
+                                            type="FontAwesome"
+                                            name="check"
                                             style={
                                                 this.state.greenActive
-                                                    ? [
-                                                        styles.buttonActive,
-                                                        {backgroundColor: 'green', borderColor: 'green'},
-                                                    ]
-                                                    : styles.buttonDeActive
+                                                    ? styles.activeIconStyle
+                                                    : styles.deActiveIconStyle
                                             }
-                                            onPress={() =>
-                                                this.setState({
-                                                    greenActive: !this.state.greenActive,
-                                                })
-                                            }>
-                                            <Icon
-                                                type="FontAwesome"
-                                                name="check"
-                                                style={
-                                                    this.state.greenActive
-                                                        ? styles.activeIconStyle
-                                                        : styles.deActiveIconStyle
-                                                }
-                                            />
-                                        </TouchableOpacity>
-                                        <TouchableOpacity
+                                        />
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={
+                                            this.state.redActive
+                                                ? [
+                                                    styles.buttonActive,
+                                                    {backgroundColor: 'red', borderColor: 'red'},
+                                                ]
+                                                : styles.buttonDeActive
+                                        }
+                                        onPress={() =>
+                                            this.setState({
+                                                redActive: !this.state.redActive,
+                                            })
+                                        }>
+                                        <Icon
+                                            type="FontAwesome"
+                                            name="times"
                                             style={
                                                 this.state.redActive
-                                                    ? [
-                                                        styles.buttonActive,
-                                                        {backgroundColor: 'red', borderColor: 'red'},
-                                                    ]
-                                                    : styles.buttonDeActive
+                                                    ? styles.activeIconStyle
+                                                    : styles.deActiveIconStyle
                                             }
-                                            onPress={() =>
-                                                this.setState({
-                                                    redActive: !this.state.redActive,
-                                                })
-                                            }>
-                                            <Icon
-                                                type="FontAwesome"
-                                                name="times"
+                                        />
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={
+                                            this.state.grayActive
+                                                ? [
+                                                    styles.buttonActive,
+                                                    {backgroundColor: 'gray', borderColor: 'gray'},
+                                                ]
+                                                : styles.buttonDeActive
+                                        }
+                                        onPress={() => {
+                                            this.setState({
+                                                grayActive: !this.state.grayActive,
+                                            });
+                                        }}>
+                                        <Icon
+                                            type="FontAwesome5"
+                                            name="clock"
+                                            style={
+                                                this.state.grayActive
+                                                    ? styles.activeIconStyle
+                                                    : styles.deActiveIconStyle
+                                            }
+                                        />
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                            {this.state.reserveList.length > 0 ? (
+                                <Card style={styles.mainCard}>
+                                    {this.state.array != null &&
+                                    this.state.reserveList.length > 0 ? (
+                                        <View>{this.renderData()}</View>
+                                    ) : null}
+                                </Card>
+                            ) : this.state.reserveList.length === 0 ? (
+                                <Card style={styles.mainCard}>
+                                    <View
+                                        style={{
+                                            flexDirection: 'row-reverse',
+                                            justifyContent: 'flex-end',
+                                            alignContent: 'flex-end',
+                                            marginTop: 2,
+                                            paddingLeft: 5,
+                                            paddingTop: 1,
+                                            paddingBottom: 1,
+                                            marginLeft: 2,
+                                            marginBottom: 10,
+                                        }}>
+                                        <TouchableOpacity
+                                            onPress={() => {
+                                                this.this.setState({
+                                                    greenActive: !this.state.greenActive,
+                                                });
+                                            }}>
+                                            <View
                                                 style={
-                                                    this.state.redActive
-                                                        ? styles.activeIconStyle
-                                                        : styles.deActiveIconStyle
+                                                    this.state.greenActive
+                                                        ? styles.greenActive
+                                                        : styles.greenDeActive
                                                 }
                                             />
                                         </TouchableOpacity>
                                         <TouchableOpacity
-                                            style={
-                                                this.state.grayActive
-                                                    ? [
-                                                        styles.buttonActive,
-                                                        {backgroundColor: 'gray', borderColor: 'gray'},
-                                                    ]
-                                                    : styles.buttonDeActive
-                                            }
+                                            onPress={() => {
+                                                this.setState({
+                                                    redActive: !this.state.redActive,
+                                                });
+                                            }}>
+                                            <View
+                                                style={
+                                                    this.state.redActive
+                                                        ? styles.disabledActive
+                                                        : styles.disabledActive
+                                                }
+                                            />
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
                                             onPress={() => {
                                                 this.setState({
                                                     grayActive: !this.state.grayActive,
                                                 });
                                             }}>
-                                            <Icon
-                                                type="FontAwesome5"
-                                                name="clock"
+                                            <View
                                                 style={
                                                     this.state.grayActive
-                                                        ? styles.activeIconStyle
-                                                        : styles.deActiveIconStyle
+                                                        ? styles.waitingActive
+                                                        : styles.waitingDeActive
                                                 }
                                             />
                                         </TouchableOpacity>
                                     </View>
-                                </View>
-                                {this.state.reserveList.length > 0 ? (
-                                    <Card style={styles.mainCard}>
-                                        {this.state.array != null &&
-                                        this.state.reserveList.length > 0 ? (
-                                            <View>{this.renderData()}</View>
-                                        ) : null}
-                                    </Card>
-                                ) : this.state.reserveList.length === 0 ? (
-                                    <Card style={styles.mainCard}>
-                                        <View
-                                            style={{
-                                                flexDirection: 'row-reverse',
-                                                justifyContent: 'flex-end',
-                                                alignContent: 'flex-end',
-                                                marginTop: 2,
-                                                paddingLeft: 5,
-                                                paddingTop: 1,
-                                                paddingBottom: 1,
-                                                marginLeft: 2,
-                                                marginBottom: 10,
-                                            }}>
-                                            <TouchableOpacity
-                                                onPress={() => {
-                                                    this.this.setState({
-                                                        greenActive: !this.state.greenActive,
-                                                    });
-                                                }}>
-                                                <View
-                                                    style={
-                                                        this.state.greenActive
-                                                            ? styles.greenActive
-                                                            : styles.greenDeActive
-                                                    }
-                                                />
-                                            </TouchableOpacity>
-                                            <TouchableOpacity
-                                                onPress={() => {
-                                                    this.setState({
-                                                        redActive: !this.state.redActive,
-                                                    });
-                                                }}>
-                                                <View
-                                                    style={
-                                                        this.state.redActive
-                                                            ? styles.disabledActive
-                                                            : styles.disabledActive
-                                                    }
-                                                />
-                                            </TouchableOpacity>
-                                            <TouchableOpacity
-                                                onPress={() => {
-                                                    this.setState({
-                                                        grayActive: !this.state.grayActive,
-                                                    });
-                                                }}>
-                                                <View
-                                                    style={
-                                                        this.state.grayActive
-                                                            ? styles.waitingActive
-                                                            : styles.waitingDeActive
-                                                    }
-                                                />
-                                            </TouchableOpacity>
-                                        </View>
 
-                                        <CardItem>
-                                            <Body style={styles.noResultBody}>
-                                                <Text style={styles.title}>موردی یافت نشد</Text>
-                                            </Body>
-                                        </CardItem>
-                                    </Card>
-                                ) : !this.greenActive &&
-                                !this.state.redActive &&
-                                !this.state.grayActive ? null : null}
-                            </View>
-                        )}
-                        <Modal
-                            style={{opacity: 0.7}}
-                            width={300}
-                            visible={this.state.progressModalVisible}
-                            modalAnimation={
-                                new SlideAnimation({
-                                    slideFrom: 'bottom',
-                                })
-                            }>
-                            <ModalContent style={styles.modalContent}>
-                                <ActivityIndicator
-                                    animating={true}
-                                    size="small"
-                                    color={'#23b9b9'}
-                                />
-                            </ModalContent>
-                        </Modal>
-                    </Content>
-                </Container>
-            );
-        }
+                                    <CardItem>
+                                        <Body style={styles.noResultBody}>
+                                            <Text style={styles.title}>موردی یافت نشد</Text>
+                                        </Body>
+                                    </CardItem>
+                                </Card>
+                            ) : !this.greenActive &&
+                            !this.state.redActive &&
+                            !this.state.grayActive ? null : null}
+                        </View>
+                    )}
+                    <Modal
+                        style={{opacity: 0.7}}
+                        width={300}
+                        visible={this.state.progressModalVisible}
+                        modalAnimation={
+                            new SlideAnimation({
+                                slideFrom: 'bottom',
+                            })
+                        }>
+                        <ModalContent style={styles.modalContent}>
+                            <ActivityIndicator
+                                animating={true}
+                                size="small"
+                                color={'#23b9b9'}
+                            />
+                        </ModalContent>
+                    </Modal>
+                </Content>
+            </Container>
+        );
+
     }
 }
 

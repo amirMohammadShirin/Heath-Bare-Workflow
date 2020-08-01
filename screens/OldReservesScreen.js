@@ -1,102 +1,29 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Image, ScrollView, StatusBar, Platform} from 'react-native';
+import {StyleSheet, View, ScrollView, StatusBar, Platform} from 'react-native';
 import {
     Container,
     Header,
-    Title,
     Content,
-    Footer,
-    FooterTab,
     CardItem,
     Button,
     Left,
     Card,
-    Right,
     Body,
-    Icon,
     Text,
-    List,
-    Accordion
 } from 'native-base';
 
-
-const MyPost = (props) => {
-    return (
-        <Card style={[styles.post]}>
-            <CardItem header style={{backgroundColor: props.myColor}}>
-                <Body>
-                    <Text style={styles.titleText}>{props.title}</Text>
-                </Body>
-            </CardItem>
-            <CardItem style={{backgroundColor: props.myColor}}>
-                <Body>
-                    <Text style={styles.contentText}>{props.content}</Text>
-                </Body>
-            </CardItem>
-        </Card>
-    )
-}
 
 export default class OldReserveScreen extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            array: [
-                {title: "چهارشنبه 1398/8/1", content: "رزرو نوبت با دکتر رضایی متخصص مغز و اعصاب"},
-                {title: "شنبه 1398/8/5", content: "رزرو نوبت با دکتر حسینی متخصص گوارش"},
-                {title: "جمعه 1398/8/7", content: "رزرو نوبت با دکتر رضایی متخصص مغز و اعصاب"},
-                {title: "جمعه 1398/8/7", content: "رزرو نوبت با دکتر رضایی متخصص مغز و اعصاب"},
-                {title: "جمعه 1398/8/7", content: "رزرو نوبت با دکتر رضایی متخصص مغز و اعصاب"},
-                {title: "جمعه 1398/8/7", content: "رزرو نوبت با دکتر رضایی متخصص مغز و اعصاب"},
-                {title: "جمعه 1398/8/7", content: "رزرو نوبت با دکتر رضایی متخصص مغز و اعصاب"},
-                {title: "جمعه 1398/8/7", content: "رزرو نوبت با دکتر رضایی متخصص مغز و اعصاب"},
-                {title: "جمعه 1398/8/7", content: "رزرو نوبت با دکتر رضایی متخصص مغز و اعصاب"},
-            ]
-        }
-
     }
-
-    renderList(value, index) {
-            return (
-                <View key={index}>
-                    <MyPost title={value.title} content={value.content}
-                            myColor='rgba(218,19,20,0.74)'/>
-                </View>
-            )
-    }
-
-    onBackPressed() {
-        this.props.navigation.goBack()
-    }
-
 
     render() {
         return (
             <Container>
-                <Header transparent style={{backgroundColor: '#23b9b9'}}>
-                    <Left>
-                        <Button transparent style={styles.headerMenuIcon}
-                                onPress={() => this.onBackPressed()}>
-                            {/*<Icon style={styles.headerMenuIcon} name='arrow-back'*/}
-                            {/*      onPress={() => this.onBackPressed()}/>*/}
-                        </Button>
-                    </Left>
-                    <Body>
-                        {/* <Title style={styles.headerText}>نوبت های قبلی</Title> */}
-                    </Body>
-                </Header>
+
                 <Content>
-                    {Platform.OS === 'android' &&
-                    <StatusBar barStyle={"dark-content"} backgroundColor={'#209b9b'}
-                               hidden={false}/>
-                    }
-                    <View style={styles.container}>
-                        <ScrollView>
-                            {this.state.array.map((value, index) =>
-                                this.renderList(value, index)
-                            )}
-                        </ScrollView>
-                    </View>
+
                 </Content>
             </Container>
 
@@ -177,13 +104,13 @@ const styles = StyleSheet.create({
         backgroundColor: '#e4e4e4'
     },
     titleText: {
-        color:'#fff',
+        color: '#fff',
         textAlign: 'left',
         alignSelf: 'flex-end',
         fontWeight: 'bold'
     },
     contentText: {
-        color:'#fff',
+        color: '#fff',
         textAlign: 'left',
         alignSelf: 'flex-end',
         marginTop: 5,

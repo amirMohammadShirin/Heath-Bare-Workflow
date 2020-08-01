@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {
-    ActivityIndicator,
     AsyncStorage,
     StatusBar,
     StyleSheet,
@@ -13,7 +12,6 @@ import {
 } from 'react-native';
 import {Dialog} from 'react-native-simple-dialogs';
 import {
-    ActionSheet,
     Button,
     Body,
     Container,
@@ -31,13 +29,6 @@ import {
     List,
     Thumbnail,
 } from 'native-base';
-import Modal, {
-    ModalButton,
-    ModalContent,
-    ModalFooter,
-    ModalTitle,
-    SlideAnimation,
-} from 'react-native-modals';
 import DefaultDoctorImage from "../component/DefaultDoctorImage";
 
 export default class DoctorsResult extends Component {
@@ -77,7 +68,6 @@ export default class DoctorsResult extends Component {
     }
 
     handleBackButtonClick() {
-        // alert('pressed')
 
         console.log(JSON.stringify(this.props.navigation.state));
 
@@ -131,8 +121,7 @@ export default class DoctorsResult extends Component {
                 medicalCenter: typeof this.props.navigation.getParam('medicalCenter'),
             });
         } else {
-            this.props.navigation.navigate('SearchDoctorScreen', {
-            });
+            this.props.navigation.navigate('SearchDoctorScreen', {});
         }
     }
 
@@ -157,8 +146,7 @@ export default class DoctorsResult extends Component {
                                         ),
                                     });
                                 } else {
-                                    this.props.navigation.navigate('SearchDoctorScreen', {
-                                    });
+                                    this.props.navigation.navigate('SearchDoctorScreen', {});
                                 }
                             }}>
                             <Icon

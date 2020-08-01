@@ -12,8 +12,6 @@ import {
     Body,
     Icon,
 } from 'native-base';
-
-
 export default class MoreInfo extends Component {
     constructor(props) {
         super(props)
@@ -21,15 +19,12 @@ export default class MoreInfo extends Component {
             question: {}
         }
     }
-
     componentDidMount() {
         this.setState({question: this.props.navigation.getParam('question')})
     }
-
     onBackPressed() {
         this.props.navigation.goBack()
     }
-
     render() {
 
         return (

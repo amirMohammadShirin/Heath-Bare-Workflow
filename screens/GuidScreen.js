@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {
     StyleSheet,
     View,
-    Image,
     StatusBar,
     AsyncStorage,
     ActivityIndicator,
@@ -13,10 +12,7 @@ import QuestionListItem from '../component/QuestionListItem'
 import {
     Container,
     Header,
-    Title,
     Content,
-    Accordion,
-    FooterTab,
     CardItem,
     Button,
     Left,
@@ -29,7 +25,6 @@ import {
 } from 'native-base';
 import {ListItem} from 'react-native-elements';
 import Modal, {ModalContent, SlideAnimation} from 'react-native-modals';
-import {TouchableNativeFeedback} from 'react-native-gesture-handler';
 
 const GETQUESTIONS = '/GetQuestions';
 export default class GuidScreen extends Component {
@@ -74,7 +69,6 @@ export default class GuidScreen extends Component {
         })
             .then(response => response.json())
             .then(responseData => {
-              console.log(responseData)
                 if (responseData['StatusCode'] === 200) {
                     if (responseData['Data'] != null) {
                         let data = responseData['Data'];
@@ -92,8 +86,7 @@ export default class GuidScreen extends Component {
                 }
             })
             .catch(error => {
-                console.error(error);
-                // alert(error)
+                console.log(error);
             });
     }
 
@@ -169,26 +162,6 @@ export default class GuidScreen extends Component {
                             this.state.questions.map((l, i) => (
 
                                 <View key={i}>
-
-                                    {/* <ListItem
-                      containerStyle={{
-                        backgroundColor: 'rgba(37,180,180,0.42)',
-                      }}
-                      noIndent
-                      style={[styles.items]}
-                      title={l.title}
-                      titleStyle={styles.titleStyle}
-                      bottomDivider
-                      onPress={() => this.SelectQuestion(l)}
-                      leftIcon={
-                        <Icon
-                          type="FontAwesome"
-                          name="info-circle"
-                          style={styles.leftIconStyle}
-                        />
-                      }
-                    /> */}
-
                                     <QuestionListItem
                                         title={l.title}
                                         onPress={() => this.SelectQuestion(l)}
@@ -197,7 +170,6 @@ export default class GuidScreen extends Component {
                             ))}
                             {this.state.questions != null && Platform.OS === 'ios' &&
                             this.state.questions.map((l, i) => (
-
                                 <View key={i}>
 
                                     <ListItem
@@ -218,11 +190,6 @@ export default class GuidScreen extends Component {
                                             />
                                         }
                                     />
-
-                                    {/* <QuestionListItem
-                       title={l.title}
-                       onPress={() => this.SelectQuestion(l)}
-                   /> */}
                                 </View>
                             ))}
                         </List>

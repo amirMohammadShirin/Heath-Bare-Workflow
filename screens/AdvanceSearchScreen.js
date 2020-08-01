@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {
     ActivityIndicator,
-    Alert,
     AsyncStorage,
     BackHandler,
     Platform,
@@ -11,8 +10,6 @@ import {
     View,
     PermissionsAndroid,
 } from 'react-native';
-import AbortController from 'abort-controller';
-// import Geolocation from '@react-native-community/geolocation';
 import {
     ActionSheet,
     Button,
@@ -20,7 +17,6 @@ import {
     Body,
     Container,
     Content,
-    Item,
     Header,
     Icon,
     Left,
@@ -33,7 +29,6 @@ import {
 } from 'native-base';
 import Modal, {ModalContent, SlideAnimation} from 'react-native-modals';
 import Geolocation from '@react-native-community/geolocation';
-
 const GETSERVICES = '/GetServices';
 const GETFACILITIES = '/GetFacilities';
 const GETSERVICEDETAILS = '/GetServiceDetails';
@@ -186,7 +181,6 @@ export default class AdvanceSearchScreen extends Component {
     }
 
     handleBackButtonClick() {
-        // alert('pressed')
 
         console.log(JSON.stringify(this.props.navigation.state));
 
@@ -255,25 +249,14 @@ export default class AdvanceSearchScreen extends Component {
     async doctorAdvanceSearch(gender, skill, certificate) {
         const baseUrl = this.state.baseUrl;
         const hub = this.state.hub;
-
         if (gender.id === -100 && skill.id === -100 && certificate.id === -100) {
             alert('لطفا فیلد ها را انتخاب کنید');
         } else {
             if (this.state.medicalCenter != null) {
-                // console.log(body)
                 await this.setState({progressModalVisible: true});
-                console.log(
-                    JSON.stringify({
-                        Skill: skill.value,
-                        Gender: gender.id === -200 ? null : gender.value,
-                        Certificate: certificate.id,
-                    }),
-                );
-
-
                 let Body = {
                     Method: "POST",
-                    Url: GETSKILLS,
+                    Url: DOCTOROFSPECIFICMEDICALCENTERADVANCESEARCH,
                     username: '',
                     nationalCode: '',
                     body: {
@@ -300,11 +283,9 @@ export default class AdvanceSearchScreen extends Component {
                         if (responseData['StatusCode'] === 200) {
                             if (responseData['Data'] != null) {
                                 let data = responseData['Data'];
-                                // console.log('data : ' + JSON.stringify(responseData))
                                 if (data.length > 0) {
                                     this.setState({progressModalVisible: false}, () => {
                                         this.setState({medicalCenterResult: data}, () => {
-                                            // alert(JSON.stringify(this.state.medicalCenterResult))
                                             this.props.navigation.navigate('DoctorsResultScreen', {
                                                 result: data,
                                                 Gender: gender.id === -200 ? 'مرد یا زن' : gender.value,
@@ -328,18 +309,9 @@ export default class AdvanceSearchScreen extends Component {
                     })
                     .catch(error => {
                         console.log(error);
-                        // alert(error)
                     });
             } else {
-                // console.log(body)
                 await this.setState({progressModalVisible: true});
-                console.log(
-                    JSON.stringify({
-                        Skill: skill.value,
-                        Gender: gender.id === -200 ? null : gender.value,
-                        Certificate: certificate.id,
-                    }),
-                );
                 let Body = {
                     Method: "POST",
                     Url: DOCTORADVANCESEARCH,
@@ -365,7 +337,6 @@ export default class AdvanceSearchScreen extends Component {
                         if (responseData['StatusCode'] === 200) {
                             if (responseData['Data'] != null) {
                                 let data = responseData['Data'];
-                                // console.log('data : ' + JSON.stringify(responseData))
                                 if (data.length > 0) {
                                     this.setState({progressModalVisible: false}, () => {
                                         this.setState({medicalCenterResult: data}, () => {
@@ -391,7 +362,6 @@ export default class AdvanceSearchScreen extends Component {
                     })
                     .catch(error => {
                         console.log(error);
-                        // alert(error)
                     });
             }
         }
@@ -407,7 +377,6 @@ export default class AdvanceSearchScreen extends Component {
             nationalCode: '',
             body: null
         }
-        console.log("Get Service Body : \n ", Body)
         await this.setState({progressModalVisible: true});
         await fetch(baseUrl + hub, {
             method: 'POST',
@@ -419,7 +388,6 @@ export default class AdvanceSearchScreen extends Component {
         })
             .then(response => response.json())
             .then(async responseData => {
-                console.log(responseData)
                 if (responseData['StatusCode'] === 200) {
                     if (responseData['Data'] != null) {
                         let data = responseData['Data'];
@@ -436,7 +404,6 @@ export default class AdvanceSearchScreen extends Component {
             })
             .catch(error => {
                 console.log(error);
-                // alert(error)
             });
     }
 
@@ -456,7 +423,6 @@ export default class AdvanceSearchScreen extends Component {
             headers: {
                 'content-type': 'application/json',
                 Accept: 'application/json',
-
             },
             body: JSON.stringify(Body)
         })
@@ -477,7 +443,6 @@ export default class AdvanceSearchScreen extends Component {
             })
             .catch(error => {
                 console.log(error);
-                // alert(error)
             });
     }
 
@@ -520,7 +485,6 @@ export default class AdvanceSearchScreen extends Component {
             })
             .catch(error => {
                 console.log(error);
-                // alert(error)
             });
     }
 
@@ -561,7 +525,6 @@ export default class AdvanceSearchScreen extends Component {
             })
             .catch(error => {
                 console.log(error);
-                // alert(error)
             });
     }
 
@@ -581,7 +544,6 @@ export default class AdvanceSearchScreen extends Component {
             headers: {
                 'content-type': 'application/json',
                 Accept: 'application/json',
-
             },
             body: JSON.stringify(Body)
         })
@@ -602,7 +564,6 @@ export default class AdvanceSearchScreen extends Component {
             })
             .catch(error => {
                 console.log(error);
-                // alert(error)
             });
     }
 
@@ -617,34 +578,9 @@ export default class AdvanceSearchScreen extends Component {
 
         const baseUrl = this.state.baseUrl;
         const hub = this.state.hub;
-
         if (facility.id === -100 || kind.id === -100 || service.id === -100) {
-            console.log("testtttttttttttttttttttttttttt : \n ",
-                JSON.stringify({
-                    IsContract: kind.id,
-                    Service: service.id,
-                    ServiceDetails:
-                        serviceDetail.id === -100 ? null : serviceDetail.value,
-                    // State: await state.value,
-                    Facility: facility.id,
-                    Latitude: location != null ? location.latitude : null,
-                    Longitude: location != null ? location.longitude : null,
-                }),
-            );
             alert('لطفا فیلد ها را انتخاب کنید');
         } else {
-            console.log(
-                JSON.stringify({
-                    IsContract: kind.id === 0 ? null : kind.id === 1 ? false : true,
-                    Service: service.value,
-                    ServiceDetails:
-                        serviceDetail.id === -100 ? null : serviceDetail.value,
-                    // State: await state.value,
-                    Facility: facility.value,
-                    Latitude: location != null ? location.latitude : null,
-                    Longitude: location != null ? location.longitude : null,
-                }),
-            );
             var body = {
                 IsContract: kind.id === 0 ? null : kind.id === 1 ? false : true,
                 Service: service.value,
@@ -655,7 +591,6 @@ export default class AdvanceSearchScreen extends Component {
                 Latitude: location != null ? location.latitude : null,
                 Longitude: location != null ? location.longitude : null,
             };
-            console.log(body)
             let Body = {
                 Method: "POST",
                 Url: MEDICALCENTERADVANCESEARCH,
@@ -663,7 +598,6 @@ export default class AdvanceSearchScreen extends Component {
                 nationalCode: '',
                 body: body
             }
-            console.log("testtttttttttttttttttttttttttt : \n ",JSON.stringify(Body))
             await this.setState({progressModalVisible: true});
             await fetch(baseUrl + hub, {
                 method: 'POST',
@@ -675,15 +609,12 @@ export default class AdvanceSearchScreen extends Component {
             })
                 .then(response => response.json())
                 .then(async responseData => {
-                    console.log("ADVANCE BODY :           \n ",responseData)
                     if (responseData['StatusCode'] === 200) {
                         if (responseData['Data'] != null) {
                             let data = responseData['Data'];
-                            // console.log('data : ' + JSON.stringify(responseData))
                             if (data.length > 0) {
                                 this.setState({progressModalVisible: false}, () => {
                                     this.setState({medicalCenterResult: data}, () => {
-                                        // alert(JSON.stringify(this.state.medicalCenterResult))
                                         this.props.navigation.navigate(
                                             'MedicalCenterResultScreen',
                                             {
@@ -719,7 +650,6 @@ export default class AdvanceSearchScreen extends Component {
                 })
                 .catch(error => {
                     console.log(error);
-                    // alert(error)
                 });
         }
     }

@@ -31,13 +31,9 @@ import {
     ActionSheet,
 } from 'native-base';
 import Modal, {
-    ModalButton,
     ModalContent,
-    ModalFooter,
-    ModalTitle,
     SlideAnimation,
 } from 'react-native-modals';
-import {NavigationActions} from 'react-navigation';
 import {Dialog} from 'react-native-simple-dialogs';
 import DefaultDoctorImage from "../component/DefaultDoctorImage";
 
@@ -83,8 +79,6 @@ export default class ServicePlanResult extends Component {
     }
 
     handleBackButtonClick() {
-        // alert('pressed')
-
         console.log(JSON.stringify(this.props.navigation.state));
 
         if (this.props.navigation.state.isDrawerOpen) {
@@ -148,7 +142,6 @@ export default class ServicePlanResult extends Component {
             NationalCode: '',
             Body: body
         }
-        console.log("Reserve Body \n ", Body)
         this.setState({visible: false});
         this.setState({
             progressModalVisible: true /*, selectedMedicalCenter: null, selectedDay: null*/,
@@ -189,26 +182,22 @@ export default class ServicePlanResult extends Component {
                 } else if (responseData['StatusCode'] === 701) {
                     this.setState({progressModalVisible: false}, () => {
                         alert(responseData['StatusMessage']);
-                        console.log(JSON.stringify(responseData));
                         this.closeModal();
                     });
                 } else if (responseData['StatusCode'] === 700) {
                     this.setState({progressModalVisible: false}, () => {
                         alert(responseData['StatusMessage']);
-                        console.log(JSON.stringify(responseData));
                         this.closeModal();
                     });
                 } else {
                     this.setState({progressModalVisible: false}, () => {
                         alert('خطا در اتصال به سرویس');
-                        console.log(JSON.stringify(responseData));
                         this.closeModal();
                     });
                 }
             })
             .catch(error => {
-                console.error(error);
-                // alert(error)
+                console.log(error);
             });
     }
 
@@ -288,9 +277,6 @@ export default class ServicePlanResult extends Component {
             }
         }
         myTimes.push(CANCEL_TEXT);
-        console.log(
-            'My Timessss ::::::::::::::::::::::::::: ' + JSON.stringify(myTimes),
-        );
         options.push(CANCEL_TEXT);
         return options;
     }
@@ -325,7 +311,6 @@ export default class ServicePlanResult extends Component {
             NationalCode: '',
             Body: body
         }
-        console.log('detaaaiiiiiil' + JSON.stringify(Body));
         this.setState({progressModalVisible: true});
         await fetch(baseUrl + hub, {
             method: 'POST',
@@ -340,12 +325,8 @@ export default class ServicePlanResult extends Component {
                 if (responseData['StatusCode'] === 200) {
                     if (responseData['Data'] != null) {
                         let data = responseData['Data'];
-                        console.log('Data ----->  ' + JSON.stringify(data));
                         await this.setState({progressModalVisible: false}, async () => {
                             await this.setState({days: data}, () => {
-                                console.log(
-                                    JSON.stringify(this.state.days + this.state.days.length),
-                                );
                                 if (this.state.days.length <= 0) {
                                     Alert.alert(
                                         'روز خالی جهت نوبت دهی در این درمانگاه وجود ندارد',
@@ -371,27 +352,15 @@ export default class ServicePlanResult extends Component {
                 } else {
                     this.setState({progressModalVisible: false}, () => {
                         alert('خطا در اتصال به سرویس');
-                        console.log(JSON.stringify(responseData));
                     });
                 }
             })
             .catch(error => {
-                console.error(error);
-                // alert(error)
+                console.log(error);
             });
     }
 
     onBackPressed() {
-        //this.props.navigation.navigate('ReserveScreen')
-        // this.props.navigation.dispatch('ReserveScreen')
-        // const navigateAction = NavigationActions.navigate({
-        //     routeName: 'ServicePlanResultScreen',
-        //     params: {},
-        //
-        //     // navigate can have a nested navigate action that will be run inside the child router
-        //     action: NavigationActions.navigate({routeName: 'ReserveScreen'}),
-        // });
-        // this.props.navigation.dispatch(navigateAction);
         this.props.navigation.push('ReserveScreen', {});
     }
 

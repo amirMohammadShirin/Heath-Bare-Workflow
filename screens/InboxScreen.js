@@ -4,39 +4,25 @@ import ImageView from 'react-native-image-view';
 import {
     StyleSheet,
     View,
-    Image,
-    ScrollView,
     TouchableOpacity,
     RefreshControl,
     StatusBar,
     Platform, AsyncStorage, Keyboard, ActivityIndicator,
 } from 'react-native';
 import {Dialog} from 'react-native-simple-dialogs';
-import Swipeable from 'react-native-swipeable-row';
 import {
     Container,
-    Input,
-    Header,
-    Title,
     Content,
-    Footer,
-    FooterTab,
     CardItem,
     Button,
     Left,
     Card,
-    Right,
     Body,
     Icon,
     Text,
-    List,
     Item,
-    ListItem,
-    Thumbnail,
     Textarea,
-    SwipeRow,
 } from 'native-base';
-import {TextInput} from 'react-native-gesture-handler';
 import Modal, {ModalContent, SlideAnimation} from "react-native-modals";
 
 const InboxTest = '/api/GetInboxMessages'
@@ -88,7 +74,6 @@ export default class InboxScreen extends Component {
         const baseUrl = this.state.baseUrl;
         const hub = this.state.hub;
         const userId = this.state.userId;
-
         let body = {UserId: userId}
         let Body = {
             Method: 'POST',
@@ -105,11 +90,9 @@ export default class InboxScreen extends Component {
         })
             .then(response => response.json())
             .then(async responseData => {
-                console.log(JSON.stringify(responseData));
                 if (responseData['StatusCode'] === 200) {
                     if (responseData['Data'] != null) {
                         let data = responseData['Data']
-                        console.log(JSON.stringify(responseData))
                         this.setState({chatList: data, chatDetails: data}, () => {
                             this.setState({progressModalVisible: false, refreshing: false})
                         })
@@ -122,7 +105,7 @@ export default class InboxScreen extends Component {
             })
             .catch(error => {
                 this.setState({progressModalVisible: false, refreshing: false})
-                console.error(error);
+                console.log(error);
             });
     }
 
@@ -135,15 +118,14 @@ export default class InboxScreen extends Component {
         });
         console.log('refresh started');
         this.getInboxMessages(true)
-        // this.setState({
-        //     refreshing: false,
-        // });
     };
 
     showMessage(item) {
         this.setState({selectedMessage: item, visible: true});
-        images[0].title = item.FileName;
-        images[0].source.uri = "data:image/png;base64,"+item.File;
+        if (this.state.selectedMessage.File != null) {
+            images[0].title = item.FileName;
+            images[0].source.uri = "data:image/png;base64," + item.File;
+        }
     }
 
     renderData(item) {

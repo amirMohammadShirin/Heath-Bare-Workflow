@@ -114,18 +114,8 @@ export default class ReserveScreen extends Component {
             doctorSelected: false,
             medicalCenterSelected: false,
             doctorData: [],
-            // doctorData: ['علی رحیمی', 'علی رضا رحیمیان', 'آرمان رضایی', 'رحیم حسینی'],
             medicalCenterData: [],
-            // medicalCenterData: [
-            //   'درمانگاه استخر',
-            //   'درمانگاه استخر',
-            //   'درمانگاه استخر',
-            //   'درمانگاه استخر',
-            //   'درمانگاه منطقه 5 شهرداری',
-            //   'مطب دکتر',
-            //   'درمانگاه منطقه 11 شهرداری',
-            //   ' درمانگاه',
-            // ],
+
         };
         (this: any).onStartDateChange = this.onStartDateChange.bind(this);
         (this: any).onEndDateChange = this.onEndDateChange.bind(this);
@@ -160,7 +150,6 @@ export default class ReserveScreen extends Component {
     }
 
     handleBackButtonClick() {
-        // alert('pressed')
         console.log(JSON.stringify(this.props.navigation.state));
         if (!this.state.progressModalVisible) {
             console.log('progress is not visible');
@@ -185,8 +174,6 @@ export default class ReserveScreen extends Component {
                 this.handleBackButtonClick,
             );
         }
-        // alert("Medical : " + JSON.stringify(this.props.navigation.getParam('medicalCenter')))
-        // alert("doctor : " + JSON.stringify(this.props.navigation.getParam('doctor')))
         const hub = await AsyncStorage.getItem('hub');
         const baseUrl = await AsyncStorage.getItem('baseUrl');
         const MEDICALCENTER = this.props.navigation.getParam('medicalCenter');
@@ -224,90 +211,6 @@ export default class ReserveScreen extends Component {
                 this.getSkills();
             },
         );
-        // if (typeof this.props.navigation.getParam('medicalCenter') !== "undefined" &&
-        //     this.props.navigation.getParam('medicalCenter') != null &&
-        //     typeof this.props.navigation.getParam('doctor') !== "undefined" &&
-        //     this.props.navigation.getParam('doctor') != null) {
-        //     const medicalCenter = this.props.navigation.getParam('medicalCenter');
-        //     const doctor = this.props.navigation.getParam('doctor');
-        //     try {
-        //         const length = medicalCenter.Title.length;
-        //         await this.setState({
-        //             selectedMedicalCenter: medicalCenter,
-        //             doctor: doctor,
-        //             baseUrl: baseUrl,
-        //             token: token,
-        //         })
-        //     } catch (e) {
-        //         await this.setState({
-        //                 baseUrl: baseUrl,
-        //                 token: token,
-        //             },
-        //             () => {
-        //
-        //                 this.getSkills();
-        //
-        //             }
-        //         )
-        //     }
-        //
-        // }else if(typeof this.props.navigation.getParam('medicalCenter') !== "undefined" &&
-        //     this.props.navigation.getParam('medicalCenter') != null){
-        //     const medicalCenter = this.props.navigation.getParam('medicalCenter');
-        //     try {
-        //         const length = medicalCenter.Title.length;
-        //         await this.setState({
-        //             selectedMedicalCenter: medicalCenter,
-        //             baseUrl: baseUrl,
-        //             token: token,
-        //         })
-        //     } catch (e) {
-        //         await this.setState({
-        //                 baseUrl: baseUrl,
-        //                 token: token,
-        //             },
-        //             () => {
-        //
-        //                 this.getSkills();
-        //
-        //             }
-        //         )
-        //     }
-        // }
-        // else if(typeof this.props.navigation.getParam('doctor') !== "undefined" &&
-        //     this.props.navigation.getParam('doctor') != null){
-        //     const doctor = this.props.navigation.getParam('doctor');
-        //     try {
-        //         await this.setState({
-        //             doctor: doctor,
-        //             baseUrl: baseUrl,
-        //             token: token,
-        //         })
-        //     } catch (e) {
-        //         await this.setState({
-        //                 baseUrl: baseUrl,
-        //                 token: token,
-        //             },
-        //             () => {
-        //
-        //                 this.getSkills();
-        //
-        //             }
-        //         )
-        //     }
-        // }
-        // else {
-        //     await this.setState({
-        //             baseUrl: baseUrl,
-        //             token: token,
-        //         },
-        //         () => {
-        //
-        //             this.getSkills();
-        //
-        //         }
-        //     )
-        // }
     }
 
     async getSkills() {
@@ -331,7 +234,6 @@ export default class ReserveScreen extends Component {
         })
             .then(response => response.json())
             .then(responseData => {
-                console.log("Skills : \n ", responseData)
                 if (responseData['StatusCode'] === 200) {
                     if (responseData['Data'] != null) {
                         let data = responseData['Data'];
@@ -347,8 +249,7 @@ export default class ReserveScreen extends Component {
                 }
             })
             .catch(error => {
-                console.error(error);
-                // alert(error)
+                console.log(error);
             });
     }
 
@@ -373,7 +274,6 @@ export default class ReserveScreen extends Component {
         })
             .then(response => response.json())
             .then(responseData => {
-                console.log("Genders : \n ", responseData)
                 if (responseData['StatusCode'] === 200) {
                     if (responseData['Data'] != null) {
                         let data = responseData['Data'];
@@ -389,8 +289,7 @@ export default class ReserveScreen extends Component {
                 }
             })
             .catch(error => {
-                console.error(error);
-                // alert(error)
+                console.log(error);
             });
     }
 
@@ -416,7 +315,6 @@ export default class ReserveScreen extends Component {
         })
             .then(response => response.json())
             .then(responseData => {
-                console.log("DoctorsName", responseData)
                 if (responseData['StatusCode'] === 200) {
                     if (responseData['Data'] != null) {
                         let data = responseData['Data'];
@@ -434,8 +332,7 @@ export default class ReserveScreen extends Component {
                 }
             })
             .catch(error => {
-                console.error(error);
-                // alert(error)
+                console.log(error);
             });
     }
 
@@ -461,16 +358,13 @@ export default class ReserveScreen extends Component {
         })
             .then(response => response.json())
             .then(responseData => {
-                console.log("MedicalCenters", responseData)
                 if (responseData['StatusCode'] === 200) {
                     if (responseData['Data'] != null) {
                         let data = responseData['Data'];
-                        // console.log(data);
                         this.setState(
                             {progressModalVisible: false, medicalCenterData: data},
                             () => {
-                                // this.setState({genders: data});
-                                // this.getSkills();
+
                             },
                         );
                     }
@@ -481,8 +375,7 @@ export default class ReserveScreen extends Component {
                 }
             })
             .catch(error => {
-                console.error(error);
-                // alert(error)
+                console.log(error);
             });
     }
 
@@ -516,10 +409,6 @@ export default class ReserveScreen extends Component {
             NationalCode: '',
             Body: body
         }
-        console.log("SEARCHSERVICEPLAN :\n ", Body);
-        console.log('start : ' + typeof body.startDate);
-        console.log('end :' + typeof body.endDate);
-        // alert(JSON.stringify(body))
         if (body.startDate === null || body.endDate === null) {
             alert('لطفا بازه زمانی مورد نظر را انتخاب کنید');
         } else {
@@ -535,7 +424,6 @@ export default class ReserveScreen extends Component {
             })
                 .then(response => response.json())
                 .then(responseData => {
-                    console.log("SEARCHSERVICEPLAN Resp", responseData)
                     if (responseData['StatusCode'] === 200) {
                         if (responseData['Data'] != null) {
                             let data = responseData['Data'];
@@ -543,22 +431,17 @@ export default class ReserveScreen extends Component {
                                 if (data.length <= 0) {
                                     alert('موردی یافت نشد');
                                 } else {
-                                    // alert(JSON.stringify(data))
                                     this.props.navigation.push('ServicePlanResultScreen', {
                                         result: data,
                                         medicalCenterQuery:
                                             medicalCenterSearchWord != null
                                                 ? medicalCenterSearchWord
                                                 : null,
-                                        // medicalCenterQuery:
-                                        //   doctorSearchWord != null ? doctorSearchWord : null,
                                         skill: skill.id !== -100 ? skill.value : null,
                                         gender: gender.id !== -100 ? gender.value : null,
                                         startDate:
                                             filters.startDate != null ? filters.startDate : null,
                                         endDate: filters.endDate != null ? filters.endDate : null,
-                                        // startDate: startDate != null ? startDate : null,
-                                        // endDate: endDate != null ? endDate : null,
                                     });
                                 }
                             });
@@ -578,13 +461,11 @@ export default class ReserveScreen extends Component {
                     } else {
                         this.setState({progressModalVisible: false}, () => {
                             alert('خطا در اتصال به سرویس');
-                            // console.log(JSON.stringify(responseData))
                         });
                     }
                 })
                 .catch(error => {
-                    console.error(error);
-                    // alert(error)
+                    console.log(error);
                 });
         }
     }
@@ -748,15 +629,6 @@ export default class ReserveScreen extends Component {
                         {Platform.OS === 'android' &&
                         <Card style={styles.card}>
                             <View style={styles.row}>
-                                {/* <TextInput
-                  placeholder={'نام مرکز'}
-                  placeholderTextColor={'gray'}
-                  onChangeText={text =>
-                    this.setState({medicalCenterSearchWord: text})
-                  }
-                  value={this.state.medicalCenterSearchWord}
-                  style={styles.Input}
-                /> */}
                                 <Autocomplete
                                     renderTextInput={() => {
                                         return (
@@ -801,7 +673,6 @@ export default class ReserveScreen extends Component {
                                             ? styles.autocompleteListContainerStyleSelected
                                             : [
                                                 styles.autocompleteListContainerStyleSelected,
-                                                // {maxHeight: 0},
                                             ]
                                     }
                                     keyboardShouldPersistTaps={'always'}
@@ -842,13 +713,7 @@ export default class ReserveScreen extends Component {
                                 </Text>
                             </View>
                             <View style={styles.row}>
-                                {/* <TextInput
-                  placeholderTextColor={'gray'}
-                  placeholder={'نام پزشک'}
-                  onChangeText={text => this.setState({doctorSearchWord: text})}
-                  value={this.state.doctorSearchWord}
-                  style={styles.Input}
-                /> */}
+
                                 <Autocomplete
                                     renderTextInput={() => {
                                         return (
@@ -893,7 +758,6 @@ export default class ReserveScreen extends Component {
                                             : [styles.autocompleteListContainerStyleSelected]
                                     }
                                     keyboardShouldPersistTaps={'always'}
-                                    // style={styles.autocompleteInputStyle}
                                     data={doctorData}
                                     renderItem={({item, i}) => (
                                         <TouchableOpacity
@@ -1010,45 +874,6 @@ export default class ReserveScreen extends Component {
                                 </Button>
                                 <Text style={styles.label}>جنسیت</Text>
                             </View>
-                            {false && (
-                                <View style={styles.row}>
-                                    <Button
-                                        onPress={() => {
-                                            Keyboard.dismiss();
-                                            ActionSheet.show(
-                                                {
-                                                    options: this.getOptions(this.state.states),
-                                                    cancelButtonIndex: this.getCancelButtonIndex(
-                                                        this.getOptions(this.state.states),
-                                                    ),
-                                                    title: 'انتخاب منطقه',
-                                                },
-                                                buttonIndex => {
-                                                    if (buttonIndex <= this.state.states.length - 1)
-                                                        this.setState({
-                                                            selectedState: this.state.states[buttonIndex],
-                                                        });
-                                                },
-                                            );
-                                        }}
-                                        bordered
-                                        style={{
-                                            textAlign: 'center',
-                                            justifyContent: 'center',
-                                            alignItems: 'center',
-                                            borderRadius: 2,
-                                            margin: 1,
-                                            flex: 3,
-                                            borderWidth: 1,
-                                            borderColor: '#fff',
-                                        }}>
-                                        <Text style={styles.buttonsTexts}>
-                                            {this.state.selectedState.value}
-                                        </Text>
-                                    </Button>
-                                    <Text style={styles.label}>منطقه</Text>
-                                </View>
-                            )}
                             <View style={styles.row}>
                                 <Button
                                     onPress={() => {
@@ -1194,13 +1019,7 @@ export default class ReserveScreen extends Component {
                                 </Text>
                             </View>
                             <View style={[styles.row, {position: 'absolute', top: 40, zIndex: 4}]}>
-                                {/* <TextInput
-                  placeholderTextColor={'gray'}
-                  placeholder={'نام پزشک'}
-                  onChangeText={text => this.setState({doctorSearchWord: text})}
-                  value={this.state.doctorSearchWord}
-                  style={styles.Input}
-                /> */}
+
                                 <Autocomplete
                                     renderTextInput={() => {
                                         return (
@@ -1245,7 +1064,6 @@ export default class ReserveScreen extends Component {
                                             : [styles.autocompleteListContainerStyleSelected]
                                     }
                                     keyboardShouldPersistTaps={'always'}
-                                    // style={styles.autocompleteInputStyle}
                                     data={doctorData}
                                     renderItem={({item, i}) => (
                                         <TouchableOpacity
@@ -1373,49 +1191,6 @@ export default class ReserveScreen extends Component {
                                 </Button>
                                 <Text style={styles.label}>جنسیت</Text>
                             </View>
-                            {false && (
-                                <View
-                                    style={[
-                                        styles.row,
-                                        {position: 'absolute', top: 130, zIndex: 2},
-                                    ]}>
-                                    <Button
-                                        onPress={() => {
-                                            Keyboard.dismiss();
-                                            ActionSheet.show(
-                                                {
-                                                    options: this.getOptions(this.state.states),
-                                                    cancelButtonIndex: this.getCancelButtonIndex(
-                                                        this.getOptions(this.state.states),
-                                                    ),
-                                                    title: 'انتخاب منطقه',
-                                                },
-                                                buttonIndex => {
-                                                    if (buttonIndex <= this.state.states.length - 1)
-                                                        this.setState({
-                                                            selectedState: this.state.states[buttonIndex],
-                                                        });
-                                                },
-                                            );
-                                        }}
-                                        bordered
-                                        style={{
-                                            textAlign: 'center',
-                                            justifyContent: 'center',
-                                            alignItems: 'center',
-                                            borderRadius: 2,
-                                            margin: 1,
-                                            flex: 3,
-                                            borderWidth: 1,
-                                            borderColor: '#fff',
-                                        }}>
-                                        <Text style={styles.buttonsTexts}>
-                                            {this.state.selectedState.value}
-                                        </Text>
-                                    </Button>
-                                    <Text style={styles.label}>منطقه</Text>
-                                </View>
-                            )}
                             <View
                                 style={[
                                     styles.row,
@@ -1478,8 +1253,6 @@ export default class ReserveScreen extends Component {
                                 <Text style={styles.label}>تا تاریخ</Text>
                             </View>
                         </Card>}
-
-
                         <Modal
                             style={{opacity: 0.7}}
                             width={300}
@@ -1654,8 +1427,6 @@ export default class ReserveScreen extends Component {
                                         this.state.doctorQuery,
                                         this.state.selectedSkill,
                                         this.state.selectedGender,
-                                        // this.state.selectedStartDate,
-                                        // this.state.selectedEndDate
                                         this.persianToEnglish(
                                             this.state.selectedStartDate
                                                 .format('YYYY-M-D')

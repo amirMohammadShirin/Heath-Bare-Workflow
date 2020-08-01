@@ -43,7 +43,6 @@ export default class VerifyScreen extends Component {
 
 
     handleBackButtonClick() {
-        // alert('pressed')
 
         Alert.alert(
             'خروج',
@@ -75,16 +74,12 @@ export default class VerifyScreen extends Component {
         const hub = this.state.hub;
         const baseUrl = this.state.baseUrl;
         let BODY = {
-            Method:'POST',
+            Method: 'POST',
             UserName: '',
             NationalCode: '',
             Url: GETVERIFICATIONCODE,
             body: body
         }
-        console.log(BODY)
-        console.log(hub)
-        console.log(baseUrl)
-        console.log(JSON.stringify(BODY));
         this.setState({progressModalVisible: true}, async () => {
             await fetch(baseUrl + hub, {
                 method: 'POST',
@@ -102,7 +97,6 @@ export default class VerifyScreen extends Component {
                         });
                     } else if (responseData['StatusCode'] === 800) {
                         this.setState({progressModalVisible: false}, () => {
-                            console.log(JSON.stringify(responseData));
                             Alert.alert(
                                 'خطا در ارتباط با سرویس ارسال پیامک',
                                 '',
@@ -126,20 +120,17 @@ export default class VerifyScreen extends Component {
                     } else {
                         this.setState({progressModalVisible: false}, () => {
                             alert('خطا در اتصال به سرویس');
-                            // console.log(JSON.stringify(responseData))
                         });
                     }
                 })
                 .catch(error => {
-                    console.error(error);
-                    // alert(error)
+                    console.log(error);
                 });
         });
     }
 
     verify = async (body) => {
 
-        // const baseUrl = await AsyncStorage.getItem("baseUrl");
         const baseUrl = this.state.baseUrl;
         const hub = this.state.hub;
         let BODY = {
@@ -172,13 +163,12 @@ export default class VerifyScreen extends Component {
                 } else {
                     this.setState({progressModalVisible: false}, () => {
                         alert('خطا در اتصال به سرویس')
-                        // alert(JSON.stringify(responseData))
                         console.log(JSON.stringify(responseData))
                     })
                 }
             })
             .catch((error) => {
-                console.error(error)
+                console.log(error)
             })
 
     }
@@ -235,7 +225,6 @@ export default class VerifyScreen extends Component {
                             }}>ویرایش شماره تماس</Text>
                         </Card>
                     </View>
-
                     <Modal style={{opacity: 0.7}}
                            width={300}
                            visible={this.state.progressModalVisible}

@@ -5,7 +5,6 @@ import {
     StatusBar,
     StyleSheet,
     Text,
-    TextInput,
     Keyboard,
     View,
     Platform,
@@ -24,16 +23,12 @@ import {
     Left,
     Right,
     Root,
-    Input,
     ListItem,
     Card,
     CardItem,
 } from 'native-base';
 import Modal, {
-    ModalButton,
     ModalContent,
-    ModalFooter,
-    ModalTitle,
     SlideAnimation,
 } from 'react-native-modals';
 
@@ -85,8 +80,6 @@ export default class SearchMedicalCenter extends Component {
     }
 
     handleBackButtonClick() {
-        // alert('pressed')
-
         console.log(JSON.stringify(this.props.navigation.state));
 
         if (this.props.navigation.state.isDrawerOpen) {
@@ -244,8 +237,7 @@ export default class SearchMedicalCenter extends Component {
                     }
                 })
                 .catch(error => {
-                    console.error(error);
-                    // alert(error)
+                    console.log(error);
                 });
         } else {
             let Body = {
@@ -284,8 +276,7 @@ export default class SearchMedicalCenter extends Component {
                         await this.setState(
                             {progressModalVisible: false, isLoading: false},
                             () => {
-                                alert(JSON.stringify(JSON.stringify(responseData)));
-                                // alert(JSON.stringify('خطا در دسترسی به سرویس'))
+                                alert(JSON.stringify('خطا در دسترسی به سرویس'))
                             },
                         );
                     } else {
@@ -296,7 +287,7 @@ export default class SearchMedicalCenter extends Component {
                     }
                 })
                 .catch(error => {
-                    console.error(error);
+                    console.log(error);
 
                 });
         }
@@ -315,7 +306,6 @@ export default class SearchMedicalCenter extends Component {
                 id: userId
             }
         }
-        console.log("favoriteDoctor Body : \n",Body)
         await this.setState({progressModalVisible: true});
         await fetch(baseUrl + hub, {
             method: 'POST',
@@ -327,7 +317,6 @@ export default class SearchMedicalCenter extends Component {
         })
             .then(async response => response.json())
             .then(async responseData => {
-              console.log("favoriteDoctor response : \n",responseData)
                 if (responseData['StatusCode'] === 200) {
                     if (responseData['Data'] != null) {
                         let data = responseData['Data'];
@@ -338,12 +327,11 @@ export default class SearchMedicalCenter extends Component {
                     }
                 } else if (responseData['StatusCode'] === 400) {
                     await this.setState({progressModalVisible: false});
-                    // alert(JSON.stringify('خطا در دسترسی به سرویس'));
+                    alert(JSON.stringify('خطا در دسترسی به سرویس'));
                 }
             })
             .catch(error => {
-                console.error(error);
-                // alert(error)
+                console.log(error);
             });
     }
 
@@ -471,33 +459,6 @@ export default class SearchMedicalCenter extends Component {
 
                         {this.state.data != null && this.state.data.length >= 1 ? (
                             this.state.data.map((item, key) => (
-                                // {false && <View key={key}>
-                                //      <ListItem
-                                //          style={{
-                                //              width: '100%',
-                                //              height: 50,
-                                //              alignSelf: 'center',
-                                //              padding: 2,
-                                //              marginTop: 2
-                                //          }}
-                                //          onPress={() => {
-                                //              Keyboard.dismiss()
-                                //              this.setState({selectedDoctor: item, visible: true})
-                                //          }
-                                //          }
-                                //      >
-                                //          <Body>
-                                //              <Text style={{
-                                //                  color: '#000',
-                                //                  width: '100%',
-                                //                  height: '100%',
-                                //                  textAlign: 'right',
-                                //                  fontSize: 15,
-                                //              }}>{this.generateTitle(item)}</Text>
-                                //          </Body>
-                                //      </ListItem>
-                                //  </View>}
-
                                 <View
                                     key={key}
                                     style={{borderBottomColor: '#e9e9e9', borderBottomWidth: 1}}>

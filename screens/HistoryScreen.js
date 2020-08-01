@@ -10,11 +10,9 @@ import {
     Icon,
     Text,
     Left,
-    Right, Content
+    Right
 } from 'native-base';
-import MedicalFilesScreen from "./MedicalFilesScreen";
 import ShowReservesScreen from "./ShowReservesScreen";
-import HomeScreen from "./HomeScreen";
 
 
 export default class HistoryScreen extends Component {
@@ -33,26 +31,11 @@ export default class HistoryScreen extends Component {
     }
 
     handleBackButtonClick() {
-        // alert('pressed')
-
         console.log(JSON.stringify(this.props.navigation.state))
 
         if (this.props.navigation.state.isDrawerOpen) {
             this.props.navigation.closeDrawer()
         } else {
-            // Alert.alert(
-            //     'خروج',
-            //     ' مایل به خروج از برنامه هستید؟ ',
-            //     [
-            //         {
-            //             text: 'خیر',
-            //             style: 'cancel',
-            //         },
-            //         {text: 'بله', onPress: () => BackHandler.exitApp()},
-            //     ],
-            //     {cancelable: false},
-            // );
-            // alert('test')
             this.props.navigation.goBack(null)
         }
         return true;
@@ -83,79 +66,10 @@ export default class HistoryScreen extends Component {
                     <Tab heading={<TabHeading style={styles.tabHeading}><Icon
                         type={'FontAwesome5'} style={styles.tabIcon} name="calendar-alt"/><Text style={styles.tabText}>نوبت
                         ها</Text></TabHeading>}>
-                        <ShowReservesScreen navigation={this.props.navigation} fullName={this.props.navigation.getParam('fullName')}/>
+                        <ShowReservesScreen navigation={this.props.navigation}
+                                            fullName={this.props.navigation.getParam('fullName')}/>
                     </Tab>
-                    {/* {false && <Tab heading={<TabHeading style={styles.tabHeading}><Icon
-                        type={'FontAwesome5'} style={styles.tabIcon} name="inbox"/><Text style={styles.tabText}>پیام
-                        ها</Text></TabHeading>}>
-                        <InboxScreen myNavigator={this.props.navigation}/>
-                    </Tab>} */}
                 </Tabs>
-                {/*<Content padder style={styles.content}>*/}
-                {/*    <View style={{width: '100%', height: '100%'}}>*/}
-                {/*        <View style={styles.row}>*/}
-                {/*            <View style={[styles.card, {backgroundColor: '#23b9b9', borderColor: '#23b9b9'}]}>*/}
-                {/*                <Button transparent style={{flexDirection: 'column'}} onPress={() => {*/}
-                {/*                    this.props.navigation.navigate('ShowReservesScreen')*/}
-                {/*                }}>*/}
-                {/*                    <Icon style={styles.iconOfCard} type='FontAwesome5' name='calendar-day'/>*/}
-                {/*                    <Text style={styles.textOfCard}>نوبت های رزرو شده</Text>*/}
-                {/*                </Button>*/}
-                {/*            </View>*/}
-                {/*            <View style={[styles.card, {backgroundColor: '#aeaaaf', borderColor: '#aeaaaf'}]}>*/}
-                {/*                <Button transparent style={{flexDirection: 'column'}} onPress={() => {*/}
-                {/*                    this.props.navigation.navigate('MedicalFilesScreen')*/}
-                {/*                }}>*/}
-                {/*                    <Icon style={styles.iconOfCard} type='FontAwesome' name='clipboard'/>*/}
-                {/*                    <Text style={styles.textOfCard}>نسخه های من</Text>*/}
-                {/*                </Button>*/}
-                {/*            </View>*/}
-                {/*        </View>*/}
-                {/*        <View style={styles.row}>*/}
-                {/*            <View style={[styles.card, {backgroundColor: '#aeaaaf', borderColor: '#aeaaaf'}]}>*/}
-                {/*                <Button transparent style={{flexDirection: 'column'}}*/}
-                {/*                        onPress={() => {*/}
-                {/*                            this.props.navigation.navigate('OldReservesScreen')*/}
-                {/*                        }}*/}
-
-                {/*                >*/}
-                {/*                    <Icon style={styles.iconOfCard} type='FontAwesome' name='calendar'/>*/}
-                {/*                    <Text style={styles.textOfCard}>نوبت های قبلی</Text>*/}
-                {/*                </Button>*/}
-                {/*            </View>*/}
-                {/*            <View style={[styles.card, {backgroundColor: '#23b9b9', borderColor: '#23b9b9'}]}*/}
-                {/*            >*/}
-                {/*                <Button transparent style={{flexDirection: 'column'}}*/}
-                {/*                        onPress={() => {*/}
-                {/*                            this.props.navigation.navigate('InboxScreen',{navigationObject:this.props.navigation})*/}
-                {/*                        }}*/}
-
-                {/*                >*/}
-                {/*                    <Icon style={styles.iconOfCard} type='FontAwesome' name='inbox'/>*/}
-                {/*                    <Text style={styles.textOfCard}>پیام ها</Text>*/}
-                {/*                </Button>*/}
-                {/*            </View>*/}
-                {/*        </View>*/}
-                {/*    </View>*/}
-                {/*</Content>*/}
-                {/*<Footer>*/}
-                {/*    <FooterTab*/}
-                {/*        tabActiveBgColor="#4fb5f9"*/}
-                {/*        tabBarActiveTextColor="#2d83bc"*/}
-                {/*        tabBarTextColor="#6b6b6b"*/}
-                {/*    >*/}
-                {/*        <Button>*/}
-                {/*            <Text style={{fontSize:15,color:'#23b9b9'}}>نسخه های من</Text>*/}
-                {/*        </Button>*/}
-                {/*        <Button>*/}
-                {/*            <Text style={{fontSize:15,color:'#23b9b9'}}>نوبت های من</Text>*/}
-                {/*        </Button>*/}
-                {/*        <Button active>*/}
-                {/*            <Text style={{fontSize:15,color:'#23b9b9'}}>پیام های من</Text>*/}
-                {/*        </Button>*/}
-                {/*    </FooterTab>*/}
-                {/*</Footer>*/}
-
             </Container>
         );
     }

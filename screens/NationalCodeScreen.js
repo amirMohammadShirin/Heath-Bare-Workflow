@@ -82,8 +82,6 @@ export default class NationalCodeScreen extends Component {
 
                             console.log(responseData)
 
-
-
                         })
                     }
                 })
@@ -96,6 +94,7 @@ export default class NationalCodeScreen extends Component {
                 //
                 // })
                 this.goToHomeScreen(body);
+
             })
     }
 
@@ -119,12 +118,8 @@ export default class NationalCodeScreen extends Component {
 
     goToHomeScreen = async (body) => {
         this.setState({progressModalVisible: true});
-
         const baseUrl = this.state.baseUrl;
-
-        // const baseUrl = "https://srv165-apigateway.tehran.ir/ApiContainer.HealthSystem.RCL1/api/v1/Health";
         const hub = this.state.hub;
-        console.log(baseUrl + hub)
         const Body = {
             UserName: body.username,
             NationalCode: body.nationalCode,
@@ -132,14 +127,12 @@ export default class NationalCodeScreen extends Component {
             Url: AUTHENTICATE,
             Body: body
         }
-        console.log('National Code Body : ' + JSON.stringify(Body))
         await fetch(baseUrl + hub, {
             method: 'POST',
             headers: {'content-type': 'application/json'},
             body: JSON.stringify(Body)
         }).then(async (response) => response.json())
             .then(async (responseData) => {
-                console.log('response \n', JSON.stringify(responseData))
                 if (responseData['StatusCode'] === 200) {
                     if (responseData['Data'] != null) {
                         try {
@@ -148,23 +141,18 @@ export default class NationalCodeScreen extends Component {
                             let userId = userInfo['user_id'];
                             let nationalCode = userInfo['nationalCode'];
                             let userName = userInfo['user_name'];
-
-                            // // await AsyncStorage.setItem('token', token);
                             await AsyncStorage.setItem('nationalCode', nationalCode);
                             await AsyncStorage.setItem('username', userName);
                             await AsyncStorage.setItem('userId', userId);
-
                             this.setState({progressModalVisible: false})
                             this.props.navigation.navigate('HomeScreen',
                                 {user: {userInfo}, baseUrl: baseUrl})
                         } catch (e) {
-
-                            console.error(e)
+                            console.log(e)
                         }
                     }
                 } else if (responseData['StatusCode'] === 600) {
                     this.setState({progressModalVisible: false}, () => {
-
                         this.props.navigation.push('RegisterScreen', {
                             phoneNumber: this.state.phoneNumber,
                             nationalCode: this.state.nationalCode

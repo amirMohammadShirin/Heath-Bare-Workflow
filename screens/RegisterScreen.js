@@ -22,13 +22,10 @@ import RadioForm, {
     RadioButtonInput,
     RadioButtonLabel,
 } from 'react-native-simple-radio-button';
-// import DatePicker from 'react-native-jalaali-date-picker';
 import DatePicker from '@mohamadkh75/react-native-jalali-datepicker';
 import {Dialog} from 'react-native-simple-dialogs';
 import ImagePicker from 'react-native-image-picker';
-// let moment = require('moment');
 const moment = require('moment-jalaali');
-// var resize = require('resize-base64');
 import {
     Container,
     Header,
@@ -39,23 +36,16 @@ import {
     Button,
     Footer,
     Right,
-    Tabs,
     Icon,
-    Title,
     Card,
-    Tab,
     Root,
     Toast,
     Body,
 } from 'native-base';
 import Modal, {
-    ModalButton,
     ModalContent,
-    ModalFooter,
-    ModalTitle,
     SlideAnimation,
 } from 'react-native-modals';
-import awaitAsyncGenerator from '@babel/runtime/helpers/esm/awaitAsyncGenerator';
 
 const options = {
     title: '',
@@ -107,78 +97,6 @@ export default class ReserveScreen extends Component {
         this.onStartDateChange = this.onStartDateChange.bind(this);
     }
 
-    // goToHomeScreen = async body => {
-    //     console.log('National Code Body : ' + JSON.stringify(body));
-    //     const baseUrl = this.state.baseUrl;
-    //     await fetch(baseUrl + AUTHENTICATE, {
-    //         method: 'POST',
-    //         headers: {'content-type': 'application/json'},
-    //         body: JSON.stringify(body),
-    //     })
-    //         .then(async response => response.json())
-    //         .then(async responseData => {
-    //             console.log(JSON.stringify(responseData));
-    //             if (responseData['StatusCode'] === 200) {
-    //                 if (responseData['Data'] != null) {
-    //                     try {
-    //                         let data = responseData['Data'];
-    //                         let userInfo = data['userinfo'];
-    //                         let token = userInfo['token'];
-    //                         let userId = userInfo['user_id'];
-    //                         await AsyncStorage.setItem('token', token);
-    //                         await AsyncStorage.setItem('nationalCode', body.nationalCode);
-    //                         await AsyncStorage.setItem('username', body.username);
-    //                         await AsyncStorage.setItem('userId', userId);
-    //                         console.log(
-    //                             'token : ' +
-    //                             token +
-    //                             '\n' +
-    //                             'username : ' +
-    //                             body.username +
-    //                             '\n' +
-    //                             'nationalCode : ' +
-    //                             body.nationalCode,
-    //                         );
-    //                         this.setState({progressModalVisible: false}, () => {
-    //                             console.log('inserted');
-    //                             this.props.navigation.navigate('HomeScreen', {
-    //                                 user: {userInfo},
-    //                                 baseUrl: baseUrl,
-    //                             });
-    //                         });
-    //                     } catch (e) {
-    //                         // alert(e)
-    //                         console.error(e);
-    //                     }
-    //                 }
-    //             } else if (responseData['StatusCode'] === 600) {
-    //                 this.setState({progressModalVisible: false}, () => {
-    //                     // alert('کاربر یافت نشد')
-    //                     this.props.navigation.navigate('RegisterScreen', {});
-    //                 });
-    //             } else if (responseData['StatusCode'] === 601) {
-    //                 this.setState({progressModalVisible: false}, () => {
-    //                     alert('کد ملی وارد شده معتبر نمی باشد');
-    //                 });
-    //             } else if (
-    //                 responseData['StatusCode'] >= 501 &&
-    //                 responseData['StatusCode'] <= 600
-    //             ) {
-    //                 alert(responseData['Data']);
-    //             } else if (responseData['StatusCode'] === 400) {
-    //                 this.setState({progressModalVisible: false}, () => {
-    //                     alert('خطا در اتصال به سرویس');
-    //                     // alert(JSON.stringify(responseData));
-    //                 });
-    //             }
-    //         })
-    //         .catch(error => {
-    //             console.error(error);
-    //         });
-    // };
-    //
-    //
-
     goToHomeScreen = async (body) => {
         this.setState({progressModalVisible: true});
         const baseUrl = this.state.baseUrl;
@@ -190,14 +108,12 @@ export default class ReserveScreen extends Component {
             Url: AUTHENTICATE,
             Body: body
         }
-        console.log('GoToHomeScreen  Body : ' + JSON.stringify(Body))
         await fetch(baseUrl + hub, {
             method: 'POST',
             headers: {'content-type': 'application/json'},
             body: JSON.stringify(Body)
         }).then(async (response) => response.json())
             .then(async (responseData) => {
-                console.log(JSON.stringify(responseData))
                 if (responseData['StatusCode'] === 200) {
                     if (responseData['Data'] != null) {
                         try {
@@ -209,22 +125,15 @@ export default class ReserveScreen extends Component {
                             await AsyncStorage.setItem('nationalCode', body.nationalCode);
                             await AsyncStorage.setItem('username', body.username);
                             await AsyncStorage.setItem('userId', userId);
-                            console.log(
-                                'token : ' + token + '\n' + 'username : ' + body.username + '\n' +
-                                'nationalCode : ' +
-                                body.nationalCode)
                             this.setState({progressModalVisible: false})
-
                             this.props.navigation.navigate('HomeScreen',
                                 {user: {userInfo}, baseUrl: baseUrl})
                         } catch (e) {
-
-                            console.error(e)
+                            console.log(e)
                         }
                     }
                 } else if (responseData['StatusCode'] === 600) {
                     this.setState({progressModalVisible: false}, () => {
-
                         this.props.navigation.push('RegisterScreen', {
                             phoneNumber: this.state.phoneNumber,
                             nationalCode: this.state.nationalCode
@@ -262,7 +171,6 @@ export default class ReserveScreen extends Component {
             UserName : body.cellPhone,
             Body:body
         }
-        console.log(JSON.stringify('Register Body : \n',<B></B>))
         this.setState({progressModalVisible: true}, async () => {
             await fetch(baseUrl + hub, {
                 method: 'POST',
@@ -275,12 +183,10 @@ export default class ReserveScreen extends Component {
             })
                 .then(async response => response.json())
                 .then(async responseData => {
-                    console.log(responseData)
                     if (responseData['StatusCode'] === 200) {
                         if (responseData['Data'] != null) {
                             let data = responseData['Data'];
                             await this.setState({progressModalVisible: false}, async () => {
-                                // await this.setState({data: data})
                                 await this.goToHomeScreen(data);
                             });
                         }
@@ -306,8 +212,7 @@ export default class ReserveScreen extends Component {
                     }
                 })
                 .catch(error => {
-                    console.error(error);
-                    // alert(error)
+                    console.log(error);
                 });
         });
     }
@@ -335,8 +240,6 @@ export default class ReserveScreen extends Component {
     }
 
     handleBackButtonClick() {
-        // alert('pressed')
-
         console.log(JSON.stringify(this.props.navigation.state));
 
         if (this.props.navigation.state.isDrawerOpen) {
@@ -395,20 +298,6 @@ export default class ReserveScreen extends Component {
         });
     }
 
-    // myCheckPermissions() {
-    //     if (Platform.OS === 'android') {
-    //         if (PermissionsAndroid.check(PermissionsAndroid.RESULTS.CAMERA) &&
-    //             PermissionsAndroid.check(PermissionsAndroid.RESULTS.READ_EXTERNAL_STORAGE) &&
-    //             PermissionsAndroid.check(PermissionsAndroid.RESULTS.WRITE_EXTERNAL_STORAGE)) {
-    //             return true;
-    //         } else {
-    //             return false;
-    //         }
-    //     } else {
-    //         return false;
-    //     }
-    // }
-
     phoneNumberValidation(value) {
         const regex = RegExp('^(\\+98|0)?9\\d{9}$');
         let phone = new String(value);
@@ -452,12 +341,7 @@ export default class ReserveScreen extends Component {
                     buttonPositive: 'OK',
                 },
             );
-            // if (cameraPermission === PermissionsAndroid.RESULTS.GRANTED) {
-            //     console.log('You can use the camera');
-            //     console.log('You can use the camera');
-            // } else {
-            //     console.log('Camera permission denied');
-            // }
+
             const storagePermission = await PermissionsAndroid.request(
                 PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
                 {
@@ -514,7 +398,6 @@ export default class ReserveScreen extends Component {
                                             },
                                         ]}>
                                         {this.state.imageFromDevice != null ? (
-                                            // <Thumbnail large source={{uri: this.state.imageFromDevice}}/> :
                                             <Button
                                                 transparent
                                                 bordered
@@ -593,33 +476,6 @@ export default class ReserveScreen extends Component {
                                         />
                                     </CardItem>
 
-                                    {false && (
-                                        <CardItem style={styles.row}>
-                                            <Text style={styles.label}>نام کاربری</Text>
-                                            <TextInput
-                                                value={this.state.patientUsername}
-                                                onChangeText={text =>
-                                                    this.setState({patientUsername: text})
-                                                }
-                                                style={[styles.textInput]}
-                                                multiline={false}
-                                            />
-                                        </CardItem>
-                                    )}
-                                    {false && (
-                                        <CardItem style={styles.row}>
-                                            <Text style={styles.label}>رمز عبور</Text>
-                                            <TextInput
-                                                secureTextEntry={true}
-                                                value={this.state.patientPassword}
-                                                onChangeText={text =>
-                                                    this.setState({patientPassword: text})
-                                                }
-                                                style={[styles.textInput]}
-                                                multiline={false}
-                                            />
-                                        </CardItem>
-                                    )}
                                     <CardItem style={styles.row}>
                                         <Text style={styles.label}>موبایل</Text>
                                         <TextInput
@@ -664,9 +520,7 @@ export default class ReserveScreen extends Component {
                                                 {this.state.selectedStartDate == null
                                                     ? 'انتخاب تاریخ'
                                                     : this.state.selectedStartDate}
-                                                {/* {this.state.selectedStartDate == null
-                          ? 'انتخاب تاریخ'
-                          : this.state.selectedStartDate.format('jYYYY-jM-jD')} */}
+
                                             </Text>
                                         </Button>
                                     </CardItem>
@@ -699,13 +553,7 @@ export default class ReserveScreen extends Component {
                                             bordered
                                             placeholder="آدرس"
                                         />
-                                        {/*<Text style={styles.label}>توضیحات</Text>*/}
-                                        {/*<TextInput*/}
-                                        {/*    value={this.state.description}*/}
-                                        {/*    onChangeText={(text) => this.setState({description: text})}*/}
-                                        {/*    style={[styles.textInput]}*/}
-                                        {/*    multiline={false}*/}
-                                        {/*/>*/}
+
                                     </CardItem>
                                     <CardItem style={styles.row}>
                                         <Textarea
@@ -716,13 +564,7 @@ export default class ReserveScreen extends Component {
                                             bordered
                                             placeholder="توضیحات"
                                         />
-                                        {/*<Text style={styles.label}>آدرس</Text>*/}
-                                        {/*<TextInput*/}
-                                        {/*    value={this.state.address}*/}
-                                        {/*    onChangeText={(text) => this.setState({address: text})}*/}
-                                        {/*    style={[styles.textInput]}*/}
-                                        {/*    multiline={false}*/}
-                                        {/*/>*/}
+
                                     </CardItem>
                                 </Card>
 
@@ -771,7 +613,6 @@ export default class ReserveScreen extends Component {
                                                 elevation: 4,
                                             }}
                                             selected="1399/1/18"
-                                            // selected={() => this.state.selectedStartDate != null ?  this.state.selectedStartDate :  "1399/1/18" }
                                             dateSeparator="/"
                                             minDate="1300/1/18"
                                             maxDate="1400/1/18"
@@ -865,7 +706,6 @@ export default class ReserveScreen extends Component {
                                             selectedDayTextColor="white"
                                             dayTextColor="#209b9b"
                                             disabledTextColor="#209b9b"
-                                            // onDateChange={date => console.warn(date)}
                                             onDateChange={date =>
                                                 this.setState({
                                                     selectedStartDate: date,
@@ -929,14 +769,12 @@ export default class ReserveScreen extends Component {
                             style={styles.button}
                             onPress={() => {
                                 if (
-                                    //this.state.patientUsername === '' ||
                                     this.state.nationalCode === '' ||
                                     this.state.cellPhone === '' ||
                                     this.state.firstName === '' ||
                                     this.state.lastName === '' ||
                                     this.state.birthDate === '' ||
                                     this.state.gender === '' ||
-                                    //this.state.patientPassword === '' ||
                                     this.state.selectedStartDate === null ||
                                     this.state.file == null ||
                                     this.state.fileName == null
@@ -969,14 +807,12 @@ export default class ReserveScreen extends Component {
                                             ],
                                             {cancelable: false},
                                         );
-                                        // alert('لطفا عکس پروفایل خود را انتخاب کنید');
-                                        // this.showToast();
+
                                     }
                                 } else {
                                     if (!this.phoneNumberValidation(this.state.cellPhone)) {
                                         alert('شماره موبایل وارد شده معتبر نیست');
                                     } else {
-                                        //myString.replace(/\D/g,'');
                                         let date = moment(
                                             this.state.selectedStartDate,
                                             'jYYYY/jM/jD',
@@ -989,14 +825,12 @@ export default class ReserveScreen extends Component {
                                             cellPhone: this.state.cellPhone,
                                             firstName: this.state.firstName,
                                             lastName: this.state.lastName,
-                                            // birthDate: this.state.selectedStartDate.format("YYYY/MM/DD"),
                                             birthDate: date.format('YYYY-M-D'),
                                             gender: this.state.gender,
                                             description: this.state.description,
                                             address: this.state.address,
                                             zipCode: this.state.zipCode,
                                         };
-                                        console.log(JSON.stringify(body));
                                         this.registerUser(body);
                                     }
                                 }

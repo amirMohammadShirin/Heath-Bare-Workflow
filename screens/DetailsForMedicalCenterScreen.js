@@ -7,9 +7,7 @@ import {
     StatusBar,
     StyleSheet,
     Text,
-    TextInput,
     View,
-    NativeModules,
     Platform,
     BackHandler,
 } from 'react-native';
@@ -24,19 +22,14 @@ import {
     Left,
     Right,
     Root,
-    Image,
     Thumbnail,
     CardItem,
-    Spinner,
-    Item,
 } from 'native-base';
 import Modal, {ModalContent, SlideAnimation} from 'react-native-modals';
 
 const GETMEDICALCENTERBYID = '/GetMedicalCenterById';
 const GETMEDICALCENTERRATE = '/GetMedicalCenterRate';
-const MySpinner = () => {
-    return <Spinner color={'#23b9b9'}/>;
-};
+
 export default class DetailsForMedicalCenterScreen extends Component {
     constructor(props) {
         super(props);
@@ -69,8 +62,6 @@ export default class DetailsForMedicalCenterScreen extends Component {
     }
 
     handleBackButtonClick() {
-        // alert('pressed')
-
         console.log(JSON.stringify(this.props.navigation.state));
 
         if (this.props.navigation.state.isDrawerOpen) {
@@ -157,7 +148,6 @@ export default class DetailsForMedicalCenterScreen extends Component {
             Body: body
 
         }
-        console.log("getMedicalCenterDetails : \n ", Body)
         await fetch(baseUrl + hub, {
             method: 'POST',
             headers: {
@@ -169,7 +159,6 @@ export default class DetailsForMedicalCenterScreen extends Component {
         })
             .then(response => response.json())
             .then(async responseData => {
-                console.log('getMedicalCenterDetails :  \n ', responseData)
                 if (responseData['StatusCode'] === 200) {
                     if (responseData['Data'] != null) {
                         let data = responseData['Data'];
@@ -201,13 +190,11 @@ export default class DetailsForMedicalCenterScreen extends Component {
                 } else {
                     this.setState({progressModalVisible: false}, () => {
                         alert(JSON.stringify('خطا در دسترسی به سرویس'));
-                        // alert(JSON.stringify(responseData))
                     });
                 }
             })
             .catch(error => {
-                console.error(error);
-                // alert(error)
+                console.log(error);
             });
     }
 
@@ -268,7 +255,7 @@ export default class DetailsForMedicalCenterScreen extends Component {
     //             }
     //         })
     //         .catch(error => {
-    //             console.error(error);
+    //             console.log(error);
     //             // alert(error)
     //         });
     // }
@@ -320,9 +307,6 @@ export default class DetailsForMedicalCenterScreen extends Component {
                                                     circular
                                                     large
                                                     style={{
-                                                        //   borderWidth: 1,
-                                                        //   borderColor: '#e0e0e0',
-                                                        //   overflow: 'hidden',
                                                         height: 100,
                                                         width: 100,
                                                         resizeMode: 'cover',
@@ -351,7 +335,6 @@ export default class DetailsForMedicalCenterScreen extends Component {
                                                 starContainerStyle={{
                                                     marginTop: 10,
                                                     backgroundColor: '#fff',
-                                                    // paddingLeft: 10,
                                                     paddingRight: 10,
                                                     borderRadius: 20,
                                                     borderColor: '#d9d9d9',
@@ -433,7 +416,6 @@ export default class DetailsForMedicalCenterScreen extends Component {
                                                 </Text>
                                             </Button>
                                         </Body>
-                                        {/* <View style={{flexDirection:}}></View> */}
                                     </Left>
                                 </CardItem>
                             )}
@@ -451,7 +433,6 @@ export default class DetailsForMedicalCenterScreen extends Component {
                                                     color: '#000',
                                                     fontWeight: 'bold',
                                                     padding: 1,
-                                                    // }}>{this.props.navigation.getParam('medicalCenter').Title}</Text>
                                                 }}>
                                                 {this.state.title}
                                             </Text>
@@ -459,7 +440,6 @@ export default class DetailsForMedicalCenterScreen extends Component {
                                     </Left>
                                 </CardItem>
                             ) : null}
-
                             {this.state.description != null &&
                             this.state.description !== '' ? (
                                 <CardItem style={{marginTop: 5}}>
@@ -480,7 +460,6 @@ export default class DetailsForMedicalCenterScreen extends Component {
                                     </Left>
                                 </CardItem>
                             ) : null}
-
                             {this.state.contract != null && this.state.contract !== '' ? (
                                 <CardItem style={{marginTop: 5}}>
                                     <Body>
@@ -498,7 +477,6 @@ export default class DetailsForMedicalCenterScreen extends Component {
                                     </Body>
                                 </CardItem>
                             ) : null}
-
                             {this.state.facilities != null &&
                             typeof this.state.facilities != 'undefined' ? (
                                 <CardItem style={{marginTop: 5}}>
@@ -513,7 +491,6 @@ export default class DetailsForMedicalCenterScreen extends Component {
                                                 }}>
                                                 بخش های مرکز درمانی :
                                             </Text>
-
                                             {this.state.facilities.map((item, key) => (
                                                 <View key={key}>
                                                     <Text

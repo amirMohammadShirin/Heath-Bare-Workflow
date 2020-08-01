@@ -5,12 +5,10 @@ import {
     ActivityIndicator,
     AsyncStorage,
     BackHandler,
-    Keyboard,
     Platform,
     StatusBar,
     StyleSheet,
     Text,
-    TextInput,
     View,
 } from 'react-native';
 import {
@@ -24,10 +22,8 @@ import {
     Left,
     Right,
     Root,
-    Image,
     Thumbnail,
     CardItem,
-    ListItem,
 } from 'native-base';
 import Modal, {ModalContent, SlideAnimation} from 'react-native-modals';
 
@@ -54,7 +50,6 @@ export default class DetailsScreen extends Component {
     }
 
     onBackPressed() {
-        // alert(this.state.selectedMedicalCenter);
         this.props.navigation.goBack();
     }
 
@@ -70,7 +65,6 @@ export default class DetailsScreen extends Component {
     }
 
     handleBackButtonClick() {
-        // alert('pressed')
 
         console.log(JSON.stringify(this.props.navigation.state));
 
@@ -133,7 +127,6 @@ export default class DetailsScreen extends Component {
                 title: value.LastName,
                 id: value.Id
             };
-
         let Body = {
             Method: "POST",
             Url: GETDOCOTRBYID,
@@ -141,7 +134,6 @@ export default class DetailsScreen extends Component {
             nationalCode: '',
             body: body
         }
-        console.log('getDoctorById Body : \n ', Body);
         await fetch(baseUrl + hub, {
             method: 'POST',
             headers: {
@@ -152,7 +144,6 @@ export default class DetailsScreen extends Component {
         })
             .then(response => response.json())
             .then(async responseData => {
-                console.log('getDoctorById Response : \n ', responseData);
                 if (responseData['StatusCode'] === 200) {
                     if (responseData['Data'] != null) {
                         let data = responseData['Data'];
@@ -164,7 +155,6 @@ export default class DetailsScreen extends Component {
                                 },
                                 async () => {
                                     // this.getDoctorRate()
-                                    // alert(JSON.stringify(this.state.doctor))
                                 },
                             );
                         });
@@ -172,13 +162,11 @@ export default class DetailsScreen extends Component {
                 } else {
                     this.setState({progressModalVisible: false}, () => {
                         alert(JSON.stringify('خطا در دسترسی به سرویس'))
-                        // alert(JSON.stringify(responseData));
                     });
                 }
             })
             .catch(error => {
-                console.error(error);
-                // alert(error)
+                console.log(error);
             });
     }
 
@@ -293,9 +281,6 @@ export default class DetailsScreen extends Component {
                                                             circular
                                                             large
                                                             style={{
-                                                                //   borderWidth: 1,
-                                                                //   borderColor: '#e0e0e0',
-                                                                //   overflow: 'hidden',
                                                                 height: 100,
                                                                 width: 100,
                                                                 resizeMode: 'cover',
@@ -317,7 +302,6 @@ export default class DetailsScreen extends Component {
                                                             starContainerStyle={{
                                                                 marginTop: 10,
                                                                 backgroundColor: '#fff',
-                                                                // paddingLeft: 10,
                                                                 paddingRight: 10,
                                                                 borderRadius: 20,
                                                                 borderColor: '#d9d9d9',
@@ -366,7 +350,6 @@ export default class DetailsScreen extends Component {
                                                             starContainerStyle={{
                                                                 marginTop: 10,
                                                                 backgroundColor: '#fff',
-                                                                // paddingLeft: 10,
                                                                 paddingRight: 10,
                                                                 borderRadius: 20,
                                                                 borderColor: '#d9d9d9',
@@ -409,9 +392,6 @@ export default class DetailsScreen extends Component {
                                                                 circular
                                                                 large
                                                                 style={{
-                                                                    //   borderWidth: 1,
-                                                                    //   borderColor: '#e0e0e0',
-                                                                    //   overflow: 'hidden',
                                                                     height: 100,
                                                                     width: 100,
                                                                     resizeMode: 'cover',
@@ -433,7 +413,6 @@ export default class DetailsScreen extends Component {
                                                                 starContainerStyle={{
                                                                     marginTop: 10,
                                                                     backgroundColor: '#fff',
-                                                                    // paddingLeft: 10,
                                                                     paddingRight: 10,
                                                                     borderRadius: 20,
                                                                     borderColor: '#d9d9d9',
@@ -482,7 +461,6 @@ export default class DetailsScreen extends Component {
                                                                 starContainerStyle={{
                                                                     marginTop: 10,
                                                                     backgroundColor: '#fff',
-                                                                    // paddingLeft: 10,
                                                                     paddingRight: 10,
                                                                     borderRadius: 20,
                                                                     borderColor: '#d9d9d9',
