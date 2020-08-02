@@ -50,6 +50,8 @@ export default class SplashScreen extends Component {
                 Url: AUTHENTICATE,
                 body: body
             }
+            console.log(JSON.stringify(BODY))
+            console.log(baseUrl + hub)
             fetch(baseUrl + hub, {
                 method: 'POST',
                 headers: {'content-type': 'application/json'},
@@ -57,6 +59,7 @@ export default class SplashScreen extends Component {
             })
                 .then(response => response.json())
                 .then(async responseData => {
+                    console.log("Response : ", responseData)
                     if (responseData['StatusCode'] === 200) {
                         if (responseData['Data'] != null) {
                             try {
