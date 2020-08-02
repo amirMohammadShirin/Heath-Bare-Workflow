@@ -122,7 +122,7 @@ export default class InboxScreen extends Component {
 
     showMessage(item) {
         this.setState({selectedMessage: item, visible: true});
-        if (this.state.selectedMessage.File != null) {
+        if (item.File !== null) {
             images[0].title = item.FileName;
             images[0].source.uri = "data:image/png;base64," + item.File;
         }

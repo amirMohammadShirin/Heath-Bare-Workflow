@@ -174,6 +174,7 @@ export default class MyChatScreen extends Component {
 
                 if (item.FullName === this.state.doctorQuery) {
                     receiver = item.Id;
+
                     break;
                 }
 
@@ -301,9 +302,9 @@ export default class MyChatScreen extends Component {
                                 renderTextInput={() => {
                                     return (
                                         <TextInput
-                                            onEndEditing={() =>
-                                                this.setState({doctorsShowData: false})
-                                            }
+                                            // onEndEditing={() =>
+                                            //     this.setState({doctorsShowData: false})
+                                            // }
                                             placeholder={'نام پزشک'}
                                             placeholderTextColor={'#b7b7b7'}
                                             value={doctorQuery}
@@ -487,9 +488,9 @@ export default class MyChatScreen extends Component {
                                     return (
                                         <Textarea
                                             numberOfLines={1}
-                                            onEndEditing={() =>
-                                                this.setState({doctorsShowData: false})
-                                            }
+                                            // onEndEditing={() =>
+                                            //     this.setState({doctorsShowData: false})
+                                            // }
                                             placeholder={'نام پزشک'}
                                             placeholderTextColor={'#b7b7b7'}
                                             value={doctorQuery}

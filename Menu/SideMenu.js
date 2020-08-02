@@ -208,8 +208,8 @@ export default class SideMenu extends Component {
                                                     )
                                                     : (this.state.user.gender === 'زن' && this.state.user.gender !== null) ?
                                                         <View>
-                                                            {(this.state.doctor.Image !== null) &&
-                                                            (typeof this.state.doctor.Image !== 'undefined') ?
+                                                            {(this.state.user.Image !== null) &&
+                                                            (typeof this.state.user.Image !== 'undefined') ?
                                                                 <View>
                                                                     <Thumbnail
                                                                         large
