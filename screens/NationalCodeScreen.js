@@ -29,7 +29,8 @@ export default class NationalCodeScreen extends Component {
             phoneNumber: null,
             nationalCode: null,
             baseUrl: null,
-            hub: null
+            hub: null,
+            token: null
         }
     }
 
@@ -37,8 +38,9 @@ export default class NationalCodeScreen extends Component {
         const phoneNumber = this.props.navigation.getParam('phoneNumber');
         const baseUrl = await AsyncStorage.getItem("baseUrl");
         const hub = await AsyncStorage.getItem("hub");
+        const token = await AsyncStorage.getItem('token');
 
-        this.setState({phoneNumber: phoneNumber, baseUrl: baseUrl, hub: hub});
+        this.setState({phoneNumber: phoneNumber, baseUrl: baseUrl, hub: hub, token: token});
         if (Platform.OS === 'android') {
             BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
         }
@@ -47,6 +49,7 @@ export default class NationalCodeScreen extends Component {
     async ShahkarVerification(body) {
         this.setState({progressModalVisible: true});
         const baseUrl = this.state.baseUrl;
+        const token = this.state.token;
         const hub = this.state.hub;
         const Body = {
             UserName: body.username,
@@ -61,7 +64,10 @@ export default class NationalCodeScreen extends Component {
         console.log('Shahkar Code Body : ' + JSON.stringify(Body))
         await fetch(baseUrl + hub, {
             method: 'POST',
-            headers: {'content-type': 'application/json'},
+            headers: {
+                'content-type': 'application/json',
+                'Authorization': 'Bearer ' + "false"
+            },
             body: JSON.stringify(Body)
         }).then(async (response) => response.json())
             .then(async (responseData) => {
@@ -76,6 +82,19 @@ export default class NationalCodeScreen extends Component {
                                 alert(data)
                             }
                         }
+                    } else if (responseData['StatusCode'] === 401) {
+                        this.setState({progressModalVisible: false}, () => {
+                            this.props.navigation.navigate(
+                                'GetVerificationCodeScreen',
+                                {
+                                    user: {
+                                        username: 'adrian',
+                                        password: '1234',
+                                        role: 'stranger',
+                                    },
+                                },
+                            );
+                        });
                     } else {
                         this.setState({progressModalVisible: false}, () => {
                             alert('خطا در استعلام شماره ملی و شماره موبایل')
@@ -119,6 +138,7 @@ export default class NationalCodeScreen extends Component {
     goToHomeScreen = async (body) => {
         this.setState({progressModalVisible: true});
         const baseUrl = this.state.baseUrl;
+        const token = this.state.token;
         const hub = this.state.hub;
         const Body = {
             UserName: body.username,
@@ -129,21 +149,25 @@ export default class NationalCodeScreen extends Component {
         }
         await fetch(baseUrl + hub, {
             method: 'POST',
-            headers: {'content-type': 'application/json'},
+            headers: {'content-type': 'application/json', 'Authorization': 'Bearer ' + "false"},
             body: JSON.stringify(Body)
         }).then(async (response) => response.json())
             .then(async (responseData) => {
                 if (responseData['StatusCode'] === 200) {
                     if (responseData['Data'] != null) {
+                        console.log(responseData)
                         try {
                             let data = responseData['Data'];
                             let userInfo = data['userinfo'];
                             let userId = userInfo['user_id'];
                             let nationalCode = userInfo['nationalCode'];
                             let userName = userInfo['user_name'];
+                            let token = userInfo['token'];
+                            console('toooooooooooooooooooooooooooooken', token)
                             await AsyncStorage.setItem('nationalCode', nationalCode);
                             await AsyncStorage.setItem('username', userName);
                             await AsyncStorage.setItem('userId', userId);
+                            await AsyncStorage.setItem('token', token);
                             this.setState({progressModalVisible: false})
                             this.props.navigation.navigate('HomeScreen',
                                 {user: {userInfo}, baseUrl: baseUrl})
@@ -151,6 +175,19 @@ export default class NationalCodeScreen extends Component {
                             console.log(e)
                         }
                     }
+                } else if (responseData['StatusCode'] === 401) {
+                    this.setState({progressModalVisible: false}, () => {
+                        this.props.navigation.navigate(
+                            'GetVerificationCodeScreen',
+                            {
+                                user: {
+                                    username: 'adrian',
+                                    password: '1234',
+                                    role: 'stranger',
+                                },
+                            },
+                        );
+                    });
                 } else if (responseData['StatusCode'] === 600) {
                     this.setState({progressModalVisible: false}, () => {
                         this.props.navigation.push('RegisterScreen', {

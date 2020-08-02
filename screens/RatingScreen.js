@@ -53,7 +53,8 @@ export default class RatingScreen extends Component {
             reservationId: null,
             hub: null,
             baseUrl: null,
-            userId: null
+            userId: null,
+            token: null
         };
     }
 
@@ -78,6 +79,7 @@ export default class RatingScreen extends Component {
         const hub = await AsyncStorage.getItem('hub');
         const userId = await AsyncStorage.getItem('userId');
         const baseUrl = await AsyncStorage.getItem('baseUrl');
+        const token = await AsyncStorage.getItem('token');
         if (fullName !== null && typeof fullName !== 'undefined') {
             this.setState({fullName: fullName});
         }
@@ -109,7 +111,8 @@ export default class RatingScreen extends Component {
                 {
                     hub: hub,
                     baseUrl: baseUrl,
-                    userId: userId
+                    userId: userId,
+                    token: token
                 },
                 () => {
                 },
@@ -120,37 +123,53 @@ export default class RatingScreen extends Component {
 
 
     async rate(body) {
-
-      const baseUrl = this.state.baseUrl;
-      const hub = this.state.hub;
-      const userId = this.state.userId;
-      let Body = {
-        Method: 'POST',
-        Url: RATE,
-        Username: '',
-        NationalCode: '',
-        Body: body
-      }
-      this.setState({progressModalVisible: !isRefresh, refreshing: isRefresh})
-      fetch(baseUrl + hub, {
-        method: 'POST',
-        headers: {'content-type': 'application/json'},
-        body: JSON.stringify(Body),
-      })
-          .then(response => response.json())
-          .then(async responseData => {
-            if (responseData['StatusCode'] === 200) {
-              alert('نظر شما با موفقیت ثبت شد')
-            } else {
-              this.setState({progressModalVisible: false, refreshing: false}, () => {
-                alert('خطا در اتصال به سرویس')
-              });
-            }
-          })
-          .catch(error => {
-            this.setState({progressModalVisible: false, refreshing: false})
-            console.log(error);
-          });
+        const token = this.state.token;
+        const baseUrl = this.state.baseUrl;
+        const hub = this.state.hub;
+        const userId = this.state.userId;
+        let Body = {
+            Method: 'POST',
+            Url: RATE,
+            Username: '',
+            NationalCode: '',
+            Body: body
+        }
+        this.setState({progressModalVisible: true})
+        fetch(baseUrl + hub, {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json',
+                'Authorization': 'Bearer ' + new String(token)
+            },
+            body: JSON.stringify(Body),
+        })
+            .then(response => response.json())
+            .then(async responseData => {
+                if (responseData['StatusCode'] === 200) {
+                    alert('نظر شما با موفقیت ثبت شد')
+                } else if (responseData['StatusCode'] === 401) {
+                    this.setState({progressModalVisible: false}, () => {
+                        this.props.navigation.navigate(
+                            'GetVerificationCodeScreen',
+                            {
+                                user: {
+                                    username: 'adrian',
+                                    password: '1234',
+                                    role: 'stranger',
+                                },
+                            },
+                        );
+                    });
+                } else {
+                    this.setState({progressModalVisible: false}, () => {
+                        alert('خطا در اتصال به سرویس')
+                    });
+                }
+            })
+            .catch(error => {
+                this.setState({progressModalVisible: false})
+                console.log(error);
+            });
     }
 
 

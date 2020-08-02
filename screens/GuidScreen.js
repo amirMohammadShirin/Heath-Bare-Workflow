@@ -43,7 +43,8 @@ export default class GuidScreen extends Component {
     async componentWillMount(): void {
         var hub = await AsyncStorage.getItem('hub');
         var baseUrl = await AsyncStorage.getItem('baseUrl');
-        this.setState({baseUrl: baseUrl, hub: hub}, () => {
+        const token = await AsyncStorage.getItem('token');
+        this.setState({baseUrl: baseUrl, hub: hub, token: token}, () => {
             this.getQuestions(false);
         });
     }
@@ -51,6 +52,7 @@ export default class GuidScreen extends Component {
     async getQuestions(isRefresh) {
         const baseUrl = this.state.baseUrl;
         const hub = this.state.hub;
+        const token = this.state.token;
         let Body = {
             method: "GET",
             Url: GETQUESTIONS,
@@ -64,6 +66,7 @@ export default class GuidScreen extends Component {
             headers: {
                 'content-type': 'application/json',
                 Accept: 'application/json',
+                'Authorization': 'Bearer ' + new String(token)
             },
             body: JSON.stringify(Body)
         })
@@ -76,6 +79,19 @@ export default class GuidScreen extends Component {
                             this.setState({progressModalVisible: false, refreshing: false});
                         });
                     }
+                } else if (responseData['StatusCode'] === 401) {
+                    this.setState({progressModalVisible: false}, () => {
+                        this.props.navigation.navigate(
+                            'GetVerificationCodeScreen',
+                            {
+                                user: {
+                                    username: 'adrian',
+                                    password: '1234',
+                                    role: 'stranger',
+                                },
+                            },
+                        );
+                    });
                 } else {
                     this.setState(
                         {progressModalVisible: false, refreshing: false},

@@ -56,19 +56,22 @@ export default class SentMessagesScreen extends Component {
             baseUrl: null,
             hub: null,
             userId: null,
-            imageVisible: false
+            imageVisible: false,
+            token: null
         };
     }
 
 
     async componentDidMount(): void {
+        const token = await AsyncStorage.getItem('token');
         const baseUrl = await AsyncStorage.getItem("baseUrl")
         const hub = await AsyncStorage.getItem("hub")
         const userId = await AsyncStorage.getItem("userId")
         this.setState({
             baseUrl: baseUrl,
             hub: hub,
-            userId: userId
+            userId: userId,
+            token: token,
         })
         this.getSentMessages(true);
     }
@@ -83,7 +86,7 @@ export default class SentMessagesScreen extends Component {
     }
 
     async getSentMessages(isRefresh) {
-
+        const token = this.state.token;
         const baseUrl = this.state.baseUrl;
         const hub = this.state.hub;
         const userId = this.state.userId;
@@ -97,10 +100,13 @@ export default class SentMessagesScreen extends Component {
             Body: body
         }
         this.setState({progressModalVisible: !isRefresh, refreshing: isRefresh})
-        fetch(baseUrl + SentMessagesTest, {
+        fetch(baseUrl + hub, {
             method: 'POST',
-            headers: {'content-type': 'application/json'},
-            body: JSON.stringify(body),
+            headers: {
+                'content-type': 'application/json',
+                'Authorization': 'Bearer ' + new String(token)
+            },
+            body: JSON.stringify(Body),
         })
             .then(response => response.json())
             .then(async responseData => {
@@ -112,6 +118,19 @@ export default class SentMessagesScreen extends Component {
                             this.setState({progressModalVisible: false, refreshing: false})
                         })
                     }
+                } else if (responseData['StatusCode'] === 401) {
+                    this.setState({progressModalVisible: false}, () => {
+                        this.props.navigation.navigate(
+                            'GetVerificationCodeScreen',
+                            {
+                                user: {
+                                    username: 'adrian',
+                                    password: '1234',
+                                    role: 'stranger',
+                                },
+                            },
+                        );
+                    });
                 } else {
                     this.setState({progressModalVisible: false, refreshing: false}, () => {
                         alert('خطا در اتصال به سرویس')

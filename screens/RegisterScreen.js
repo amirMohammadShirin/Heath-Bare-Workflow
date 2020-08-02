@@ -25,6 +25,7 @@ import RadioForm, {
 import DatePicker from '@mohamadkh75/react-native-jalali-datepicker';
 import {Dialog} from 'react-native-simple-dialogs';
 import ImagePicker from 'react-native-image-picker';
+
 const moment = require('moment-jalaali');
 import {
     Container,
@@ -110,7 +111,7 @@ export default class ReserveScreen extends Component {
         }
         await fetch(baseUrl + hub, {
             method: 'POST',
-            headers: {'content-type': 'application/json'},
+            headers: {'content-type': 'application/json', 'Authorization': 'Bearer ' + "false"},
             body: JSON.stringify(Body)
         }).then(async (response) => response.json())
             .then(async (responseData) => {
@@ -156,20 +157,15 @@ export default class ReserveScreen extends Component {
     };
 
 
-
-
-
-
-
     async registerUser(body) {
         const baseUrl = this.state.baseUrl;
         const hub = this.state.hub;
-        let Body={
-            Method:'POST',
-            Url:REGISTER,
-            NationalCode : body.nationalCode,
-            UserName : body.cellPhone,
-            Body:body
+        let Body = {
+            Method: 'POST',
+            Url: REGISTER,
+            NationalCode: body.nationalCode,
+            UserName: body.cellPhone,
+            Body: body
         }
         this.setState({progressModalVisible: true}, async () => {
             await fetch(baseUrl + hub, {

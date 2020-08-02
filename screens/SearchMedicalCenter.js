@@ -57,7 +57,8 @@ export default class SearchMedicalCenter extends Component {
             imageObject: null,
             isLoading: false,
             hub: null,
-            userId: null
+            userId: null,
+            token: null
         };
     }
 
@@ -97,11 +98,12 @@ export default class SearchMedicalCenter extends Component {
                 this.handleBackButtonClick,
             );
         }
+        const token = await AsyncStorage.getItem('token');
         var hub = await AsyncStorage.getItem('hub');
         var userId = await AsyncStorage.getItem('userId');
         var baseUrl = await AsyncStorage.getItem('baseUrl');
         await this.setState(
-            {baseUrl: baseUrl, userId: userId, hub: hub},
+            {baseUrl: baseUrl, userId: userId, hub: hub, token: token,},
             () => {
                 this.getFavoriteMedicalCenters();
             },
@@ -112,6 +114,7 @@ export default class SearchMedicalCenter extends Component {
         const baseUrl = this.state.baseUrl;
         const hub = this.state.hub;
         const userId = this.state.userId;
+        const token = this.state.token;
         let Body = {
             method: 'POST',
             Url: SEARCHMEDICALCENTERALLFIELD,
@@ -125,7 +128,7 @@ export default class SearchMedicalCenter extends Component {
             headers: {
                 'content-type': 'application/json',
                 Accept: 'application/json',
-
+                'Authorization': 'Bearer ' + new String(token)
             },
             body: JSON.stringify(Body),
         })
@@ -141,6 +144,19 @@ export default class SearchMedicalCenter extends Component {
                             },
                         );
                     }
+                } else if (responseData['StatusCode'] === 401) {
+                    this.setState({progressModalVisible: false}, () => {
+                        this.props.navigation.navigate(
+                            'GetVerificationCodeScreen',
+                            {
+                                user: {
+                                    username: 'adrian',
+                                    password: '1234',
+                                    role: 'stranger',
+                                },
+                            },
+                        );
+                    });
                 } else if (responseData['StatusCode'] === 400) {
                     this.setState({progressModalVisible: false, isLoading: false}, () => {
                         alert(JSON.stringify('خطا در دسترسی به سرویس'));
@@ -155,6 +171,7 @@ export default class SearchMedicalCenter extends Component {
     }
 
     async getFavoriteMedicalCenters() {
+        const token = this.state.token;
         const baseUrl = this.state.baseUrl;
         const hub = this.state.hub;
         const userId = this.state.userId;
@@ -171,7 +188,7 @@ export default class SearchMedicalCenter extends Component {
             headers: {
                 'content-type': 'application/json',
                 Accept: 'application/json',
-
+                'Authorization': 'Bearer ' + new String(token)
             },
             body: JSON.stringify(Body)
         })
@@ -184,6 +201,19 @@ export default class SearchMedicalCenter extends Component {
                             this.setState({favoriteMedicalCenters: data});
                         });
                     }
+                } else if (responseData['StatusCode'] === 401) {
+                    this.setState({progressModalVisible: false}, () => {
+                        this.props.navigation.navigate(
+                            'GetVerificationCodeScreen',
+                            {
+                                user: {
+                                    username: 'adrian',
+                                    password: '1234',
+                                    role: 'stranger',
+                                },
+                            },
+                        );
+                    });
                 } else if (responseData['StatusCode'] === 400) {
                     await this.setState({progressModalVisible: false});
                     alert(JSON.stringify('خطا در دسترسی به سرویس'))

@@ -29,6 +29,7 @@ import {
 } from 'native-base';
 import Modal, {ModalContent, SlideAnimation} from 'react-native-modals';
 import Geolocation from '@react-native-community/geolocation';
+
 const GETSERVICES = '/GetServices';
 const GETFACILITIES = '/GetFacilities';
 const GETSERVICEDETAILS = '/GetServiceDetails';
@@ -237,7 +238,8 @@ export default class AdvanceSearchScreen extends Component {
         }
         var hub = await AsyncStorage.getItem('hub');
         var baseUrl = await AsyncStorage.getItem('baseUrl');
-        this.setState({baseUrl: baseUrl, hub: hub}, () => {
+        var token = await AsyncStorage.getItem('token');
+        this.setState({baseUrl: baseUrl, hub: hub, token: token}, () => {
             if (this.props.navigation.getParam('doctor')) {
                 this.getGenders();
             } else {
@@ -249,6 +251,7 @@ export default class AdvanceSearchScreen extends Component {
     async doctorAdvanceSearch(gender, skill, certificate) {
         const baseUrl = this.state.baseUrl;
         const hub = this.state.hub;
+        const token = this.state.token;
         if (gender.id === -100 && skill.id === -100 && certificate.id === -100) {
             alert('لطفا فیلد ها را انتخاب کنید');
         } else {
@@ -274,6 +277,7 @@ export default class AdvanceSearchScreen extends Component {
                         headers: {
                             'content-type': 'application/json',
                             Accept: 'application/json',
+                            'Authorization': 'Bearer ' + new String(token)
                         },
                         body: JSON.stringify(Body),
                     },
@@ -301,6 +305,19 @@ export default class AdvanceSearchScreen extends Component {
                                     });
                                 }
                             }
+                        } else if (responseData['StatusCode'] === 401) {
+                            this.setState({progressModalVisible: false}, () => {
+                                this.props.navigation.navigate(
+                                    'GetVerificationCodeScreen',
+                                    {
+                                        user: {
+                                            username: 'adrian',
+                                            password: '1234',
+                                            role: 'stranger',
+                                        },
+                                    },
+                                );
+                            });
                         } else {
                             this.setState({progressModalVisible: false}, () => {
                                 alert(JSON.stringify('خطا در دسترسی به سرویس'));
@@ -329,6 +346,7 @@ export default class AdvanceSearchScreen extends Component {
                     headers: {
                         'content-type': 'application/json',
                         Accept: 'application/json',
+                        'Authorization': 'Bearer ' + new String(token)
                     },
                     body: JSON.stringify(Body),
                 })
@@ -347,6 +365,19 @@ export default class AdvanceSearchScreen extends Component {
                                                 Skill: skill.value,
                                             });
                                         });
+                                    });
+                                } else if (responseData['StatusCode'] === 401) {
+                                    this.setState({progressModalVisible: false}, () => {
+                                        this.props.navigation.navigate(
+                                            'GetVerificationCodeScreen',
+                                            {
+                                                user: {
+                                                    username: 'adrian',
+                                                    password: '1234',
+                                                    role: 'stranger',
+                                                },
+                                            },
+                                        );
                                     });
                                 } else {
                                     this.setState({progressModalVisible: false}, () => {
@@ -370,6 +401,7 @@ export default class AdvanceSearchScreen extends Component {
     async getServices() {
         const baseUrl = this.state.baseUrl;
         const hub = this.state.hub;
+        const token = this.state.token;
         let Body = {
             Method: "GET",
             Url: GETSERVICES,
@@ -383,6 +415,7 @@ export default class AdvanceSearchScreen extends Component {
             headers: {
                 'content-type': 'application/json',
                 Accept: 'application/json',
+                'Authorization': 'Bearer ' + new String(token)
             },
             body: JSON.stringify(Body)
         })
@@ -396,6 +429,19 @@ export default class AdvanceSearchScreen extends Component {
                             await this.getFacilities();
                         });
                     }
+                } else if (responseData['StatusCode'] === 401) {
+                    this.setState({progressModalVisible: false}, () => {
+                        this.props.navigation.navigate(
+                            'GetVerificationCodeScreen',
+                            {
+                                user: {
+                                    username: 'adrian',
+                                    password: '1234',
+                                    role: 'stranger',
+                                },
+                            },
+                        );
+                    });
                 } else {
                     this.setState({progressModalVisible: false}, () => {
                         alert('خطا در اتصال به سرویس');
@@ -410,6 +456,7 @@ export default class AdvanceSearchScreen extends Component {
     async getFacilities() {
         const baseUrl = this.state.baseUrl;
         const hub = this.state.hub;
+        const token = this.state.token;
         let Body = {
             Method: "GET",
             Url: GETFACILITIES,
@@ -423,6 +470,7 @@ export default class AdvanceSearchScreen extends Component {
             headers: {
                 'content-type': 'application/json',
                 Accept: 'application/json',
+                'Authorization': 'Bearer ' + new String(token)
             },
             body: JSON.stringify(Body)
         })
@@ -435,6 +483,19 @@ export default class AdvanceSearchScreen extends Component {
                             await this.setState({facilities: data});
                         });
                     }
+                } else if (responseData['StatusCode'] === 401) {
+                    this.setState({progressModalVisible: false}, () => {
+                        this.props.navigation.navigate(
+                            'GetVerificationCodeScreen',
+                            {
+                                user: {
+                                    username: 'adrian',
+                                    password: '1234',
+                                    role: 'stranger',
+                                },
+                            },
+                        );
+                    });
                 } else {
                     this.setState({progressModalVisible: false}, () => {
                         alert('خطا در اتصال به سرویس');
@@ -449,6 +510,7 @@ export default class AdvanceSearchScreen extends Component {
     async getGenders() {
         const baseUrl = this.state.baseUrl;
         const hub = this.state.hub;
+        const token = this.state.token;
         let Body = {
             Method: "GET",
             Url: GETGENDERS,
@@ -462,7 +524,7 @@ export default class AdvanceSearchScreen extends Component {
             headers: {
                 'content-type': 'application/json',
                 Accept: 'application/json',
-
+                'Authorization': 'Bearer ' + new String(token)
             },
             body: JSON.stringify(Body)
         })
@@ -477,6 +539,19 @@ export default class AdvanceSearchScreen extends Component {
                             this.getSkills();
                         });
                     }
+                } else if (responseData['StatusCode'] === 401) {
+                    this.setState({progressModalVisible: false}, () => {
+                        this.props.navigation.navigate(
+                            'GetVerificationCodeScreen',
+                            {
+                                user: {
+                                    username: 'adrian',
+                                    password: '1234',
+                                    role: 'stranger',
+                                },
+                            },
+                        );
+                    });
                 } else {
                     this.setState({progressModalVisible: false}, () => {
                         alert('خطا در اتصال به سرویس');
@@ -491,6 +566,7 @@ export default class AdvanceSearchScreen extends Component {
     async getSkills() {
         const baseUrl = this.state.baseUrl;
         const hub = this.state.hub;
+        const token = this.state.token;
         let Body = {
             Method: "GET",
             Url: GETSKILLS,
@@ -504,6 +580,7 @@ export default class AdvanceSearchScreen extends Component {
             headers: {
                 'content-type': 'application/json',
                 Accept: 'application/json',
+                'Authorization': 'Bearer ' + new String(token)
             },
             body: JSON.stringify(Body)
         })
@@ -517,6 +594,19 @@ export default class AdvanceSearchScreen extends Component {
                             this.getCertificates();
                         });
                     }
+                } else if (responseData['StatusCode'] === 401) {
+                    this.setState({progressModalVisible: false}, () => {
+                        this.props.navigation.navigate(
+                            'GetVerificationCodeScreen',
+                            {
+                                user: {
+                                    username: 'adrian',
+                                    password: '1234',
+                                    role: 'stranger',
+                                },
+                            },
+                        );
+                    });
                 } else {
                     this.setState({progressModalVisible: false}, () => {
                         alert('خطا در اتصال به سرویس');
@@ -531,6 +621,7 @@ export default class AdvanceSearchScreen extends Component {
     async getCertificates() {
         const baseUrl = this.state.baseUrl;
         const hub = this.state.hub;
+        const token = this.state.token;
         let Body = {
             Method: "GET",
             Url: GETCERTIFICATES,
@@ -544,6 +635,7 @@ export default class AdvanceSearchScreen extends Component {
             headers: {
                 'content-type': 'application/json',
                 Accept: 'application/json',
+                'Authorization': 'Bearer ' + new String(token)
             },
             body: JSON.stringify(Body)
         })
@@ -556,6 +648,19 @@ export default class AdvanceSearchScreen extends Component {
                             this.setState({certificates: data});
                         });
                     }
+                } else if (responseData['StatusCode'] === 401) {
+                    this.setState({progressModalVisible: false}, () => {
+                        this.props.navigation.navigate(
+                            'GetVerificationCodeScreen',
+                            {
+                                user: {
+                                    username: 'adrian',
+                                    password: '1234',
+                                    role: 'stranger',
+                                },
+                            },
+                        );
+                    });
                 } else {
                     this.setState({progressModalVisible: false}, () => {
                         alert('خطا در اتصال به سرویس');
@@ -578,6 +683,7 @@ export default class AdvanceSearchScreen extends Component {
 
         const baseUrl = this.state.baseUrl;
         const hub = this.state.hub;
+        const token = this.state.token;
         if (facility.id === -100 || kind.id === -100 || service.id === -100) {
             alert('لطفا فیلد ها را انتخاب کنید');
         } else {
@@ -604,6 +710,7 @@ export default class AdvanceSearchScreen extends Component {
                 headers: {
                     'content-type': 'application/json',
                     Accept: 'application/json',
+                    'Authorization': 'Bearer ' + new String(token)
                 },
                 body: JSON.stringify(Body),
             })
@@ -642,6 +749,19 @@ export default class AdvanceSearchScreen extends Component {
                                 });
                             }
                         }
+                    } else if (responseData['StatusCode'] === 401) {
+                        this.setState({progressModalVisible: false}, () => {
+                            this.props.navigation.navigate(
+                                'GetVerificationCodeScreen',
+                                {
+                                    user: {
+                                        username: 'adrian',
+                                        password: '1234',
+                                        role: 'stranger',
+                                    },
+                                },
+                            );
+                        });
                     } else {
                         this.setState({progressModalVisible: false}, () => {
                             alert(JSON.stringify('خطا در دسترسی به سرویس'));

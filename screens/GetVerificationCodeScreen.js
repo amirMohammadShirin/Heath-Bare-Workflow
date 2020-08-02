@@ -32,16 +32,25 @@ export default class GetVerificationCodeScreen extends Component {
             check: 'checkmark-circle',
             error: 'close-circle',
             progressModalVisible: false,
+            token : null
         };
     }
 
-    componentDidMount(): void {
+    async componentDidMount(): void {
         if (Platform.OS === 'android') {
             BackHandler.addEventListener(
                 'hardwareBackPress',
                 this.handleBackButtonClick,
             );
         }
+        const baseUrl = await AsyncStorage.getItem('baseUrl');
+        const hub = await AsyncStorage.getItem('hub');
+        const token = await AsyncStorage.getItem('token');
+        this.setState({
+            baseUrl : baseUrl,
+            hub : hub,
+            token : token
+        })
     }
 
     async demo(body) {
@@ -141,8 +150,9 @@ export default class GetVerificationCodeScreen extends Component {
     }
 
     async getVerificationCode(body) {
-        const baseUrl = await AsyncStorage.getItem('baseUrl');
-        const hub = await AsyncStorage.getItem('hub');
+        const token = this.state.token;
+        const baseUrl = this.state.baseUrl;
+        const hub = this.state.hub;
         let BODY = {
             Method: 'POST',
             UserName: this.state.phone,
@@ -150,17 +160,20 @@ export default class GetVerificationCodeScreen extends Component {
             Url: GETVERIFICATIONCODE,
             body: body
         }
+        console.log(JSON.stringify(BODY))
         this.setState({progressModalVisible: true}, async () => {
             await fetch(baseUrl + hub, {
                 method: 'POST',
                 headers: {
                     'content-type': 'application/json',
                     Accept: 'application/json',
+                    'Authorization': 'Bearer ' + "false"
                 },
                 body: JSON.stringify(BODY),
             })
                 .then(response => response.json())
                 .then(async responseData => {
+                    console.log(responseData)
                     if (responseData['StatusCode'] === 200) {
                         this.setState({progressModalVisible: false}, () => {
                             this.props.navigation.push('VerifyScreen', {
@@ -190,7 +203,22 @@ export default class GetVerificationCodeScreen extends Component {
                                 },
                             );
                         });
-                    } else {
+                    }
+                    else if (responseData['StatusCode'] === 401) {
+                        this.setState({progressModalVisible: false}, () => {
+                            this.props.navigation.navigate(
+                                'GetVerificationCodeScreen',
+                                {
+                                    user: {
+                                        username: 'adrian',
+                                        password: '1234',
+                                        role: 'stranger',
+                                    },
+                                },
+                            );
+                        });
+                    }
+                    else {
                         this.setState({progressModalVisible: false}, () => {
                             alert('خطا در اتصال به سرویس');
                         });

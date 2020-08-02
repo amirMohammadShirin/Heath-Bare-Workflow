@@ -44,6 +44,7 @@ export default class DoctorsResult extends Component {
             Gender: null,
             Skill: null,
             Certificate: null,
+
         };
     }
 

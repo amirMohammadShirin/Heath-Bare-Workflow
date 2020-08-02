@@ -55,8 +55,8 @@ PushNotification.configure({
             && (hub != null && typeof hub !== 'undefined')
         ) {
 
-            const url = baseUrl + testNotifToken
-            console.log('\n URL : \n',url)
+            const url = baseUrl + hub
+            console.log('\n URL : \n', url)
             var body = {
                 UserId: userId,
                 Token: token.token
@@ -67,24 +67,26 @@ PushNotification.configure({
                 Url: SAVENOTIFICATIONTOKEN,
                 username: '',
                 nationalCode: '',
-                Body: Body
+                Body: body
             }
 
             console.log('idddddddddddddddddddddddddddd : \n ', userId)
             console.log('baseeeeeeeeeeeeeeeeeeeeeeeeee : \n ', baseUrl)
             console.log('hubbbbbbbbbbbbbbbbbbbbbbbbbbb : \n ', hub)
             console.log('bodyyyyyyyyyyyyyyyyyyyyyyyyyy : \n ', body)
+            console.log('bodyyyyyyyyyyyyyyyyyyyyyyyyyy : \n ', Body)
             fetch(url, {
                 method: 'POST',
                 headers: {
                     'content-type': 'application/json',
                     Accept: 'application/json',
+                    'Authorization': 'Bearer ' + "false"
                 },
-                body: JSON.stringify(body)
+                body: JSON.stringify(Body)
             })
                 .then(response => response.json())
                 .then(responseData => {
-                    console.log("SAVE NOTIFICATION RESPONSE : \n ",responseData)
+                    console.log("SAVE NOTIFICATION RESPONSE : \n ", responseData)
                 })
                 .catch(error => {
                     console.error(error);

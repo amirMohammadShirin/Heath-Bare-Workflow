@@ -56,7 +56,6 @@ export default class ReserveScreen extends Component {
             this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
         }
         this.state = {
-
             hub: null,
             userId: null,
             medicalCenterSearchWord: null,
@@ -174,6 +173,7 @@ export default class ReserveScreen extends Component {
                 this.handleBackButtonClick,
             );
         }
+        const token = await AsyncStorage.getItem('token');
         const hub = await AsyncStorage.getItem('hub');
         const baseUrl = await AsyncStorage.getItem('baseUrl');
         const MEDICALCENTER = this.props.navigation.getParam('medicalCenter');
@@ -184,6 +184,7 @@ export default class ReserveScreen extends Component {
                 hub: hub,
                 baseUrl: baseUrl,
                 userId: userId,
+                token: token,
                 medicalCenterSearchWord:
                     typeof MEDICALCENTER != 'undefined' && MEDICALCENTER != null
                         ? MEDICALCENTER.Title
@@ -214,6 +215,7 @@ export default class ReserveScreen extends Component {
     }
 
     async getSkills() {
+        const token = this.state.token;
         const baseUrl = this.state.baseUrl;
         const hub = this.state.hub;
         let Body = {
@@ -229,6 +231,7 @@ export default class ReserveScreen extends Component {
             headers: {
                 'content-type': 'application/json',
                 Accept: 'application/json',
+                'Authorization': 'Bearer ' + new String(token)
             },
             body: JSON.stringify(Body)
         })
@@ -242,6 +245,19 @@ export default class ReserveScreen extends Component {
                             this.getGenders();
                         });
                     }
+                } else if (responseData['StatusCode'] === 401) {
+                    this.setState({progressModalVisible: false}, () => {
+                        this.props.navigation.navigate(
+                            'GetVerificationCodeScreen',
+                            {
+                                user: {
+                                    username: 'adrian',
+                                    password: '1234',
+                                    role: 'stranger',
+                                },
+                            },
+                        );
+                    });
                 } else {
                     this.setState({progressModalVisible: false}, () => {
                         alert('خطا در اتصال به سرویس');
@@ -254,6 +270,7 @@ export default class ReserveScreen extends Component {
     }
 
     async getGenders() {
+        const token = this.state.token;
         const baseUrl = this.state.baseUrl;
         const hub = this.state.hub;
         let Body = {
@@ -269,6 +286,7 @@ export default class ReserveScreen extends Component {
             headers: {
                 'content-type': 'application/json',
                 Accept: 'application/json',
+                'Authorization': 'Bearer ' + new String(token)
             },
             body: JSON.stringify(Body)
         })
@@ -282,6 +300,19 @@ export default class ReserveScreen extends Component {
                             this.getDoctorsName();
                         });
                     }
+                } else if (responseData['StatusCode'] === 401) {
+                    this.setState({progressModalVisible: false}, () => {
+                        this.props.navigation.navigate(
+                            'GetVerificationCodeScreen',
+                            {
+                                user: {
+                                    username: 'adrian',
+                                    password: '1234',
+                                    role: 'stranger',
+                                },
+                            },
+                        );
+                    });
                 } else {
                     this.setState({progressModalVisible: false}, () => {
                         alert('خطا در اتصال به سرویس');
@@ -294,6 +325,7 @@ export default class ReserveScreen extends Component {
     }
 
     async getDoctorsName() {
+        const token = this.state.token;
         const baseUrl = this.state.baseUrl;
         const hub = this.state.hub;
         let Body = {
@@ -310,6 +342,7 @@ export default class ReserveScreen extends Component {
             headers: {
                 'content-type': 'application/json',
                 Accept: 'application/json',
+                'Authorization': 'Bearer ' + new String(token)
             },
             body: JSON.stringify(Body)
         })
@@ -325,6 +358,19 @@ export default class ReserveScreen extends Component {
                             },
                         );
                     }
+                } else if (responseData['StatusCode'] === 401) {
+                    this.setState({progressModalVisible: false}, () => {
+                        this.props.navigation.navigate(
+                            'GetVerificationCodeScreen',
+                            {
+                                user: {
+                                    username: 'adrian',
+                                    password: '1234',
+                                    role: 'stranger',
+                                },
+                            },
+                        );
+                    });
                 } else {
                     this.setState({progressModalVisible: false}, () => {
                         alert('خطا در اتصال به سرویس');
@@ -337,6 +383,7 @@ export default class ReserveScreen extends Component {
     }
 
     async getMedicalCentersName() {
+        const token = this.state.token;
         const baseUrl = this.state.baseUrl;
         const hub = this.state.hub;
         let Body = {
@@ -352,7 +399,7 @@ export default class ReserveScreen extends Component {
             headers: {
                 'content-type': 'application/json',
                 Accept: 'application/json',
-
+                'Authorization': 'Bearer ' + new String(token)
             },
             body: JSON.stringify(Body)
         })
@@ -368,6 +415,19 @@ export default class ReserveScreen extends Component {
                             },
                         );
                     }
+                } else if (responseData['StatusCode'] === 401) {
+                    this.setState({progressModalVisible: false}, () => {
+                        this.props.navigation.navigate(
+                            'GetVerificationCodeScreen',
+                            {
+                                user: {
+                                    username: 'adrian',
+                                    password: '1234',
+                                    role: 'stranger',
+                                },
+                            },
+                        );
+                    });
                 } else {
                     this.setState({progressModalVisible: false}, () => {
                         alert('خطا در اتصال به سرویس');
@@ -387,6 +447,7 @@ export default class ReserveScreen extends Component {
         startDate,
         endDate,
     ) {
+        const token = this.state.token;
         const baseUrl = this.state.baseUrl;
         const hub = this.state.hub;
         let filters = {
@@ -419,6 +480,7 @@ export default class ReserveScreen extends Component {
                 headers: {
                     'content-type': 'application/json',
                     Accept: 'application/json',
+                    'Authorization': 'Bearer ' + new String(token)
                 },
                 body: JSON.stringify(Body),
             })
@@ -446,6 +508,19 @@ export default class ReserveScreen extends Component {
                                 }
                             });
                         }
+                    } else if (responseData['StatusCode'] === 401) {
+                        this.setState({progressModalVisible: false}, () => {
+                            this.props.navigation.navigate(
+                                'GetVerificationCodeScreen',
+                                {
+                                    user: {
+                                        username: 'adrian',
+                                        password: '1234',
+                                        role: 'stranger',
+                                    },
+                                },
+                            );
+                        });
                     } else if (responseData['StatusCode'] === 100019) {
                         this.setState({progressModalVisible: false}, () => {
                             alert('توالی تاریخ رعایت نشده است !');

@@ -38,14 +38,15 @@ export default class NoticeScreen extends Component {
             notices: null,
             picImage: null,
             refreshing: false,
-            hub: null
+            hub: null,
         };
     }
 
     async componentWillMount(): void {
+        const token = await AsyncStorage.getItem('token');
         var hub = await AsyncStorage.getItem('hub');
         var baseUrl = await AsyncStorage.getItem('baseUrl');
-        this.setState({baseUrl: baseUrl, hub: hub}, () => {
+        this.setState({baseUrl: baseUrl, hub: hub, token: token}, () => {
             this.getNotices(false);
         });
     }
@@ -66,6 +67,7 @@ export default class NoticeScreen extends Component {
             headers: {
                 'content-type': 'application/json',
                 Accept: 'application/json',
+                'Authorization': 'Bearer ' + new String(token)
             },
             body: JSON.stringify(Body)
         })
@@ -83,6 +85,19 @@ export default class NoticeScreen extends Component {
                             },
                         );
                     }
+                } else if (responseData['StatusCode'] === 401) {
+                    this.setState({progressModalVisible: false}, () => {
+                        this.props.navigation.navigate(
+                            'GetVerificationCodeScreen',
+                            {
+                                user: {
+                                    username: 'adrian',
+                                    password: '1234',
+                                    role: 'stranger',
+                                },
+                            },
+                        );
+                    });
                 } else {
                     this.setState(
                         {progressModalVisible: false, refreshing: false},

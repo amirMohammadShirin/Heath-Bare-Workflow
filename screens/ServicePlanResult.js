@@ -101,6 +101,7 @@ export default class ServicePlanResult extends Component {
                 this.handleBackButtonClick,
             );
         }
+        const token = await AsyncStorage.getItem('token');
         var hub = await AsyncStorage.getItem('hub');
         var baseUrl = await AsyncStorage.getItem('baseUrl');
         var userId = await AsyncStorage.getItem('userId');
@@ -128,11 +129,12 @@ export default class ServicePlanResult extends Component {
             gender: gender,
             startDate: startDate,
             endDate: endDate,
+            token: token,
         });
     }
 
     async reserve(body) {
-
+        const token = this.state.token;
         const baseUrl = this.state.baseUrl;
         const hub = this.state.hub;
         let Body = {
@@ -152,6 +154,7 @@ export default class ServicePlanResult extends Component {
             headers: {
                 'content-type': 'application/json',
                 Accept: 'application/json',
+                'Authorization': 'Bearer ' + new String(token)
             },
             body: JSON.stringify(Body),
         })
@@ -179,6 +182,19 @@ export default class ServicePlanResult extends Component {
                             );
                         });
                     }
+                } else if (responseData['StatusCode'] === 401) {
+                    this.setState({progressModalVisible: false}, () => {
+                        this.props.navigation.navigate(
+                            'GetVerificationCodeScreen',
+                            {
+                                user: {
+                                    username: 'adrian',
+                                    password: '1234',
+                                    role: 'stranger',
+                                },
+                            },
+                        );
+                    });
                 } else if (responseData['StatusCode'] === 701) {
                     this.setState({progressModalVisible: false}, () => {
                         alert(responseData['StatusMessage']);

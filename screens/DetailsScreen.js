@@ -98,6 +98,7 @@ export default class DetailsScreen extends Component {
                 this.handleBackButtonClick,
             );
         }
+        const token = await AsyncStorage.getItem('token');
         var hub = await AsyncStorage.getItem('hub');
         var baseUrl = await AsyncStorage.getItem('baseUrl');
         const doctor = this.props.navigation.getParam('doctor');
@@ -106,6 +107,7 @@ export default class DetailsScreen extends Component {
                 baseUrl: baseUrl,
                 hub: hub,
                 selectedDoctor: doctor,
+                token: token,
                 selectedMedicalCenter:
                     selectedMedicalCenter != null && selectedMedicalCenter !== 'undefined'
                         ? selectedMedicalCenter
@@ -120,6 +122,7 @@ export default class DetailsScreen extends Component {
     async getDoctorDetails() {
         const baseUrl = this.state.baseUrl;
         const hub = this.state.hub;
+        const token = this.state.token;
         this.setState({progressModalVisible: true});
         const value = this.state.selectedDoctor;
         let body =
@@ -139,6 +142,7 @@ export default class DetailsScreen extends Component {
             headers: {
                 'content-type': 'application/json',
                 Accept: 'application/json',
+                'Authorization': 'Bearer ' + new String(token)
             },
             body: JSON.stringify(Body),
         })
@@ -159,6 +163,19 @@ export default class DetailsScreen extends Component {
                             );
                         });
                     }
+                } else if (responseData['StatusCode'] === 401) {
+                    this.setState({progressModalVisible: false}, () => {
+                        this.props.navigation.navigate(
+                            'GetVerificationCodeScreen',
+                            {
+                                user: {
+                                    username: 'adrian',
+                                    password: '1234',
+                                    role: 'stranger',
+                                },
+                            },
+                        );
+                    });
                 } else {
                     this.setState({progressModalVisible: false}, () => {
                         alert(JSON.stringify('خطا در دسترسی به سرویس'))
@@ -173,6 +190,7 @@ export default class DetailsScreen extends Component {
     // async getDoctorRate() {
     //     const baseUrl = this.state.baseUrl;
     //     const hub = this.state.hub
+    //     const token = this.state.token;
     //     this.setState({progressModalVisible: true});
     //     const value = this.state.selectedDoctor;
     //     let body =
@@ -194,6 +212,7 @@ export default class DetailsScreen extends Component {
     //         headers: {
     //             'content-type': 'application/json',
     //             Accept: 'application/json',
+    //             'Authorization': 'Bearer ' + new String(token)
     //         },
     //         body: JSON.stringify(Body),
     //     })
@@ -218,6 +237,19 @@ export default class DetailsScreen extends Component {
     //                         );
     //                     });
     //                 }
+    //             } else if (responseData['StatusCode'] === 401) {
+    //                 this.setState({progressModalVisible: false}, () => {
+    //                     this.props.navigation.navigate(
+    //                         'GetVerificationCodeScreen',
+    //                         {
+    //                             user: {
+    //                                 username: 'adrian',
+    //                                 password: '1234',
+    //                                 role: 'stranger',
+    //                             },
+    //                         },
+    //                     );
+    //                 });
     //             } else {
     //                 this.setState({progressModalVisible: false}, () => {
     //                     alert(JSON.stringify('خطا در دسترسی به سرویس'))
@@ -226,11 +258,11 @@ export default class DetailsScreen extends Component {
     //             }
     //         })
     //         .catch(error => {
-    //             console.error(error);
+    //             console.log(error);
     //             // alert(error)
     //         });
     // }
-    //
+
 
     render() {
         return (

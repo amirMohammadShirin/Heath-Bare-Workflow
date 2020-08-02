@@ -99,7 +99,8 @@ export default class HomeScreen extends Component {
                 longitudeDelta: 1.3,
             },
             tracksViewChanges: true,
-            hub: null
+            hub: null,
+
         };
     }
 
@@ -140,6 +141,8 @@ export default class HomeScreen extends Component {
     async getAllLocations() {
         const baseUrl = this.state.baseUrl;
         const hub = this.state.hub;
+        const token = this.state.token;
+        console.log(token)
         let Body = {
             method: 'GET',
             Url: GETALLLOCATIONS,
@@ -153,6 +156,7 @@ export default class HomeScreen extends Component {
             headers: {
                 'content-type': 'application/json',
                 Accept: 'application/json',
+                'Authorization': 'Bearer ' + new String(token)
             },
             body: JSON.stringify(Body),
         })
@@ -189,6 +193,19 @@ export default class HomeScreen extends Component {
                             );
                         });
                     }
+                } else if (responseData['StatusCode'] === 401) {
+                    this.setState({progressModalVisible: false}, () => {
+                        this.props.navigation.navigate(
+                            'GetVerificationCodeScreen',
+                            {
+                                user: {
+                                    username: 'adrian',
+                                    password: '1234',
+                                    role: 'stranger',
+                                },
+                            },
+                        );
+                    });
                 } else if (responseData['StatusCode'] === 400) {
                     alert(JSON.stringify('خطا در دسترسی به سرویس'));
                 }
@@ -234,6 +251,7 @@ export default class HomeScreen extends Component {
                 this.handleBackButtonClick,
             );
         }
+        const token = await AsyncStorage.getItem('token');
         let hub = await AsyncStorage.getItem('hub');
         let baseUrl = await AsyncStorage.getItem('baseUrl');
 
@@ -249,6 +267,7 @@ export default class HomeScreen extends Component {
                 user: this.props.navigation.getParam('user'),
                 baseUrl: baseUrl,
                 hub: hub,
+                token: token
             },
             async () => {
                 await this.getAllLocations();

@@ -78,7 +78,8 @@ export default class ShowReservesScreen extends Component {
             greenActive: true,
             navigation: null,
             hub: null,
-            userId: null
+            userId: null,
+            token: null
         };
     }
 
@@ -102,10 +103,11 @@ export default class ShowReservesScreen extends Component {
 
     async componentWillMount(): void {
         console.log('showReserveScreen will mount');
+        const token = await AsyncStorage.getItem('token');
         var hub = await AsyncStorage.getItem('hub');
         var userId = await AsyncStorage.getItem('userId');
         var baseUrl = await AsyncStorage.getItem('baseUrl');
-        this.setState({baseUrl: baseUrl, userId: userId, hub: hub}, async () => {
+        this.setState({baseUrl: baseUrl, userId: userId, hub: hub, token: token}, async () => {
             this.getReservationReports(false);
         });
     }
@@ -119,6 +121,7 @@ export default class ShowReservesScreen extends Component {
     }
 
     async disableReservation(value) {
+        const token = this.state.token;
         const baseUrl = this.state.baseUrl;
         const hub = this.state.hub;
         const userId = this.state.userId;
@@ -142,12 +145,12 @@ export default class ShowReservesScreen extends Component {
             body: body
         }
         console.log('body : ' + JSON.stringify(body));
-        fetch(this.state.baseUrl + DISABLERESERVATION, {
+        fetch(baseUrl + hub, {
             method: 'POST',
             headers: {
                 'content-type': 'application/json',
                 Accept: 'application/json',
-
+                'Authorization': 'Bearer ' + new String(token)
             },
             body: JSON.stringify(Body),
         })
@@ -177,12 +180,20 @@ export default class ShowReservesScreen extends Component {
                             );
                         });
                     }
-                }
-
-                    // else if (responseData['StatusCode'] === 501) { //10010
-                    //     alert('عملیات لغو با شکست مواجه شد')
-                // }
-                else if (responseData['StatusCode'] === 501) {
+                } else if (responseData['StatusCode'] === 401) {
+                    this.setState({progressModalVisible: false}, () => {
+                        this.props.navigation.navigate(
+                            'GetVerificationCodeScreen',
+                            {
+                                user: {
+                                    username: 'adrian',
+                                    password: '1234',
+                                    role: 'stranger',
+                                },
+                            },
+                        );
+                    });
+                } else if (responseData['StatusCode'] === 501) {
                     //10010
                     this.setState({progressModalVisible: false});
                     alert(responseData['Data']);
@@ -203,7 +214,7 @@ export default class ShowReservesScreen extends Component {
         const baseUrl = this.state.baseUrl;
         const hub = this.state.hub;
         const userId = this.state.userId;
-
+        const token = this.state.token;
         let Body = {
             method: "POST",
             Url: GETRESREVATIONREPORTS,
@@ -219,6 +230,7 @@ export default class ShowReservesScreen extends Component {
             headers: {
                 'content-type': 'application/json',
                 Accept: 'application/json',
+                'Authorization': 'Bearer ' + new String(token)
             },
             body: JSON.stringify(Body)
         })
@@ -241,6 +253,19 @@ export default class ShowReservesScreen extends Component {
                             refreshing: false,
                         });
                     }
+                } else if (responseData['StatusCode'] === 401) {
+                    this.setState({progressModalVisible: false}, () => {
+                        this.props.navigation.navigate(
+                            'GetVerificationCodeScreen',
+                            {
+                                user: {
+                                    username: 'adrian',
+                                    password: '1234',
+                                    role: 'stranger',
+                                },
+                            },
+                        );
+                    });
                 } else {
                     this.setState(
                         {progressModalVisible: false, refreshing: false, searchWord: null},

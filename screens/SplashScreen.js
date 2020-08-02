@@ -28,6 +28,7 @@ export default class SplashScreen extends Component {
         console.log(hub);
         console.log(nationalCode);
         console.log(username)
+        console.log("Adrian Token : \n ", token)
         if (
             hub != null &&
             typeof hub !== 'undefined' &&
@@ -36,7 +37,9 @@ export default class SplashScreen extends Component {
             username != null &&
             typeof username !== 'undefined' &&
             nationalCode != null &&
-            typeof nationalCode !== 'undefined'
+            typeof nationalCode !== 'undefined' &&
+            token != null &&
+            typeof token !== 'undefined'
         ) {
 
             let body = {
@@ -54,7 +57,10 @@ export default class SplashScreen extends Component {
             console.log(baseUrl + hub)
             fetch(baseUrl + hub, {
                 method: 'POST',
-                headers: {'content-type': 'application/json'},
+                headers: {
+                    'content-type': 'application/json',
+                    'Authorization': 'Bearer ' + new String(this.state.token)
+                },
                 body: JSON.stringify(BODY),
             })
                 .then(response => response.json())
@@ -75,6 +81,19 @@ export default class SplashScreen extends Component {
 
                         }
                     } else if (responseData['StatusCode'] === 600) {
+                        this.setState({progressModalVisible: false}, () => {
+                            this.props.navigation.navigate(
+                                'GetVerificationCodeScreen',
+                                {
+                                    user: {
+                                        username: 'adrian',
+                                        password: '1234',
+                                        role: 'stranger',
+                                    },
+                                },
+                            );
+                        });
+                    } else if (responseData['StatusCode'] === 401) {
                         this.setState({progressModalVisible: false}, () => {
                             this.props.navigation.navigate(
                                 'GetVerificationCodeScreen',

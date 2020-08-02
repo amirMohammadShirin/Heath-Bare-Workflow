@@ -138,6 +138,7 @@ export default class SearchMedicalCenter extends Component {
                 this.handleBackButtonClick,
             );
         }
+        const token = await AsyncStorage.getItem('token');
         const hub = await AsyncStorage.getItem('hub');
         const baseUrl = await AsyncStorage.getItem('baseUrl');
         const userId = await AsyncStorage.getItem('userId');
@@ -153,14 +154,16 @@ export default class SearchMedicalCenter extends Component {
                     headerFontSize: length >= 20 ? 15 : 20,
                     baseUrl: baseUrl,
                     hub: hub,
-                    userId: userId
+                    userId: userId,
+                    token: token,
                 });
             } catch (e) {
                 await this.setState(
                     {
                         baseUrl: baseUrl,
                         hub: hub,
-                        userId: userId
+                        userId: userId,
+                        token: token,
                     },
                     () => {
                         this.getFavoriteDoctors();
@@ -172,7 +175,8 @@ export default class SearchMedicalCenter extends Component {
                 {
                     baseUrl: baseUrl,
                     hub: hub,
-                    userId: userId
+                    userId: userId,
+                    token: token,
                 },
                 () => {
                     this.getFavoriteDoctors();
@@ -182,6 +186,7 @@ export default class SearchMedicalCenter extends Component {
     }
 
     async search(text) {
+        const token = this.state.token;
         const baseUrl = this.state.baseUrl;
         const hub = this.state.hub;
 
@@ -205,6 +210,7 @@ export default class SearchMedicalCenter extends Component {
                     headers: {
                         'content-type': 'application/json',
                         Accept: 'application/json',
+                        'Authorization': 'Bearer ' + new String(token)
                     },
                     body: JSON.stringify(Body),
                 },
@@ -221,6 +227,19 @@ export default class SearchMedicalCenter extends Component {
                                 },
                             );
                         }
+                    } else if (responseData['StatusCode'] === 401) {
+                        this.setState({progressModalVisible: false}, () => {
+                            this.props.navigation.navigate(
+                                'GetVerificationCodeScreen',
+                                {
+                                    user: {
+                                        username: 'adrian',
+                                        password: '1234',
+                                        role: 'stranger',
+                                    },
+                                },
+                            );
+                        });
                     } else if (responseData['StatusCode'] === 400) {
                         await this.setState(
                             {progressModalVisible: false, isLoading: false},
@@ -249,19 +268,20 @@ export default class SearchMedicalCenter extends Component {
                     SearchWord: text,
                 }
             }
-          console.log("searchDoctor Body : \n",Body)
+            console.log("searchDoctor Body : \n", Body)
             await this.setState({progressModalVisible: false, isLoading: true});
             await fetch(baseUrl + hub, {
                 method: 'POST',
                 headers: {
                     'content-type': 'application/json',
                     Accept: 'application/json',
+                    'Authorization': 'Bearer ' + new String(token)
                 },
                 body: JSON.stringify(Body),
             })
                 .then(async response => response.json())
                 .then(async responseData => {
-                  console.log("favoriteDoctor response : \n",responseData)
+                    console.log("favoriteDoctor response : \n", responseData)
                     if (responseData['StatusCode'] === 200) {
                         if (responseData['Data'] != null) {
                             let data = responseData['Data'];
@@ -272,6 +292,19 @@ export default class SearchMedicalCenter extends Component {
                                 },
                             );
                         }
+                    } else if (responseData['StatusCode'] === 401) {
+                        this.setState({progressModalVisible: false}, () => {
+                            this.props.navigation.navigate(
+                                'GetVerificationCodeScreen',
+                                {
+                                    user: {
+                                        username: 'adrian',
+                                        password: '1234',
+                                        role: 'stranger',
+                                    },
+                                },
+                            );
+                        });
                     } else if (responseData['StatusCode'] === 400) {
                         await this.setState(
                             {progressModalVisible: false, isLoading: false},
@@ -294,6 +327,7 @@ export default class SearchMedicalCenter extends Component {
     }
 
     async getFavoriteDoctors() {
+        const token = this.state.token;
         const baseUrl = this.state.baseUrl;
         const hub = this.state.hub;
         const userId = this.state.userId;
@@ -312,6 +346,7 @@ export default class SearchMedicalCenter extends Component {
             headers: {
                 'content-type': 'application/json',
                 Accept: 'application/json',
+                'Authorization': 'Bearer ' + new String(token)
             },
             body: JSON.stringify(Body)
         })
@@ -325,6 +360,19 @@ export default class SearchMedicalCenter extends Component {
                             await this.setState({favoriteDoctors: data});
                         });
                     }
+                } else if (responseData['StatusCode'] === 401) {
+                    this.setState({progressModalVisible: false}, () => {
+                        this.props.navigation.navigate(
+                            'GetVerificationCodeScreen',
+                            {
+                                user: {
+                                    username: 'adrian',
+                                    password: '1234',
+                                    role: 'stranger',
+                                },
+                            },
+                        );
+                    });
                 } else if (responseData['StatusCode'] === 400) {
                     await this.setState({progressModalVisible: false});
                     alert(JSON.stringify('خطا در دسترسی به سرویس'));

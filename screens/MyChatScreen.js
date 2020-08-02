@@ -49,13 +49,14 @@ export default class MyChatScreen extends Component {
             medicalCenterSelected: false,
             progressModalVisible: false,
             doctorData: [],
-            file: null
+            file: null,
+            token: null
         };
     }
 
 
     async getDoctorsForMessage() {
-
+        const token = this.state.token;
         const baseUrl = this.state.baseUrl;
         const hub = this.state.hub;
         const userId = this.state.userId;
@@ -68,10 +69,13 @@ export default class MyChatScreen extends Component {
             Body: body
         }
         this.setState({progressModalVisible: true})
-        fetch(baseUrl + testUrl, {
+        fetch(baseUrl + hub, {
             method: 'POST',
-            headers: {'content-type': 'application/json'},
-            body: JSON.stringify(body),
+            headers: {
+                'content-type': 'application/json',
+                'Authorization': 'Bearer ' + new String(token)
+            },
+            body: JSON.stringify(Body),
         })
             .then(response => response.json())
             .then(async responseData => {
@@ -105,6 +109,19 @@ export default class MyChatScreen extends Component {
                         }
 
                     }
+                } else if (responseData['StatusCode'] === 401) {
+                    this.setState({progressModalVisible: false}, () => {
+                        this.props.navigation.navigate(
+                            'GetVerificationCodeScreen',
+                            {
+                                user: {
+                                    username: 'adrian',
+                                    password: '1234',
+                                    role: 'stranger',
+                                },
+                            },
+                        );
+                    });
                 } else {
                     this.setState({progressModalVisible: false}, () => {
                         alert('خطا در اتصال به سرویس')
@@ -121,10 +138,12 @@ export default class MyChatScreen extends Component {
         const baseUrl = await AsyncStorage.getItem('baseUrl');
         const hub = await AsyncStorage.getItem('hub');
         const userId = await AsyncStorage.getItem('userId');
+        const token = await AsyncStorage.getItem('token');
         this.setState({
             baseUrl: baseUrl,
             hub: hub,
-            userId: userId
+            userId: userId,
+            token: token
         }, () => {
             this.getDoctorsForMessage()
 
@@ -166,6 +185,7 @@ export default class MyChatScreen extends Component {
         if (this.state.textAreaValue === '') {
             alert('لطفا متن پیام را وارد کنید')
         } else {
+            const token = this.state.token;
             const baseUrl = this.state.baseUrl;
             const hub = this.state.hub;
             const userId = this.state.userId;
@@ -194,10 +214,13 @@ export default class MyChatScreen extends Component {
                 nationalCode: '',
                 Body: body
             }
-            fetch(baseUrl + testMessage, {
+            fetch(baseUrl + hub, {
                 method: 'POST',
-                headers: {'content-type': 'application/json'},
-                body: JSON.stringify(body),
+                headers: {
+                    'content-type': 'application/json',
+                    'Authorization': 'Bearer ' + new String(token)
+                },
+                body: JSON.stringify(Body),
             })
                 .then(response => response.json())
                 .then(async responseData => {

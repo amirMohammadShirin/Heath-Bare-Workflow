@@ -86,6 +86,7 @@ export default class VerifyScreen extends Component {
                 headers: {
                     'content-type': 'application/json',
                     Accept: 'application/json',
+                    'Authorization': 'Bearer ' + "false"
                 },
                 body: JSON.stringify(BODY),
             })
@@ -143,7 +144,10 @@ export default class VerifyScreen extends Component {
         console.log('verify body : ' + JSON.stringify(BODY))
         fetch(baseUrl + hub, {
             method: 'POST',
-            headers: {'content-type': 'application/json'},
+            headers: {
+                'content-type': 'application/json',
+                'Authorization': 'Bearer ' + "false"
+            },
             body: JSON.stringify(BODY)
         }).then((response) => response.json())
             .then(async (responseData) => {
