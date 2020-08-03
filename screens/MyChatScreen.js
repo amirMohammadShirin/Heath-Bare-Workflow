@@ -351,7 +351,7 @@ export default class MyChatScreen extends Component {
                                                     }
                                                 }
                                             }}
-                                            style={styles.autocompleteInputStyle}
+                                            style={[styles.autocompleteInputStyle,{paddingTop:2}]}
                                         />
                                     );
                                 }}
@@ -394,7 +394,7 @@ export default class MyChatScreen extends Component {
                                 )}
                             />
 
-                            <Text style={[styles.label, {marginBottom: 8, fontSize: 9}]}>
+                            <Text style={[styles.label, {marginBottom: 8, fontSize: 9,opacity:0}]}>
                                 {' '}
                                 ارسال پیام به
                             </Text>
@@ -452,12 +452,12 @@ export default class MyChatScreen extends Component {
                                 }}>
                                 {this.state.imageFromDevice != null ? (
                                     <Text
-                                        style={[styles.autocompleteInputStyle, {color: '#d9d9d9'}]}>
+                                        style={[styles.autocompleteInputStyle, {color: '#d9d9d9',paddingTop:1}]}>
                                         {this.state.fileName}
                                     </Text>
                                 ) : (
                                     <Text
-                                        style={[styles.autocompleteInputStyle, {color: '#d9d9d9'}]}>
+                                        style={[styles.autocompleteInputStyle, {color: '#d9d9d9',paddingTop:1}]}>
                                         انتخاب عکس
                                     </Text>
                                 )}

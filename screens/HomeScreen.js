@@ -711,31 +711,34 @@ export default class HomeScreen extends Component {
                                 latitudeDelta: 0.0922,
                                 longitudeDelta: 0.0421,
                             }}>
-                            {this.state.medicalCenters.map((value, index) => (
-                                <View>
-                                    {value.CenterDefinitionId ==
-                                    MunicipalityMedicalCenterDefinitionId &&
-                                    value.IsActiveForReservation ? (
-                                            <Marker
-                                                title={value.Title}
-                                                onCalloutPress={() =>
-                                                    this.setState({selectedMedicalCenter: value}, () => {
-                                                        this.setState({visible: true});
-                                                    })
+                            {this.state.showMunicipality &&
+                            this.state.municipalityMedicalCenters.map(value => (
+                                <Marker
+                                    title={value.Title}
+                                    onCalloutPress={() => {
+                                        if (value.IsActiveForReservation) {
+                                            this.setState({selectedMedicalCenter: value}, () => {
+                                                this.setState({visible: true});
+                                            });
+                                        }
+                                    }}
+                                    coordinate={{
+                                        latitude: this.getLatLong(value.Location, 'latitude'),
+                                        longitude: this.getLatLong(value.Location, 'longitude'),
+                                    }}>
+                                    <Icon
+                                        type={'FontAwesome5'}
+                                        name={'map-marker-alt'}
+                                        style={
+                                            value.IsActiveForReservation
+                                                ? {
+                                                    color: MunicipalityMedicalCenterColor,
+                                                    fontSize: 45,
                                                 }
-                                                coordinate={{
-                                                    latitude: this.getLatLong(value.Location, 'latitude'),
-                                                    longitude: this.getLatLong(value.Location, 'longitude'),
-                                                }}>
-                                                <Icon
-                                                    type={'FontAwesome5'}
-                                                    name={'map-marker-alt'}
-                                                    style={{color: '#23b9b9', fontSize: 45}}
-                                                />
-                                            </Marker>
-                                        ) :
-                                        null}
-                                </View>
+                                                : {color: 'gray', fontSize: 40}
+                                        }
+                                    />
+                                </Marker>
                             ))}
                         </MapView>
 

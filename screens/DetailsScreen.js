@@ -151,14 +151,14 @@ export default class DetailsScreen extends Component {
                 if (responseData['StatusCode'] === 200) {
                     if (responseData['Data'] != null) {
                         let data = responseData['Data'];
-                        await this.setState({progressModalVisible: false}, () => {
+                        await this.setState({progressModalVisible: true}, () => {
                             console.log(JSON.stringify(data));
                             this.setState(
                                 {
                                     doctor: data[0],
                                 },
                                 async () => {
-                                    // this.getDoctorRate()
+                                    this.getDoctorRate()
                                 },
                             );
                         });
@@ -187,81 +187,81 @@ export default class DetailsScreen extends Component {
             });
     }
 
-    // async getDoctorRate() {
-    //     const baseUrl = this.state.baseUrl;
-    //     const hub = this.state.hub
-    //     const token = this.state.token;
-    //     this.setState({progressModalVisible: true});
-    //     const value = this.state.selectedDoctor;
-    //     let body =
-    //         {
-    //             title: value.LastName,
-    //             id: value.Id
-    //         };
-    //
-    //     let Body = {
-    //         Method: "POST",
-    //         Url: GETDOCTORRATE,
-    //         username: '',
-    //         nationalCode: '',
-    //         body: body
-    //     }
-    //     console.log('getDoctorRate Body : \n ', Body);
-    //     await fetch(baseUrl + hub, {
-    //         method: 'POST',
-    //         headers: {
-    //             'content-type': 'application/json',
-    //             Accept: 'application/json',
-    //             'Authorization': 'Bearer ' + new String(token)
-    //         },
-    //         body: JSON.stringify(Body),
-    //     })
-    //         .then(response => response.json())
-    //         .then(async responseData => {
-    //             console.log('getDoctorRate Response : \n ', responseData);
-    //             if (responseData['StatusCode'] === 200) {
-    //                 if (responseData['Data'] != null) {
-    //                     let data = responseData['Data'];
-    //                     let score = data['Score']
-    //                     let count = data['Count']
-    //                     await this.setState({progressModalVisible: false}, () => {
-    //                         console.log(JSON.stringify(data));
-    //                         this.setState(
-    //                             {
-    //                                 score: score,
-    //                                 count: count.toString()
-    //                             },
-    //                             async () => {
-    //                                 // alert(JSON.stringify(this.state.doctor))
-    //                             },
-    //                         );
-    //                     });
-    //                 }
-    //             } else if (responseData['StatusCode'] === 401) {
-    //                 this.setState({progressModalVisible: false}, () => {
-    //                     this.props.navigation.navigate(
-    //                         'GetVerificationCodeScreen',
-    //                         {
-    //                             user: {
-    //                                 username: 'adrian',
-    //                                 password: '1234',
-    //                                 role: 'stranger',
-    //                             },
-    //                         },
-    //                     );
-    //                 });
-    //             } else {
-    //                 this.setState({progressModalVisible: false}, () => {
-    //                     alert(JSON.stringify('خطا در دسترسی به سرویس'))
-    //                     // alert(JSON.stringify(responseData));
-    //                 });
-    //             }
-    //         })
-    //         .catch(error => {
-    //             console.log(error);
-    //             // alert(error)
-    //         });
-    // }
+    async getDoctorRate() {
+        const baseUrl = this.state.baseUrl;
+        const hub = this.state.hub
+        const token = this.state.token;
+        const value = this.state.selectedDoctor;
+        let body =
+            {
+                title: value.LastName,
+                id: value.Id.toString()
+            };
+
+        let Body = {
+            Method: "POST",
+            Url: GETDOCTORRATE,
+            username: '',
+            nationalCode: '',
+            body: body
+        }
+        console.log('getDoctorRate Body : \n ', Body);
+        await fetch(baseUrl + hub, {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json',
+                Accept: 'application/json',
+                'Authorization': 'Bearer ' + new String(token)
+            },
+            body: JSON.stringify(Body),
+        })
+            .then(response => response.json())
+            .then(async responseData => {
+                console.log('getDoctorRate Response : \n ', responseData);
+                if (responseData['StatusCode'] === 200) {
+                    if (responseData['Data'] != null) {
+                        let data = responseData['Data'];
+                        let score = data['Score']
+                        let count = data['Count']
+                        console.log(count)
+                        await this.setState({progressModalVisible: false}, () => {
+                            console.log(JSON.stringify(data));
+                            this.setState(
+                                {
+                                    score: score,
+                                    count: count.toString()
+                                },
+                                async () => {
+                                    // alert(JSON.stringify(this.state.doctor))
+                                },
+                            );
+                        });
+                    }
+                } else if (responseData['StatusCode'] === 401) {
+                    this.setState({progressModalVisible: false}, () => {
+                        this.props.navigation.navigate(
+                            'GetVerificationCodeScreen',
+                            {
+                                user: {
+                                    username: 'adrian',
+                                    password: '1234',
+                                    role: 'stranger',
+                                },
+                            },
+                        );
+                    });
+                } else {
+                    this.setState({progressModalVisible: false}, () => {
+                        alert(JSON.stringify('خطا در دسترسی به سرویس'))
+                        // alert(JSON.stringify(responseData));
+                    });
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                // alert(error)
+            });
+    }
 
 
     render() {
@@ -408,7 +408,7 @@ export default class DetailsScreen extends Component {
                                                                 color: '#8a8a8a',
                                                                 textAlign: 'center',
                                                             }}>
-                                                            مجموع نظرات کاربران
+                                                            مجموع نظرات کاربران  {this.state.count}
                                                         </Text>
                                                     </View>
                                                 }
