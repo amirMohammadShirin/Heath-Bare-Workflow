@@ -730,11 +730,11 @@ export default class MyChatScreen extends Component {
                                 this.state.doctorSelected
                                     ? [
                                         styles.autocompleteInputStyle,
-                                        {color: '#fff', fontSize: 13},
+                                        {color: '#fff', fontSize: 13,paddingTop:1},
                                     ]
                                     : [
                                         styles.autocompleteInputStyle,
-                                        {color: 'gray', fontSize: 13},
+                                        {color: 'gray', fontSize: 13,paddingTop:1},
                                     ]
                             }>
                             ارسال
