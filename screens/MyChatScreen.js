@@ -69,16 +69,18 @@ export default class MyChatScreen extends Component {
             Body: body
         }
         this.setState({progressModalVisible: true})
-        fetch(baseUrl + hub, {
+        console.log(Body)
+        fetch(baseUrl + testUrl, {
             method: 'POST',
             headers: {
                 'content-type': 'application/json',
                 'Authorization': 'Bearer ' + new String(token)
             },
-            body: JSON.stringify(Body),
+            body: JSON.stringify(body),
         })
             .then(response => response.json())
             .then(async responseData => {
+                console.log(responseData)
                 if (responseData['StatusCode'] === 200) {
                     if (responseData['Data'] != null) {
                         try {

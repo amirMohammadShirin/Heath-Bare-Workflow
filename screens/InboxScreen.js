@@ -74,6 +74,7 @@ export default class InboxScreen extends Component {
 
     async getInboxMessages(isRefresh) {
 
+        const token = this.state.token;
         const baseUrl = this.state.baseUrl;
         const hub = this.state.hub;
         const userId = this.state.userId;

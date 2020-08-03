@@ -163,7 +163,6 @@ export default class NationalCodeScreen extends Component {
                             let nationalCode = userInfo['nationalCode'];
                             let userName = userInfo['user_name'];
                             let token = userInfo['token'];
-                            console('toooooooooooooooooooooooooooooken', token)
                             await AsyncStorage.setItem('nationalCode', nationalCode);
                             await AsyncStorage.setItem('username', userName);
                             await AsyncStorage.setItem('userId', userId);

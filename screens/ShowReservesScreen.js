@@ -135,7 +135,7 @@ export default class ShowReservesScreen extends Component {
             type: value.type,
             date: value.date,
             status: value.status,
-            statusValue: value.statusValue,
+            statusValue: value.statusValue.toString(),
         };
         let Body = {
             method: "POST",
@@ -144,7 +144,8 @@ export default class ShowReservesScreen extends Component {
             NationalCode: '',
             body: body
         }
-        console.log('body : ' + JSON.stringify(body));
+        console.log('body : ' + JSON.stringify(Body));
+        console.log('token : ' + JSON.stringify(token));
         fetch(baseUrl + hub, {
             method: 'POST',
             headers: {
@@ -512,7 +513,7 @@ export default class ShowReservesScreen extends Component {
                                     <Text style={[styles.title]}>تاریخ</Text>
                                 </Right>
                                 <Body>
-                                    <Text style={[styles.title]}>{item.date}</Text>
+                                    <Text style={[styles.value]}>{item.date}</Text>
                                 </Body>
                             </CardItem>
                             <CardItem style={styles.detailCard}>
@@ -583,7 +584,7 @@ export default class ShowReservesScreen extends Component {
                                     </TouchableOpacity>
                                 </Left>
                                 <Body style={[styles.headerBody]}>
-                                    <Text style={[styles.title]}>
+                                    <Text style={[styles.title,{flex:10,}]}>
                                         {item.actor} {item.medicalCenter}
                                     </Text>
                                     <TouchableOpacity
@@ -597,10 +598,7 @@ export default class ShowReservesScreen extends Component {
                                             );
                                         }}
                                         style={{
-                                            flex: 1,
-                                            justifyContent: 'center',
-                                            alignContent: 'center',
-                                            alignItems: 'center',
+                                            flexDirection:'row',
                                         }}>
                                         <Text
                                             style={{
@@ -1068,7 +1066,7 @@ const styles = StyleSheet.create({
     },
     headerBody: {
         flexDirection: 'row-reverse',
-        flex: 7,
+        flex: 10,
         margin: 1,
     },
     headerCard: {
@@ -1153,14 +1151,14 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(47,246,246,0.02)',
     },
     title: {
-        flex: 5,
-        alignSelf: 'center',
-        alignContent: 'center',
-        justifyContent: 'center',
-        alignItems: 'center',
+        flex: 1,
+        alignSelf: 'flex-end',
+        alignContent: 'flex-end',
+        justifyContent: 'flex-end',
+        alignItems: 'flex-end',
         paddingTop: 5,
         color: 'gray',
-        textAlign: 'center',
+        textAlign: 'right',
         fontFamily: 'IRANMarker',
         fontSize: 9,
     },

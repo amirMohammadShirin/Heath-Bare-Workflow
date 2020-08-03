@@ -533,7 +533,17 @@ export default class ReserveScreen extends Component {
                         this.setState({progressModalVisible: false}, () => {
                             alert('لطفا بازه تاریخی را وارد کنید');
                         });
-                    } else {
+                    } else if (responseData['StatusCode'] === 700) {
+                        this.setState({progressModalVisible: false}, () => {
+                            alert("برای شما قبلا با این پزشک در این روز نوبت ثبت شده است");
+                        });
+                    }
+                    else if (responseData['StatusCode'] === 701) {
+                        this.setState({progressModalVisible: false}, () => {
+                            alert("نوبت های امروز پر شده اند");
+                        });
+                    }
+                    else {
                         this.setState({progressModalVisible: false}, () => {
                             alert('خطا در اتصال به سرویس');
                         });

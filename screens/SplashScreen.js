@@ -59,7 +59,7 @@ export default class SplashScreen extends Component {
                 method: 'POST',
                 headers: {
                     'content-type': 'application/json',
-                    'Authorization': 'Bearer ' + new String(this.state.token)
+                    'Authorization': 'Bearer ' + new String(token)
                 },
                 body: JSON.stringify(BODY),
             })

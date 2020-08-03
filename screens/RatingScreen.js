@@ -68,7 +68,7 @@ export default class RatingScreen extends Component {
         this.setState({refreshing: true});
     };
 
-    async componentWillMount() {
+    async componentDidMount() {
         this.setState({progressModalVisible: true});
         let fullName = this.props.navigation.getParam('fullName');
         let reservationId = this.props.navigation.getParam('reservationId');
@@ -86,22 +86,38 @@ export default class RatingScreen extends Component {
         if (typeof medicalCenterId !== 'undefined' && medicalCenterId != null) {
             this.setState({
                 medicalCenterId: medicalCenterId,
+                hub: hub,
+                baseUrl: baseUrl,
+                userId: userId,
+                token: token
             });
         }
         if (typeof doctorId !== 'undefined' && doctorId != null) {
             this.setState({
                 doctorId: doctorId,
+                hub: hub,
+                baseUrl: baseUrl,
+                userId: userId,
+                token: token
             });
         }
         if (typeof medicalCenter !== 'undefined' && medicalCenter != null) {
             this.setState({
                 medicalCenterQuery: medicalCenter,
                 medicalCenterSelected: true,
+                hub: hub,
+                baseUrl: baseUrl,
+                userId: userId,
+                token: token
             });
         }
         if (typeof reservationId !== 'undefined' && reservationId != null) {
             this.setState({
                 reservationId: reservationId,
+                hub: hub,
+                baseUrl: baseUrl,
+                userId: userId,
+                token: token
             });
         }
         if (typeof doctor !== 'undefined' && doctor != null) {
@@ -127,6 +143,10 @@ export default class RatingScreen extends Component {
         const baseUrl = this.state.baseUrl;
         const hub = this.state.hub;
         const userId = this.state.userId;
+        console.log(userId)
+        console.log(token)
+        console.log(hub)
+        console.log(baseUrl)
         let Body = {
             Method: 'POST',
             Url: RATE,
@@ -134,6 +154,7 @@ export default class RatingScreen extends Component {
             NationalCode: '',
             Body: body
         }
+        console.log(Body)
         this.setState({progressModalVisible: true})
         fetch(baseUrl + hub, {
             method: 'POST',
@@ -145,8 +166,11 @@ export default class RatingScreen extends Component {
         })
             .then(response => response.json())
             .then(async responseData => {
+                console.log(responseData)
                 if (responseData['StatusCode'] === 200) {
-                    alert('نظر شما با موفقیت ثبت شد')
+                    this.setState({progressModalVisible: false}, () => {
+                        alert('نظر شما با موفقیت ثبت شد')
+                    })
                 } else if (responseData['StatusCode'] === 401) {
                     this.setState({progressModalVisible: false}, () => {
                         this.props.navigation.navigate(
@@ -335,6 +359,7 @@ export default class RatingScreen extends Component {
                         onPress={() => {
                             Keyboard.dismiss();
                             let body = {
+                                UserId: this.state.userId,
                                 MedicalCenterId: this.state.medicalCenterId,
                                 DoctorId: this.state.doctorId,
                                 Score: this.state.score,
@@ -488,7 +513,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
     },
     iconViewStyle: {
-        backgroundColor: 'red',
+        backgroundColor: '#fff',
         alignSelf: 'center',
         minWidth: 80,
         minHeight: 80,
